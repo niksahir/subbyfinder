@@ -1,0 +1,124 @@
+.chart-sec {
+
+    .row {
+        &>div {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    }
+
+    .top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 30px;
+        width: 100%;
+    }
+
+    .chart-wrapper {
+        box-shadow: 0px 2px 8px 0px #00000014;
+        padding: 10px;
+        border-radius: 4px;
+
+        .top-bar {
+           flex-wrap: wrap;
+        }
+    }
+
+    .blance {
+        box-shadow: 0px 2px 8px 0px #00000014;
+        padding: 20px;
+        border-radius: 4px;
+        width: 100%;
+
+        &:not(:last-child) {
+            margin-bottom: 30px;
+        }
+
+        h6 {
+            color: var(--c-text);
+
+        }
+
+        h3 {
+            margin-top: 12px;
+        }
+
+        .button-full {
+            padding-top: 20px;
+
+            a {
+                @include button;
+                width: 100%;
+            }
+        }
+
+
+    }
+}
+
+
+/* table css */
+
+.table-wrapper {
+    padding-top: 50px;
+   //  width: 100%;
+   overflow: hidden;
+       overflow: auto;
+
+    h5 {
+        font-weight: bold;
+    }
+
+
+    table {
+        border: none;
+        width: 100%;
+        overflow: scroll;
+        
+
+        tr {
+           th, td {
+               font-size: 14px;
+               // white-space: nowrap;
+               @include breakpoint($md){
+                   font-size: 16px;
+               }
+           }
+        }
+
+        thead {
+            tr {
+                border: none;
+
+                th {
+                    border: none;
+                    color: var(--c-text);
+                    padding: 20px 0;
+                    border-bottom: 1px solid var(--c-gray);
+                }
+            }
+        }
+
+
+        tbody {
+            border: none;
+
+            tr {
+                border: none;
+
+                td {
+                    border: none;
+                    color: #25324B;
+                    vertical-align: middle;
+
+                    img {
+                        height: 40px;
+                        object-fit: contain;
+                        width: auto;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,448 @@
+html,
+body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    font-family: $primary-font;
+}
+
+html body {
+    line-height: 1.4;
+    font-size: 16px;
+}
+
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+
+    &::after,
+    &::before {
+        padding: 0px;
+        margin: 0px;
+        box-sizing: border-box;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    padding: 0px;
+    margin: 0px;
+    color: var(--c-title);
+    margin-bottom: 10px;
+
+    @include breakpoint($xl, down) {
+        br {
+            display: none;
+        }
+    }
+}
+
+p {
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    @include breakpoint($xl, down) {
+        br {
+            display: none;
+        }
+    }
+}
+
+h1 {
+    @extend %font-180;
+}
+
+%font-180 {
+    font-size: rem-calc(60px);
+
+    @include breakpoint($md) {
+        font-size: rem-calc(80px);
+    }
+
+    @include breakpoint($lg) {
+        font-size: rem-calc(120px);
+    }
+
+    @include breakpoint($xl) {
+        font-size: rem-calc(140px);
+    }
+
+    @include breakpoint($xxl) {
+        font-size: rem-calc(160px);
+    }
+
+    @include breakpoint($xxxl) {
+        font-size: rem-calc(180px);
+    }
+}
+
+h2 {
+    @extend %font-52;
+    font-weight: bold;
+}
+
+%font-52 {
+    font-size: rem-calc(36px);
+
+    @include breakpoint($md) {
+        font-size: rem-calc(42px);
+    }
+
+    @include breakpoint($xl) {
+        font-size: rem-calc(52px);
+    }
+}
+
+h3 {
+    @extend %font-40;
+}
+
+%font-40 {
+    font-size: rem-calc(26px);
+
+    @include breakpoint($lg) {
+        font-size: rem-calc(36px);
+    }
+
+    @include breakpoint($xl) {
+        font-size: rem-calc(40px);
+    }
+}
+
+h4 {
+    @extend %font-28;
+}
+
+%font-28 {
+    font-size: rem-calc(22px);
+
+    @include breakpoint($md) {
+        font-size: rem-calc(26px);
+    }
+
+    @include breakpoint($xl) {
+        font-size: rem-calc(30px);
+    }
+}
+
+h5 {
+    @extend %font-20;
+}
+
+%font-20 {
+    font-size: rem-calc(20px);
+}
+
+%font-22 {
+    font-size: rem-calc(18px);
+
+    @include breakpoint($md) {
+        font-size: rem-calc(20px);
+    }
+
+    @include breakpoint($xl) {
+        font-size: rem-calc(22px);
+    }
+}
+
+h6 {
+    font-size: rem-calc(18px);
+}
+
+%pt-80 {
+    padding-top: 60px;
+
+    @include breakpoint($md) {
+        padding-top: 80px;
+    }
+}
+
+%pb-80 {
+    padding-bottom: 60px;
+
+    @include breakpoint($md) {
+        padding-bottom: 80px;
+    }
+}
+
+%pt-100 {
+    padding-top: 52px;
+
+    @include breakpoint($md) {
+        padding-top: 68px;
+    }
+
+    @include breakpoint($xl) {
+        padding-top: 80px;
+    }
+
+    @include breakpoint($xxl) {
+        padding-top: 100px;
+    }
+}
+
+%pb-100 {
+    padding-bottom: 60px;
+
+    @include breakpoint($md) {
+        padding-bottom: 80px;
+    }
+
+    @include breakpoint($xxl) {
+        padding-bottom: 100px;
+    }
+}
+
+%pb-120 {
+    padding-bottom: 50px;
+
+    @include breakpoint($md) {
+        padding-bottom: 100px;
+    }
+
+    @include breakpoint($xxl) {
+        padding-bottom: 120px;
+    }
+}
+
+%pt-120 {
+    padding-top: 80px;
+
+    @include breakpoint($md) {
+        padding-top: 100px;
+    }
+
+    @include breakpoint($xxl) {
+        padding-top: 120px;
+    }
+}
+
+%pt-140 {
+    padding-top: 80px;
+
+    @include breakpoint($md) {
+        padding-top: 110px;
+    }
+
+    @include breakpoint($xxl) {
+        padding-top: 140px;
+    }
+}
+
+%pb-140 {
+    padding-bottom: 80px;
+
+    @include breakpoint($md) {
+        padding-bottom: 110px;
+    }
+
+    @include breakpoint($xxl) {
+        padding-bottom: 140px;
+    }
+}
+
+%pt-160 {
+    padding-top: 80px;
+
+    @include breakpoint($md) {
+        padding-top: 140px;
+    }
+
+    @include breakpoint($xxl) {
+        padding-top: 160px;
+    }
+}
+
+%pb-160 {
+    padding-bottom: 80px;
+
+    @include breakpoint($md) {
+        padding-bottom: 140px;
+    }
+
+    @include breakpoint($xxl) {
+        padding-bottom: 120px;
+    }
+}
+
+%py-200 {
+    padding: 80px 0;
+
+    @include breakpoint($md) {
+        padding: 100px 0;
+    }
+
+    @include breakpoint($lg) {
+        padding: 160px 0;
+    }
+
+    @include breakpoint($xxl) {
+        padding: 250px 0;
+    }
+}
+
+%pt-200 {
+    padding-top: 100px;
+
+    @include breakpoint($lg) {
+        padding-top: 160px;
+    }
+
+    @include breakpoint($xxl) {
+        padding-top: 200px;
+    }
+}
+
+%pb-200 {
+    padding-bottom: 100px;
+
+    @include breakpoint($lg) {
+        padding-bottom: 160px;
+    }
+
+    @include breakpoint($xxl) {
+        padding-bottom: 200px;
+    }
+}
+
+.link {
+    padding-top: 30px;
+
+    a {
+        @include button;
+    }
+
+    &-normal {
+        a {
+            @include button("normal");
+        }
+    }
+
+    &.wrapper {
+        a {
+            @include button;
+
+            &:not(:last-child) {
+                margin-right: 20px;
+            }
+
+            &:nth-child(2) {
+                @include button("white");
+            }
+        }
+    }
+
+    &.border {
+        border: none !important;
+
+        a {
+            @include button("border");
+        }
+    }
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+
+    a {
+        width: 100%;
+        @include button;
+
+        &:not(:last-child) {
+            margin-bottom: 20px;
+        }
+
+        &:first-child {
+            background-color: #f77a361a;
+            color: var(--c-primary);
+        }
+    }
+}
+
+.Recommended {
+    width: 100%;
+    left: 0;
+    top: 0;
+    transform: translateY(-100%);
+    position: absolute;
+
+    @include breakpoint($md, down) {
+        position: relative;
+    }
+
+    p {
+        @include button;
+        width: 100%;
+    }
+}
+
+/* pagination css start */
+
+.pagination {
+    padding-top: 50px;
+
+    ul {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+
+        li {
+            list-style: none;
+
+            &:not(:last-child) {
+                margin-right: 16px;
+            }
+
+            &:first-child,
+            &:last-child {
+                a {
+                    background-color: var(--c-bgcolor);
+                }
+            }
+
+            a {
+                text-decoration: none;
+                width: 44px;
+                height: 44px;
+                display: inline-block;
+                border-radius: 4px;
+                transition: all 0.32s ease-in-out;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                color: var(--c-secondary);
+                background-color: transparent;
+
+                &:hover {
+                    color: var(--c-white);
+                    background-color: var(--c-primary);
+                    box-shadow: 0px 2px 8px 0px #2a41e840;
+                }
+            }
+        }
+    }
+}
+
+/* detail-content-outer css start */
+
+.detail-content-outer {
+    p {
+        b {
+            color: var(--c-black);
+            font-weight: normal;
+        }
+    }
+}

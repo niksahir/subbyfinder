@@ -1,0 +1,44 @@
+.create-account-sec {
+    padding-top: 60px;
+    h5 {
+        font-weight: bold;
+    }
+
+    .profile {
+        padding-right: 30px;
+        margin-bottom: 30px;
+    }
+
+    .wrapper {
+        margin-top: 40px;
+        background-color: var(--c-white);
+        border-radius: 10px;
+        box-shadow: 0px 2px 8px 0px #00000014;
+        padding: 20px 0px;
+        @include breakpoint($md){
+            padding: 20px;
+        }
+
+        .label{
+            padding: 20px 0;
+            border-bottom: 1px solid var(--c-gray); 
+            margin-bottom: 30px;
+        }
+
+    }
+
+
+    .input-wrapper {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+
+        .form-control {
+            width: 45%;
+            @include breakpoint($md){
+                width: 15%;
+            }
+        }
+    }
+}

@@ -1,0 +1,181 @@
+@use "sass:math";
+
+@mixin all-clear {
+
+  &::after,
+  &::before {
+    content: " ";
+    display: table;
+    width: 0;
+  }
+
+  &::after {
+    clear: both;
+  }
+}
+
+$html-font-size: 16px;
+@function stripUnit($value) {
+  @return math.div($value, $value * 0 + 1);
+}
+@function rem-calc($pxValue) {
+  @return calc((stripUnit($pxValue) / stripUnit($html-font-size))*1rem);
+}
+
+@mixin flexbox($wrap:false, $direction:false, $oriant:false) {
+  display: -webkit-flex;
+  display: -webkit-box;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex;
+
+  @if $wrap {
+    flex-wrap: $wrap;
+    -webkit-flex-wrap: $wrap;
+  }
+
+  @if $direction {
+    -webkit-flex-direction: $direction;
+    flex-direction: $direction;
+  }
+
+  @if $oriant {
+    -webkit-box-orient: $oriant;
+  }
+}
+
+
+@mixin align-items($pos) {
+  -webkit-align-items: $pos;
+  -ms-align-items: $pos;
+  align-items: $pos;
+}
+
+@mixin justify-content($pos) {
+  -webkit-justify-content: $pos;
+  -ms-justify-content: $pos;
+  justify-content: $pos;
+}
+
+@mixin transition($t) {
+  -ms-transition: all $t ease-in-out;
+  -o-transition: all $t ease-in-out;
+  -moz-transition: all $t ease-in-out;
+  -webkit-transition: all $t ease-in-out;
+  transition: all $t ease-in-out;
+}
+
+@mixin transform($property) {
+  -ms-transform: $property;
+  -o-transform: $property;
+  -moz-transform: $property;
+  -webkit-transform: $property;
+  transform: $property;
+}
+
+
+
+@mixin breakpoint($width, $direction: up) {
+  @if $direction==up {
+    @media screen and (min-width: $width) {
+      @content;
+    }
+  }
+
+  @else if $direction==down {
+    @media screen and (max-width:$width - .28px) {
+      @content;
+    }
+  }
+}
+
+@mixin breakpoint-n($width, $widthx) {
+  @media screen and (min-width: $width) and (max-width: $widthx) {
+    @content;
+  }
+}
+
+@mixin col-width($x, $max: false) {
+  width: calc((100% / 12) * $x);
+  @if $max {
+    max-width: calc((100% / 12) * $x);
+  }
+}
+
+
+@mixin button($type: "default") {
+  padding: 14px 30px;
+  border-radius: 4px;
+  display: inline-block;
+  text-decoration: none;
+  border: 1px solid transparent;
+  background-color: var(--c-primary);
+  color: var(--c-white);
+  text-align: center;
+  transition: all .32s ease-in-out;
+  
+  &:hover {
+    background-color: var(--c-secondary);
+  }
+
+  @if $type == "white" {
+    background-color: var(--c-white);
+    color: var(--c-primary);
+  }
+
+  @if $type == "normal" {
+    background-color: transparent;
+    color: var(--c-primary);
+    padding: 0;
+    margin: 0;
+
+    &:hover {
+      color: var(--c-black);
+      background-color: transparent;
+    }
+  }
+
+  @if $type == "border" {
+    background-color: transparent;
+    color: var(--c-primary);
+    border-color: var(--c-primary);
+
+    &:hover {
+      background-color: var(--c-black);
+      border-color: var(--c-black);
+      color: var(--c-white);
+    }
+  }
+
+  @if $type == "white-border" {
+    background-color: var(--c-white);
+    color: var(--c-title);
+    border-color: var(--c-white);
+    font-weight: 600;
+    border-radius: 30px;
+
+    &:hover {
+      background-color: var(--c-black);
+      border-color: var(--c-black);
+      color: var(--c-white);
+    }
+  }
+
+
+  @if $type == "light" {
+    background-color: #F77A3612;
+    color: var(--c-primary);
+    border-color: transparent;
+    font-weight: 600;
+    border: none;
+
+    &:hover {
+      background-color: var(--c-black);
+      border-color: var(--c-black);
+      color: var(--c-white);
+    }
+  }
+
+
+ 
+}

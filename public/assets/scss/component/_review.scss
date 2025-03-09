@@ -1,0 +1,240 @@
+.review-dash {
+    box-shadow: 0px 2px 12px 0px #4b48481c;
+
+    .inner-slide {
+        width: 100%;
+        background-color: var(--c-white);
+        padding: 30px 20px;
+        border-radius: 4px;
+        display: flex;
+        align-items: flex-start;
+        text-align: left;
+        flex-wrap: wrap;
+        position: relative;
+        justify-content: space-between;
+        color: var(--c-text); 
+
+        &:not(:last-child) {
+            border-bottom: 1px solid var(--c-gray);
+        }
+
+        .inner-wrapper {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            @include breakpoint($md){
+                width: 75%;
+                flex-wrap: nowrap;
+            }
+        }
+
+        .image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 0 20px;
+            position: relative;
+
+            &.not-round {
+                border-radius: 0;
+                width: 150px;
+                height: 100%;
+                object-fit: contain;
+                img {
+                    border-radius: 0px;
+                }
+            }
+
+            img {
+                width: 100%;
+                border-radius: 50%;
+            }
+            
+            .check {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                z-index: 2;
+            }
+        }
+
+
+        ul {
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+
+            li {
+                i {
+                    margin-right: 6px;
+                    color: var(--c-text);
+                }
+
+                list-style: none;
+                color: var(--c-text);
+
+                &:not(:last-child) {
+                    padding-right: 10px;
+                    margin-right: 10px;
+                    border-right: 1px solid var(--c-text)
+                }
+            }
+        }
+
+        .content {
+            padding: 0 0 20px;
+            @include breakpoint($md){
+                padding: 0 30px;
+            }
+
+            span {
+                display: inline-block;
+                padding: 10px 20px;
+                color: var(--c-primary);
+                background-color: #F77A3612;
+                border-radius: 4px;
+            }
+            
+
+            p {
+                padding-top: 12px;
+                // max-width: 70%;
+                small {
+                    display: inline-block;
+                    margin-left: 10px;
+                    color: var(--c-title);
+                    font-size: 16px;
+                }
+            }
+        }
+
+        .link {
+            padding: 0;
+        }
+
+
+        .ratimg {
+            display: flex;
+            align-items: center;
+            margin: 12px 0px;
+            justify-content: flex-start;
+
+            .number {
+                padding: 4px 10px;
+                color: var(--c-white);
+                border-radius: 4px;
+                background-color: var(--c-yellow);
+                margin-right: 10px;
+            }
+
+            .star {
+                display: flex;
+                align-items: center;
+                color: var(--c-yellow);
+                gap: 2px;
+            }
+        }
+    }
+
+    .top-label {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 12px 0 50px;
+
+        .row {
+            width: 100%;
+            margin: 0;
+            justify-content: space-between;
+            &>div {
+                padding: 0;
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        .link {
+            width: 100%;
+            text-align: right;
+        }
+
+        img {
+            margin-right: 20px;
+        }
+
+        font-weight: bold;
+        color: var(--c-title);
+    }
+    
+    
+    .buttons {
+        width: auto;    
+        flex-direction: column;
+        width: 100%;
+        margin-top: 20px;
+        @include breakpoint($md){
+            width: 25%;
+            margin-top: 0;
+        }
+
+        .fa-trash {
+            background-color: #E4E4E4;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--c-red);
+            margin-left: auto;
+            border-radius: 4px;
+        }
+
+        a {
+            &:nth-of-type(1) {
+                @include button('light')
+            }
+        }
+
+        .copy {
+            text-align: right;
+
+            i {
+                width: 44px;
+                height: 44px;
+                background-color: var(--c-bg-light);
+                color: var(--c-primary);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: auto;
+            }
+        }
+
+        a {
+            width: auto;
+        }
+
+        i {
+            text-align: right;
+            margin-bottom: 20px;
+            color: var(--c-primary);
+        }
+    }
+}
+
+
+.delete {
+    color: var(--c-red);
+    background-color: #EEEEEE;
+    border-radius: 4px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+

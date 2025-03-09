@@ -1,0 +1,104 @@
+.job-info {
+    @extend %pt-80;
+
+    .left-sidebar {
+        @include breakpoint($xl){
+            padding: 0 10% 0 0;
+        }
+
+        .form-control {
+            box-shadow: 0px 1px 4px 0px #0000001F;
+            border: none;
+            padding: 12px 20px;
+        }
+
+        .location {
+            position: relative;
+
+            i {
+                position: absolute;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--c-gray);
+            }
+        }
+    }
+
+
+    fieldset {
+        .inner-form {
+            margin-bottom: 40px;
+
+            span {
+                display: inline-block;
+                margin: 0 auto;
+                padding: 10px 20px;
+                background-color: #FEF6F1;
+                color: var(--c-primary);
+                margin-bottom: 20px;
+            }
+
+            label {
+                display: block;
+            }
+
+
+            .filter-price {
+                max-width: 140px;
+                margin: 0 auto 12px;
+                display: inline-block;
+            }
+
+            .form-range {
+                color: var(--c-gray);
+            }
+        }
+    }
+
+
+    .result {
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--c-bgcolor);
+            border-radius: 4px;
+            flex-wrap: wrap;
+            color: #666666;
+            padding: 12px 16px;
+            @include breakpoint($md){
+                padding: 12px 30px;
+            }
+
+            .filter{
+                display: flex;
+                justify-content: flex-end;
+                // width: 100%;
+            }
+
+            p,
+            label {
+                margin: 0;
+                color: #666666;
+                @include breakpoint($md, down){
+                    font-size: 14px;
+                }
+            }
+        }
+
+
+        .form-switch {
+            display: flex;
+            align-items: center;
+            margin: 0;
+        
+
+            input {
+                width: 3em;
+                height: 1.5em;
+                margin-right: 20px;
+            }
+        }
+    }
+}

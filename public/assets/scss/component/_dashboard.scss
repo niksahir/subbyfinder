@@ -1,0 +1,407 @@
+.breadcrumb {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+
+    @include breakpoint($md, down){
+        margin-top: 20px;
+        justify-content: flex-start;
+    }
+
+
+    ul {
+        padding: 0;
+        margin: 0;
+        display: inline-flex;
+        background-color: #333333;
+        border-radius: 4px;
+        padding: 10px 20px;
+        @include breakpoint($md){
+            padding: 14px 30px;
+        }
+
+        li {
+            list-style: none;
+
+            &:not(:last-child) {
+                margin-right: 20px;
+            }
+
+            a {
+                text-decoration: none;
+                text-align: center;
+                display: inline-block;
+                color: var(--c-white);
+                @include breakpoint($md, down){
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+}
+
+.dashboard {
+    .wrapper.d-flex {
+        flex-wrap: wrap;
+    }
+
+    .left-side-menu {
+        padding: 30px 0;
+        background-color: var(--c-white);
+        box-shadow: 0px 10px 20px 0px #0000001A;
+        height: 100vh;
+
+        @include breakpoint($lg, down) {
+            display: none;
+        }
+
+        p {
+            padding: 20px 30px 10px;
+            margin: 0;
+            color: var(--c-primary);
+        }
+
+        ul {
+            padding: 0;
+            margin: 0;
+
+            li {
+                list-style: none;
+
+                a {
+                    padding: 10px 30px;
+                    display: inline-block;
+                    width: 100%;
+                    text-decoration: none;
+                    color: var(--c-text);
+                    display: flex;
+                    align-items: center;
+                    transition: all .32s ease-in-out;
+                    position: relative;
+
+                    span {
+                        min-width: 20px;
+                        aspect-ratio: 1/1;
+                        border-radius: 50%;
+                        display: inline-block;
+                        margin-left: 20px;
+                        background-color: var(--c-primary);
+                        color: var(--c-white);
+                        font-size: 11px;
+                        height: 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 4px;
+                        background-color: var(--c-primary);
+                    }
+                    
+
+                    svg {
+                        margin-right: 12px;
+                    }
+
+                    &:hover {
+                        color: var(--c-primary);
+                    }
+                }
+
+                &.active {
+                    a {
+                        color: var(--c-primary);
+
+                        &::after {
+                         height: 100%;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+
+
+
+/* right side bar */
+
+
+.right-side {
+    padding: 30px 4%;
+    @include breakpoint($md){
+        padding: 30px 10% 30px 4%;
+    }
+
+
+    .title {
+        h4 {
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+    }
+
+    .block-item-sec {
+        padding-bottom: 40px;
+
+        .block-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: var(--c-white);
+            box-shadow: 0px 2px 6px 0px #00000014;
+
+            .content {
+                padding: 0 10px;
+
+                p {
+                    padding: 0;
+                    margin: 0;
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+
+}
+
+
+
+/* notifications-order-css start */
+
+
+.note {
+    box-shadow: 0px 2px 8px 0px #00000014;
+    width: 100%;
+    padding: 30px 20px;
+    background-color: var(--c-white);
+
+    @include breakpoint($md) {
+        margin-top: 30px;
+    }
+
+    ul {
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: flex-start;
+
+        li {
+            list-style: none;
+
+            &:not(:last-child) {
+                margin-right: 12px;
+            }
+
+            a {
+                color: var(--c-primary);
+                text-decoration: none;
+            }
+        }
+    }
+
+    .inner-box {
+        background-color: #F8F8F8;
+        padding: 20px;
+        border-radius: 10px;
+        color: var(--c-text);
+        margin-bottom: 20px;
+    }
+
+    .wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 20px;
+
+        button {
+            @include button;
+            background-color: var(--c-red);
+        }
+    }
+
+    .link {
+        a {
+            width: 100%;
+        }
+    }
+}
+
+
+.notifications-order-sec {
+    padding-top: 50px;
+
+
+    .row {
+        &>div {
+            display: flex;
+        }
+    }
+
+    .title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 40px;
+    }
+
+    .notification,
+    .order {
+        box-shadow: 0px 2px 8px 0px #00000014;
+        width: 100%;
+
+        @include breakpoint($md) {
+            margin-bottom: 30px;
+        }
+
+        h5 {
+            font-size: 16px;
+        }
+
+        ul {
+            padding: 0;
+            margin: 0;
+
+            li {
+                display: flex;
+                align-items: flex-start;
+                padding: 14px 30px;
+                border-top: 1px solid var(--c-gray);
+
+                a {
+                    color: var(--c-primary);
+                    text-decoration: none;
+                }
+            }
+        }
+
+    }
+
+
+    .order {
+        .box-item {
+            padding: 14px 30px;
+            border-top: 1px solid var(--c-gray);
+            display: flex;
+            flex-wrap: wrap;
+
+            h5 {
+                display: block;
+                width: 100%;
+            }
+
+            .wrong,
+            .success {
+                background-color: #DC3139;
+                color: var(--c-white);
+                font-size: 14px;
+                padding: 4px 10px;
+                border-radius: 4px;
+                margin: 0;
+                margin-right: 12px;
+            }
+
+            .success {
+                background-color: #40B660;
+            }
+
+
+            ul {
+                display: flex;
+                align-items: center;
+
+                li {
+                    padding: 0;
+                    margin: 0;
+                    border: none;
+                    display: unset;
+                    list-style: unset;
+                    color: var(--c-text);
+
+                    &:not(:last-child) {
+                        margin-right: 20px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+.footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--c-gray);
+
+    @include breakpoint($md, down) {
+        text-align: center;
+    }
+
+
+
+    .row {
+        align-items: center;
+    }
+
+    ul {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+
+        @include breakpoint($md) {
+            margin-top: 0px;
+            justify-content: flex-end;
+        }
+
+        li {
+            list-style-type: none;
+
+            &:not(:last-child) {
+                margin-right: 20px;
+            }
+
+            a {
+                text-decoration: none;
+                color: var(--c-text);
+            }
+        }
+    }
+}
+
+
+
+
+// .table-responsive {
+//     table {
+//         thead { 
+//             tr {
+//                 th {
+//                     white-space: nowrap;
+//                 }
+//             }
+//         }
+//     }
+// }
+
+
+.values-item{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    
+
+    .link {
+        padding: 0;
+    }
+}

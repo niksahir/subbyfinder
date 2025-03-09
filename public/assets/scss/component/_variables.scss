@@ -1,0 +1,30 @@
+:root {
+    --c-black: #000;
+    --c-body: #000;
+    --c-white: #ffffff;
+    --c-primary: #F77A36;
+    --c-secondary: #484848;
+    --c-text: #666666;
+    --c-dark-gray: #888888;
+    --c-gray: #E0E0E0;
+    --c-red: #DC3139;
+    --c-title: #1A1C28;
+    --c-bg-light: #F7F7F7;
+    --c-yellow: #FEBE42;
+    --c-bgcolor: #F2F2F2;
+} 
+
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+
+$primary-font:  "Nunito", serif; 
+
+$xs: 420px;
+$sm: 576px;
+$md: 768px;
+$lg: 992px;
+$xl: 1200px;
+$xxl: 1400px;
+$xxxl: 1600px;
+$xxxxl: 1800px;
