@@ -32,43 +32,49 @@ class RegisterController extends Controller {
     * Store a newly created resource in storage.
     */
    public function store(Request $request) {
-    $validatedData = $request->validate([
-        'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'business_name' => 'required|string|max:255',
-        'contact_name' => 'required|string|max:255',
-        'phone' => 'required|string|max:20',
-        'email' => 'required|string|email|unique:contractors,email',
-        'address' => 'nullable|string',
-        'support_staff_size' => 'nullable|integer',
-        'years_in_business' => 'nullable|string',
-        'insurances' => 'nullable|string',
-        'abn' => 'nullable|string',
-        'licenses' => 'nullable|string',
-        'expertise_in' => 'nullable|array',
-        'project_types' => 'nullable|array',
-        'availability' => 'nullable|array',
-        'description' => 'nullable|string',
-        'values' => 'nullable|string',
-    ]);
+    try{
 
-    if ($request->hasFile('profile_photo')) {
-        $path = $request->file('profile_photo')->store('profile_photos', 'public');
-        $validatedData['profile_photo'] = $path;
+        $validatedData = $request->validate([
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'business_name' => 'required|string|max:255',
+            'contact_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|string|email|unique:contractors,email',
+            'address' => 'nullable|string',
+            'support_staff_size' => 'nullable|integer',
+            'years_in_business' => 'nullable|string',
+            'insurances' => 'nullable|string',
+            'abn' => 'nullable|string',
+            'licenses' => 'nullable|string',
+            'expertise_in' => 'nullable|array',
+            'project_types' => 'nullable|array',
+            'availability' => 'nullable|array',
+            'description' => 'nullable|string',
+            'values' => 'nullable|string',
+        ]);
+
+        if ($request->hasFile('profile_photo')) {
+            $path = $request->file('profile_photo')->store('profile_photos', 'public');
+            $validatedData['profile_photo'] = $path;
+        }
+
+        // $availability = "";
+
+        // if (!empty($request->availability)) {
+            //     $availability = implode(', ', array_map(
+        //     fn($key, $value) => "$key: " . json_encode($value),
+        //     array_keys($request->availability),
+        //     $request->availability
+        //     ));
+        // }
+        
+        $validatedData['password'] = Hash::make($validatedData['email']);
+        Contractor::create($validatedData);
+
+        return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
+    }catch(\Exception $e){
+        return $e->getMessage();
     }
-
-    // $availability = "";
-
-    // if (!empty($request->availability)) {
-    //     $availability = implode(', ', array_map(
-    //     fn($key, $value) => "$key: " . json_encode($value),
-    //     array_keys($request->availability),
-    //     $request->availability
-    //     ));
-    // }
-
-    Contractor::create($validatedData);
-
-    return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
    }
 
    /**

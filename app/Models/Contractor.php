@@ -12,6 +12,7 @@ class Contractor extends Model
         'contact_name',
         'phone',
         'email',
+        'password',
         'address',
         'support_staff_size',
         'years_in_business',

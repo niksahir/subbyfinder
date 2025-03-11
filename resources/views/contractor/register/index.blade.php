@@ -57,7 +57,7 @@
          <div class="title">
             <h5>Create Account</h5>
          </div>
-         <form method="POST" action="{{ route('contractor.register.store') }}">
+         <form method="POST" action="{{ route('contractor.register.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="wrapper">
                <div class="row">
@@ -195,7 +195,7 @@
             <div class="wrapper">
                <div class="values-item">
                   <h5 class="">Values</h5>
-                  <textarea class="form-control" rows="6" placeholder="Enter values here" name="value"></textarea>
+                  <textarea class="form-control" rows="6" placeholder="Enter values here" name="values"></textarea>
                </div>
 
             </div>
