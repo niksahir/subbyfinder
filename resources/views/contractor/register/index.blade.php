@@ -59,7 +59,6 @@
          </div>
          <form method="POST" action="{{ route('contractor.register.store') }}">
             @csrf
-            <input type="hidden" name="role_id" class="role_id" value="2">
             <div class="wrapper">
                <div class="row">
                   <div class="col-12">
@@ -73,7 +72,8 @@
 
                   <div class="col-md-3">
                      <div class="profile">
-                        <img src="{{ asset('assets/images/team-3.png') }}" alt="" class="img-fluid">
+                        <input type="file" name="profile_photo" class="form-control d-none" id="profileInput">
+                        <img src="{{ asset('assets/images/team-3.png') }}" alt="" class="img-fluid" id="profileImage" onclick="document.getElementById('profileInput').click()">
                      </div>
                   </div>
 
@@ -147,42 +147,21 @@
                         </div>
                         <div class="col-md-6 form-inner">
                            <label class="form-label">Expertise in</label>
-                           <input type="text" class="form-control" placeholder="Expertise in" name="expertise_in" value="{{ old('expertise_in') }}" />
+                           <select name="expertise_in[]" class="form-control" multiple>
+                            @foreach($expertise_in as $expertise)
+                                <option value="{{ $expertise->id }}">{{ $expertise->name }}</option>
+                            @endforeach
+                            </select>
                         </div>
                      </div>
-
-                     <div class="mt-4 col-12">
-                        <div class="list">
-                           <ul>
-                              <li>Lighting</li>
-                              <li>Cabling</li>
-                              <li>Decommissioning</li>
-                              <li>Power</li>
-                              <li>Repairs</li>
-                              <li>Rough-in & Fitoff</li>
-                              <li>Smoke Detectors</li>
-                           </ul>
-                        </div>
-                     </div>
-
 
                      <div class="col-md-6 form-inner">
                         <label class="form-label">Project Types</label>
-                        <input type="text" class="form-control" placeholder="Project Types" name="project_type" />
-                     </div>
-
-                     <div class="mt-4 col-12">
-                        <div class="list">
-                           <ul>
-                              <li>Lighting</li>
-                              <li>Cabling</li>
-                              <li>Decommissioning</li>
-                              <li>Power</li>
-                              <li>Repairs</li>
-                              <li>Rough-in & Fitoff</li>
-                              <li>Smoke Detectors</li>
-                           </ul>
-                        </div>
+                        <select name="project_types[]" class="form-control" multiple>
+                            @foreach($project_types as $project)
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            @endforeach
+                        </select>
                      </div>
 
                      <div class="col-12">
@@ -192,24 +171,8 @@
 
                      <div class="row">
                         <div class="input-wrapper">
-                           <input type="text" class="form-control" placeholder="Mon" name="availability['Mon'][]" />
-                           <input type="text" class="form-control" placeholder="Tue" name="availability['Tue'][]" />
-                           <input type="text" class="form-control" placeholder="Wed" name="availability['Wed'][]" />
-                           <input type="text" class="form-control" placeholder="Thus" name="availability['Thus'][]" />
-                        </div>
-                     </div>
-
-                     <div class="mt-4 col-12">
-                        <div class="list">
-                           <ul>
-                              <li>Lighting</li>
-                              <li>Cabling</li>
-                              <li>Decommissioning</li>
-                              <li>Power</li>
-                              <li>Repairs</li>
-                              <li>Rough-in & Fitoff</li>
-                              <li>Smoke Detectors</li>
-                           </ul>
+                            <input type="text" name="availability[Mon][start]" class="form-control" placeholder="Start Time">
+                            <input type="text" name="availability[Mon][end]" class="form-control" placeholder="End Time">
                         </div>
                      </div>
                   </div>
@@ -288,6 +251,18 @@
    <script src=" {{ asset('assets/js/jquery.js') }} "></script>
    <script src=" {{ asset('assets/js/bootstrap.js') }} "></script>
    <script src=" {{ asset('assets/js/custom.js') }} "></script>
+   <script>
+        document.getElementById('profileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 </body>
 
 </html>
