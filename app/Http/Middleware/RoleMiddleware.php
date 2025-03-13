@@ -14,29 +14,22 @@ class RoleMiddleware {
     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
     */
    public function handle(Request $request, Closure $next, string $role) {
+        // Determine authenticated guard
+        if (Auth::guard('contractor')->check()) {
+            $userType = 'contractor';
+        } elseif (Auth::guard('subcontractor')->check()) {
+            $userType = 'subcontractor';
+        } elseif (Auth::guard('web')->check()) {
+            $userType = 'admin';
+        } else {
+            return redirect()->route('login')->with('error', 'You must be logged in.');
+        }
 
-      // Check if the user is authenticated
-      if (!Auth::check()) {
-         return redirect()->route('login')->with('error', 'You must be logged in.');
-      }
+        // Check if the user has the correct role
+        if ($userType !== $role) {
+            return redirect()->route('front.home')->with('error', 'Unauthorized access.');
+        }
 
-      // Check user role
-      if (!empty(Auth::user()->role) && Auth::user()->role->slug !== $role) {
-         if (Auth::user()->role->slug == "contractor") {
-            return redirect()->route('contractor.dashboard.index');
-         }
-
-         if (Auth::user()->role->slug == "sub-contractor") {
-            return redirect()->route('subcontractor.dashboard.index');
-         }
-
-         if (Auth::user()->role->slug == "admin") {
-            return redirect()->route('front.home');
-         }
-
-         return redirect()->route('front.home')->with('error', 'Unauthorized access.');
-      }
-
-      return $next($request);
+        return $next($request);
    }
 }

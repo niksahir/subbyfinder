@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Contractor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Contractor;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller {
    /**
@@ -24,7 +27,19 @@ class LoginController extends Controller {
     * Store a newly created resource in storage.
     */
    public function store(Request $request) {
-      //
+    try{
+
+        $contractor = Contractor::where('email', $request->email)->first();
+        if ($contractor && Hash::check($request->password, $contractor->password)) {
+            Auth::guard('contractor')->login($contractor);
+
+            return redirect()->route('contractor.dashboard.index'); // Ensure this executes
+        }
+
+        return back()->withErrors(['email' => 'These credentials do not match our records.']);
+    }catch(\Exception $e){
+        return $e->getMessage();
+    }
    }
 
    /**

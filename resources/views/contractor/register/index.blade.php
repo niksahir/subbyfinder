@@ -164,7 +164,7 @@
                         </select>
                      </div>
 
-                     <div class="col-12">
+                     {{-- <div class="col-12">
                         <h6>Availability </h6>
                      </div>
 
@@ -174,7 +174,7 @@
                             <input type="text" name="availability[Mon][start]" class="form-control" placeholder="Start Time">
                             <input type="text" name="availability[Mon][end]" class="form-control" placeholder="End Time">
                         </div>
-                     </div>
+                     </div> --}}
                   </div>
                </div>
             </div>

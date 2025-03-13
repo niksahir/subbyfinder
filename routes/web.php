@@ -44,7 +44,7 @@ Route::get('/front', [App\Http\Controllers\HomeController::class, 'index'])->nam
 Route::prefix('contractor')->name('contractor.')->group(function () {
    Route::resource('login', ContractorLoginController::class);
    Route::resource('register', ContractorRegisterController::class);
-   Route::middleware(['auth', 'role:contractor'])->group(function () {
+   Route::middleware(['auth:contractor'])->group(function () {
       Route::resource('dashboard', HomeController::class);
       Route::resource('messages', ChatController::class);
       Route::resource('reviews', ReviewsController::class);

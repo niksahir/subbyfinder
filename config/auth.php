@@ -36,9 +36,13 @@ return [
     */
 
     'guards' => [
-        'web' => [
+        // 'web' => [
+        //     'driver' => 'session',
+        //     'provider' => 'users',
+        // ],
+        'contractor' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'contractors',
         ],
     ],
 
@@ -60,11 +64,14 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        // 'users' => [
+        //     'driver' => 'eloquent',
+        //     'model' => env('AUTH_MODEL', App\Models\User::class),
+        // ],
+        'contractors' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => App\Models\Contractor::class,
         ],
-
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
