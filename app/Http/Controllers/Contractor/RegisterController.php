@@ -32,25 +32,26 @@ class RegisterController extends Controller {
     * Store a newly created resource in storage.
     */
    public function store(Request $request) {
-    // try{
+    try{
 
         $validatedData = $request->validate([
-            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'profile_photo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'business_name' => 'required|string|max:255',
             'contact_name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'email' => 'required|string|email|unique:contractors,email',
-            'address' => 'nullable|string',
-            'support_staff_size' => 'nullable|integer',
-            'years_in_business' => 'nullable|string',
-            'insurances' => 'nullable|string',
-            'abn' => 'nullable|string',
-            'licenses' => 'nullable|string',
-            'expertise_in' => 'nullable|array',
-            'project_types' => 'nullable|array',
-            'availability' => 'nullable|array',
-            'description' => 'nullable|string',
-            'values' => 'nullable|string',
+            'password' => 'required|string',
+            'address' => 'required|string',
+            'support_staff_size' => 'required|integer',
+            'years_in_business' => 'required|string',
+            'insurances' => 'required|string',
+            'abn' => 'required|string',
+            'licenses' => 'required|string',
+            'expertise_in' => 'required|array',
+            'project_types' => 'required|array',
+            // 'availability' => 'required|array',
+            'description' => 'required|string',
+            'values' => 'required|string',
         ]);
 
         if ($request->hasFile('profile_photo')) {
@@ -68,13 +69,13 @@ class RegisterController extends Controller {
         //     ));
         // }
 
-        $validatedData['password'] = Hash::make($validatedData['email']);
+        $validatedData['password'] = Hash::make($validatedData['password']);
         Contractor::create($validatedData);
 
         return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
-    // }catch(\Exception $e){
-    //     return $e->getMessage();
-    // }
+    }catch(\Exception $e){
+        return $e->getMessage();
+    }
    }
 
    /**

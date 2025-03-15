@@ -37,21 +37,22 @@ class RegisterController extends Controller {
 
         // return $request->all();
         $validatedData = $request->validate([
-            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'profile_photo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'business_name' => 'required|string|max:255',
             'contact_name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            'email' => 'required|string|email|unique:contractors,email',
-            'address' => 'nullable|string',
-            'support_staff_size' => 'nullable|integer',
-            'years_in_business' => 'nullable|string',
-            'insurances' => 'nullable|string',
-            'abn' => 'nullable|string',
-            'licenses' => 'nullable|string',
-            'expertise_in' => 'nullable|array',
-            'project_types' => 'nullable|array',
-            'availability' => 'nullable|array',
-            'description' => 'nullable|string',
+            'email' => 'required|string|email|unique:sub_contractors,email',
+            'password' => 'required|string|max:255',
+            'address' => 'required|string',
+            'support_staff_size' => 'required|integer',
+            'years_in_business' => 'required|string',
+            'insurances' => 'required|string',
+            'abn' => 'required|string',
+            'licenses' => 'required|string',
+            'expertise_in' => 'required|array',
+            'project_types' => 'required|array',
+            // 'availability' => 'required|array',
+            'description' => 'required|string',
             // 'certificates.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -70,7 +71,7 @@ class RegisterController extends Controller {
         //     ));
         // }
 
-        $validatedData['password'] = Hash::make($validatedData['email']);
+        $validatedData['password'] = Hash::make($validatedData['password']);
         $subContractor = SubContractor::create($validatedData);
 
         // return [
