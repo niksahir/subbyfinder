@@ -151,7 +151,7 @@
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Years in Business</label>
-                                    <input type="text" class="form-control" placeholder="Years in Business"
+                                    <input type="number" class="form-control" placeholder="Years in Business"
                                         name="years_in_business" value="{{ old('years_in_business') }}" required/>
                                 </div>
                                 <div class="col-md-6 form-inner">

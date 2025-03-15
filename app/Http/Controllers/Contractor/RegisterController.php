@@ -43,7 +43,7 @@ class RegisterController extends Controller {
             'password' => 'required|string',
             'address' => 'required|string',
             'support_staff_size' => 'required|integer',
-            'years_in_business' => 'required|string',
+            'years_in_business' => 'required|integer',
             'insurances' => 'required|string',
             'abn' => 'required|string',
             'licenses' => 'required|string',
