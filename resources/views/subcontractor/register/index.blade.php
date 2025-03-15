@@ -172,8 +172,10 @@
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Expertise in</label>
                                     <select name="expertise_in[]" class="form-control" multiple data-multi-select required>
-                                        @foreach ($expertise_in as $expertise)
-                                            <option value="{{ $expertise->id }}">{{ $expertise->name }}</option>
+                                        @foreach ($expertise_in as $key => $expertise)
+                                            <option value="{{ $expertise->id }}" {{ $key == 0 ? 'selected' : '' }}>
+                                                {{ $expertise->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -182,8 +184,10 @@
                             <div class="col-md-6 form-inner">
                                 <label class="form-label">Project Types</label>
                                 <select name="project_types[]" class="form-control" multiple data-multi-select required>
-                                    @foreach ($project_types as $project)
-                                        <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                    @foreach ($project_types as $key => $project)
+                                        <option value="{{ $project->id }}" {{ $key == 0 ? 'selected' : '' }}>
+                                            {{ $project->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
