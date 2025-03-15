@@ -59,7 +59,7 @@ Route::prefix('contractor')->name('contractor.')->group(function () {
 Route::prefix('sub-contractor')->name('subcontractor.')->group(function () {
    Route::resource('login', SubContractorLoginController::class);
    Route::resource('register', SubContractorRegisterController::class);
-   Route::middleware(['auth', 'role:sub-contractor'])->group(function () {
+   Route::middleware(['auth:subcontractor'])->group(function () {
       Route::resource('dashboard', SubContractorHomeController::class);
       Route::resource('messages', MassageController::class);
       Route::resource('reviews', ReviewController::class);

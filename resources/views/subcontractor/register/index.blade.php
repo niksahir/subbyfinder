@@ -23,6 +23,7 @@
 
    {{-- Custom Css  --}}
    <link href="{{ asset('assets/css/theme.css') }}" rel="stylesheet">
+   <link href="{{ asset('assets/css/multiSelect.css') }}" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -57,7 +58,7 @@
          <div class="title">
             <h5>Create Account</h5>
          </div>
-         <form method="POST" action="{{ route('subcontractor.register.store') }}">
+         <form method="POST" action="{{ route('subcontractor.register.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="wrapper">
                <div class="row">
@@ -67,7 +68,8 @@
 
                   <div class="col-md-3">
                      <div class="profile">
-                        <img src="{{ asset('assets/images/team-3.png') }}" alt="" class="img-fluid">
+                        <input type="file" name="profile_photo" class="form-control d-none" id="profileInput">
+                        <img src="{{ asset('assets/images/team-3.png') }}" alt="" class="img-fluid" id="profileImage" onclick="document.getElementById('profileInput').click()">
                      </div>
                   </div>
 
@@ -142,45 +144,24 @@
                         </div>
                         <div class="col-md-6 form-inner">
                            <label class="form-label">Expertise in</label>
-                           <input type="text" class="form-control" placeholder="Expertise in" name="expertise_in" value="{{ old('expertise_in') }}" />
+                           <select name="expertise_in[]" class="form-control" multiple data-multi-select>
+                            @foreach($expertise_in as $expertise)
+                                <option value="{{ $expertise->id }}">{{ $expertise->name }}</option>
+                            @endforeach
+                            </select>
                         </div>
                      </div>
-
-                     <div class="mt-4 col-12">
-                        <div class="list">
-                           <ul>
-                              <li>Lighting</li>
-                              <li>Cabling</li>
-                              <li>Decommissioning</li>
-                              <li>Power</li>
-                              <li>Repairs</li>
-                              <li>Rough-in & Fitoff</li>
-                              <li>Smoke Detectors</li>
-                           </ul>
-                        </div>
-                     </div>
-
 
                      <div class="col-md-6 form-inner">
                         <label class="form-label">Project Types</label>
-                        <input type="text" class="form-control" placeholder="Project Types" name="project_type" />
+                        <select name="project_types[]" class="form-control" multiple data-multi-select>
+                            @foreach($project_types as $project)
+                                <option value="{{ $project->id }}">{{ $project->name }}</option>
+                            @endforeach
+                        </select>
                      </div>
 
-                     <div class="mt-4 col-12">
-                        <div class="list">
-                           <ul>
-                              <li>Lighting</li>
-                              <li>Cabling</li>
-                              <li>Decommissioning</li>
-                              <li>Power</li>
-                              <li>Repairs</li>
-                              <li>Rough-in & Fitoff</li>
-                              <li>Smoke Detectors</li>
-                           </ul>
-                        </div>
-                     </div>
-
-                     <div class="col-12">
+                     {{-- <div class="col-12">
                         <h6>Availability
                            <img src="{{ asset('assets/images/pluse.png') }}" alt="" class="img-fluid ps-5">
                         </h6>
@@ -237,7 +218,7 @@
                               </div>
                            </div>
                         </div>
-                     </div>
+                     </div> --}}
                   </div>
                </div>
             </div>
@@ -261,13 +242,16 @@
                   <h5 class="">Certifications &amp; Training</h5>
 
                   <div class="link">
-                     <a href="#">Add More</a>
+                     <a id="addMore">Add More</a>
                   </div>
                </div>
 
-               <div class="upload-cer pt-4">
-                  <img src="{{ asset('assets/images/certificates.png') }}" alt="" class="img-fluid">
-               </div>
+               <div class="upload-cer pt-4 d-flex flex-wrap" id="imagePreviewContainer">
+                <div class="image-item me-2 position-relative">
+                    <img src="assets/images/certificates.png" alt="" class="img-fluid default-img" width="150">
+                </div>
+            </div>
+            <input type="file" id="imageInput" class="d-none" multiple accept="image/*">
 
             </div>
 
@@ -318,7 +302,49 @@
    <script src=" {{ asset('assets/js/jquery.js') }} "></script>
    <script src=" {{ asset('assets/js/bootstrap.js') }} "></script>
    <script src=" {{ asset('assets/js/custom.js') }} "></script>
+   <script src="{{ asset('assets/js/multiSelect.js') }}"></script>
+   <script>
+        document.getElementById('profileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#addMore').click(function() {
+                $('#imageInput').click();
+            });
 
+            $('#imageInput').on('change', function(event) {
+                let files = event.target.files;
+                let container = $('#imagePreviewContainer');
+
+                for (let i = 0; i < files.length; i++) {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        let imageItem = `<div class="image-item me-2 position-relative">
+                                    <img src="${e.target.result}" class="img-fluid" width="150">
+                                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 remove-image">X</button>
+                                    <input type="hidden" name="certificates[]" value="${e.target.result}">
+                                </div>`;
+                        container.append(imageItem);
+                    };
+                    reader.readAsDataURL(files[i]);
+                }
+            });
+
+            $(document).on('click', '.remove-image', function() {
+                $(this).closest('.image-item').remove();
+            });
+
+        });
+    </script>
 </body>
 
 </html>

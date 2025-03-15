@@ -38,7 +38,7 @@ class LoginController extends Controller {
 
         return back()->withErrors(['email' => 'These credentials do not match our records.']);
     }catch(\Exception $e){
-        return $e->getMessage();
+        return back()->withErrors(['email' => $e->getMessage()]);
     }
    }
 

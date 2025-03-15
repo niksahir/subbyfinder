@@ -32,7 +32,7 @@ class RegisterController extends Controller {
     * Store a newly created resource in storage.
     */
    public function store(Request $request) {
-    try{
+    // try{
 
         $validatedData = $request->validate([
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -67,14 +67,14 @@ class RegisterController extends Controller {
         //     $request->availability
         //     ));
         // }
-        
+
         $validatedData['password'] = Hash::make($validatedData['email']);
         Contractor::create($validatedData);
 
         return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
-    }catch(\Exception $e){
-        return $e->getMessage();
-    }
+    // }catch(\Exception $e){
+    //     return $e->getMessage();
+    // }
    }
 
    /**

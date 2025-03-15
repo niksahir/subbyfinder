@@ -67,7 +67,7 @@
                      </div>
 
 
-                     <form method="POST" action="{{ route('login') }}">
+                     <form method="POST" action="{{ route('subcontractor.login.store') }}">
                         @csrf
                         <div class="mb-3">
                            <label for="email" class="form-label">{{ __('Email Address') }}</label>
@@ -105,7 +105,7 @@
                         <button type="submit" class="btn "> {{ __('Login') }}</button>
 
                         <div class="account">
-                           <p>Don’t have an account? <a href="{{ route('register') }}"> Sign up</a></p>
+                           <p>Don’t have an account? <a href="{{ route('subcontractor.register.index') }}"> Sign up</a></p>
                         </div>
                      </form>
                   </div>
@@ -123,7 +123,7 @@
                         <p>Or login with email</p>
                      </div>
 
-                     <form method="POST" action="{{ route('login') }}">
+                     <form method="POST" action="{{ route('subcontractor.login.store') }}">
                         @csrf
                         <div class="mb-3">
                            <label for="email" class="form-label">{{ __('Email Address') }}</label>
@@ -161,7 +161,7 @@
                         <button type="submit" class="btn "> {{ __('Login') }}</button>
 
                         <div class="account">
-                           <p>Don’t have an account? <a href="{{ route('register') }}"> Sign up</a></p>
+                           <p>Don’t have an account? <a href="{{ route('subcontractor.register.index') }}"> Sign up</a></p>
                         </div>
                      </form>
                   </div>

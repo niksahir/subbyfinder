@@ -23,6 +23,7 @@
 
    {{-- Custom Css  --}}
    <link href="{{ asset('assets/css/theme.css') }}" rel="stylesheet">
+   <link href="{{ asset('assets/css/multiSelect.css') }}" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -147,7 +148,7 @@
                         </div>
                         <div class="col-md-6 form-inner">
                            <label class="form-label">Expertise in</label>
-                           <select name="expertise_in[]" class="form-control" multiple>
+                           <select name="expertise_in[]" class="form-control" multiple data-multi-select>
                             @foreach($expertise_in as $expertise)
                                 <option value="{{ $expertise->id }}">{{ $expertise->name }}</option>
                             @endforeach
@@ -157,7 +158,7 @@
 
                      <div class="col-md-6 form-inner">
                         <label class="form-label">Project Types</label>
-                        <select name="project_types[]" class="form-control" multiple>
+                        <select name="project_types[]" class="form-control" multiple data-multi-select>
                             @foreach($project_types as $project)
                                 <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach
@@ -251,6 +252,7 @@
    <script src=" {{ asset('assets/js/jquery.js') }} "></script>
    <script src=" {{ asset('assets/js/bootstrap.js') }} "></script>
    <script src=" {{ asset('assets/js/custom.js') }} "></script>
+   <script src="{{ asset('assets/js/multiSelect.js') }}"></script>
    <script>
         document.getElementById('profileInput').addEventListener('change', function(event) {
             const file = event.target.files[0];

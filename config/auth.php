@@ -44,6 +44,10 @@ return [
             'driver' => 'session',
             'provider' => 'contractors',
         ],
+        'subcontractor' => [
+            'driver' => 'session',
+            'provider' => 'subcontractor',
+        ],
     ],
 
     /*
@@ -71,6 +75,10 @@ return [
         'contractors' => [
             'driver' => 'eloquent',
             'model' => App\Models\Contractor::class,
+        ],
+        'subcontractor' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SubContractor::class,
         ],
         // 'users' => [
         //     'driver' => 'database',
