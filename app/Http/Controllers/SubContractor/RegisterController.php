@@ -53,7 +53,10 @@ class RegisterController extends Controller {
             'project_types' => 'required|array',
             // 'availability' => 'required|array',
             'description' => 'required|string',
-            // 'certificates.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+            'certificates.*' => 'mimes:jpeg,png,jpg,gif,pdf|max:2048',
+        ], [
+            'certificates.*.mimes' => 'Only JPEG, PNG, JPG, GIF, and PDF files are allowed for certificates.',
+            'certificates.*.max' => 'Each certificate must not exceed 2MB in size.',
         ]);
 
         if ($request->hasFile('profile_photo')) {
@@ -74,29 +77,14 @@ class RegisterController extends Controller {
         $validatedData['password'] = Hash::make($validatedData['password']);
         $subContractor = SubContractor::create($validatedData);
 
-        // return [
-        //     'subContractor' => $subContractor,
-        //     '$request->hasFile' => !empty($request->certificates),
-        //     'is_array' => is_array($request->file('certificates'))
-        // ];
-
-        if (!empty($request->certificates) || is_array($request->certificates)) {
-            foreach ($request->certificates as $index => $base64File) {
-                preg_match('/^data:image\/(\w+);base64,/', $base64File, $matches);
-                $extension = $matches[1] ?? 'png'; // Default to PNG if no extension found
-
-                $fileData = base64_decode(preg_replace('/^data:image\/\w+;base64,/', '', $base64File));
-                $fileName = 'certificate_' . time() . "_$index.$extension";
-                $filePath = "certifications/$fileName";
-
-                Storage::disk('public')->put($filePath, $fileData);
-
-                // $path = $request->file('profile_photo')->store('profile_photos', 'public');
-                // $validatedData['profile_photo'] = $path;
+        if ($request->hasFile('certificates')) {
+            foreach ($request->file('certificates') as $file) {
+                $extension = $file->getClientOriginalExtension(); // Get the file extension
+                $fileName = 'certificate_' . time() . '.' . $extension;
+                $filePath = $file->storeAs('certifications', $fileName, 'public'); // Store the file
 
                 Certification::create([
                     'sub_contractor_id' => $subContractor->id,
-                    // 'certificate_name' => $fileName,
                     'file_path' => $filePath,
                 ]);
             }

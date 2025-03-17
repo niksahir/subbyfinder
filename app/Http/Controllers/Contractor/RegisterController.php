@@ -32,7 +32,7 @@ class RegisterController extends Controller {
     * Store a newly created resource in storage.
     */
    public function store(Request $request) {
-    try{
+    // try{
 
         $validatedData = $request->validate([
             'profile_photo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
@@ -40,7 +40,7 @@ class RegisterController extends Controller {
             'contact_name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'email' => 'required|string|email|unique:contractors,email',
-            'password' => 'required|string',
+            'password' => 'required|string|confirmed',
             'address' => 'required|string',
             'support_staff_size' => 'required|integer',
             'years_in_business' => 'required|integer',
@@ -73,9 +73,9 @@ class RegisterController extends Controller {
         Contractor::create($validatedData);
 
         return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
-    }catch(\Exception $e){
-        return $e->getMessage();
-    }
+    // }catch(\Exception $e){
+    //     return $e->getMessage();
+    // }
    }
 
    /**

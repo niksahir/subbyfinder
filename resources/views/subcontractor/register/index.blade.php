@@ -67,12 +67,18 @@
                         </div>
 
                         <div class="col-md-3">
-                            <div class="profile">
-                                <input type="file" name="profile_photo" class="form-control d-none"
+                            <div class="profile @error('profile_photo') is-invalid @enderror">
+                                <input type="file" accept="image/*" name="profile_photo" class="form-control d-none"
                                     id="profileInput" required>
                                 <img src="{{ asset('assets/images/team-3.png') }}" alt="" class="img-fluid"
                                     id="profileImage" onclick="document.getElementById('profileInput').click()">
                             </div>
+
+                            @error('profile_photo')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
 
                         <div class="col-md-9">
@@ -84,7 +90,7 @@
                                     <input type="text"
                                         class="form-control @error('business_name') is-invalid @enderror"
                                         name="business_name" placeholder="Business Name"
-                                        value="{{ old('business_name') }}" required/>
+                                        value="{{ old('business_name') }}" required />
                                     @error('business_name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -96,7 +102,7 @@
                                     <input type="text"
                                         class="form-control @error('contact_name') is-invalid @enderror"
                                         name="contact_name" placeholder="Contact Name"
-                                        value="{{ old('contact_name') }}" required/>
+                                        value="{{ old('contact_name') }}" required />
                                     @error('contact_name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -106,7 +112,7 @@
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Phone</label>
                                     <input type="text" class="form-control @error('phone') is-invalid @enderror"
-                                        placeholder="Phone" name="phone" value="{{ old('phone') }}" required/>
+                                        placeholder="Phone" name="phone" value="{{ old('phone') }}" required />
                                     @error('phone')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -116,7 +122,7 @@
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Email</label>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                        placeholder="Email" name="email" value="{{ old('email') }}" required/>
+                                        placeholder="Email" name="email" value="{{ old('email') }}" required />
                                     @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -125,7 +131,8 @@
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Password</label>
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    <input type="password"
+                                        class="form-control @error('password') is-invalid @enderror"
                                         placeholder="Password" name="password" value="{{ old('password') }}"
                                         required />
                                     @error('password')
@@ -135,9 +142,21 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
+                                    <label class="form-label">Confirm Password</label>
+                                    <input type="password"
+                                        class="form-control @error('password_confirmation') is-invalid @enderror"
+                                        placeholder="Confirm Password" name="password_confirmation" required />
+                                    @error('password_confirmation')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 form-inner">
                                     <label class="form-label">Address</label>
                                     <input type="text" class="form-control @error('address') is-invalid @enderror"
-                                        placeholder="Address" name="address" value="{{ old('address') }}" required/>
+                                        placeholder="Address" name="address" value="{{ old('address') }}"
+                                        required />
                                     @error('address')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -146,50 +165,100 @@
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Support Staff Size</label>
-                                    <input type="number" class="form-control" placeholder="Support Staff Size"
-                                        name="support_staff_size" value="{{ old('support_staff_size') }}" required/>
+                                    <input type="number"
+                                        class="form-control @error('support_staff_size') is-invalid @enderror"
+                                        placeholder="Support Staff Size" name="support_staff_size"
+                                        value="{{ old('support_staff_size') }}" required />
+                                    @error('support_staff_size')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Years in Business</label>
-                                    <input type="number" class="form-control" placeholder="Years in Business"
-                                        name="years_in_business" value="{{ old('years_in_business') }}" required/>
+                                    <input type="number"
+                                        class="form-control @error('years_in_business') is-invalid @enderror"
+                                        placeholder="Years in Business" name="years_in_business"
+                                        value="{{ old('years_in_business') }}" required />
+                                    @error('years_in_business')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Insurances</label>
-                                    <input type="text" class="form-control" placeholder="Insurances"
-                                        name="insurances" value="{{ old('insurances') }}" required/>
+                                    <input type="text"
+                                        class="form-control @error('insurances') is-invalid @enderror"
+                                        placeholder="Insurances" name="insurances" value="{{ old('insurances') }}"
+                                        required />
+                                    @error('insurances')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">ABN</label>
-                                    <input type="text" class="form-control" placeholder="ABN" name="abn"
-                                        value="{{ old('abn') }}" required/>
+                                    <input type="text" class="form-control @error('abn') is-invalid @enderror"
+                                        placeholder="ABN" name="abn" value="{{ old('abn') }}" required />
+                                    @error('abn')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Licenses</label>
-                                    <input type="text" class="form-control" placeholder="Licenses"
-                                        name="licenses" value="{{ old('licenses') }}" required/>
+                                    <input type="text"
+                                        class="form-control @error('licenses') is-invalid @enderror"
+                                        placeholder="Licenses" name="licenses" value="{{ old('licenses') }}"
+                                        required />
+                                    @error('licenses')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Expertise in</label>
-                                    <select name="expertise_in[]" class="form-control" multiple data-multi-select required>
-                                        @foreach ($expertise_in as $key => $expertise)
-                                            <option value="{{ $expertise->id }}" {{ $key == 0 ? 'selected' : '' }}>
-                                                {{ $expertise->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <div class="@error('expertise_in') is-invalid @enderror">
+                                        <select name="expertise_in" class="form-control" multiple data-multi-select>
+                                            @foreach ($expertise_in as $key => $expertise)
+                                                <option value="{{ $expertise->id }}"
+                                                    {{ $key == 0 ? 'selected' : '' }}>
+                                                    {{ $expertise->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    @error('expertise_in')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                             </div>
 
                             <div class="col-md-6 form-inner">
                                 <label class="form-label">Project Types</label>
-                                <select name="project_types[]" class="form-control" multiple data-multi-select required>
-                                    @foreach ($project_types as $key => $project)
-                                        <option value="{{ $project->id }}" {{ $key == 0 ? 'selected' : '' }}>
-                                            {{ $project->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <div class="@error('expertise_in') is-invalid @enderror">
+                                    <select name="project_types" class="form-control" multiple data-multi-select
+                                        required>
+                                        @foreach ($project_types as $key => $project)
+                                            <option value="{{ $project->id }}" {{ $key == 0 ? 'selected' : '' }}>
+                                                {{ $project->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @error('project_types')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
 
                             {{-- <div class="col-12">
@@ -271,8 +340,12 @@
 
                 <div class="wrapper">
                     <div class="values-item">
-                        <h5 class="">Certifications &amp; Training</h5>
-
+                        <h5 class="@error('certificates.0') is-invalid @enderror">Certifications &amp; Training </h5>
+                        @error('certificates.0')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
                         <div class="link">
                             <a id="addMore">Add More</a>
                         </div>
@@ -284,14 +357,15 @@
                                 width="150">
                         </div>
                     </div>
-                    <input type="file" id="imageInput" class="d-none" multiple accept="image/*">
 
+                    <input type="file" id="imageInput" name="certificates[]" class="d-none" multiple
+                        accept="image/*,application/pdf">
                 </div>
 
 
                 <div class="save-button link">
                     <button type="submit" name="subcontractor_register" id="subcontractor_register"
-                        class="btn btn-primary buttons">Save Changes</button>
+                        class="btn btn-primary buttons">Register</button>
                 </div>
             </form>
         </div>
@@ -351,6 +425,8 @@
     </script>
     <script>
         $(document).ready(function() {
+            let selectedFiles = new DataTransfer(); // Stores files persistently
+
             $('#addMore').click(function() {
                 $('#imageInput').click();
             });
@@ -360,23 +436,62 @@
                 let container = $('#imagePreviewContainer');
 
                 for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+
+                    // Check if the file is already in selectedFiles (avoid duplicates)
+                    let exists = false;
+                    for (let j = 0; j < selectedFiles.files.length; j++) {
+                        if (selectedFiles.files[j].name === file.name) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (exists) continue; // Skip duplicate files
+
+                    selectedFiles.items.add(file); // Add new file to DataTransfer
+
                     let reader = new FileReader();
                     reader.onload = function(e) {
-                        let imageItem = `<div class="image-item me-2 position-relative">
-                                    <img src="${e.target.result}" class="img-fluid" width="150">
-                                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 remove-image">X</button>
-                                    <input type="hidden" name="certificates[]" value="${e.target.result}">
+                        let preview = '';
+
+                        if (file.type.startsWith("image/")) {
+                            preview = `<img src="${e.target.result}" class="img-fluid" width="150">`;
+                        } else if (file.type === "application/pdf") {
+                            preview =
+                                `<img src="{{ asset('assets/images/files.png') }}" class="img-fluid" width="150">`;
+                        }
+
+                        let fileItem = `<div class="image-item me-2 position-relative">
+                                    ${preview}
+                                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 remove-image" data-name="${file.name}">X</button>
                                 </div>`;
-                        container.append(imageItem);
+                        container.append(fileItem);
                     };
-                    reader.readAsDataURL(files[i]);
+
+                    reader.readAsDataURL(file);
                 }
+
+                // Assign the updated file list to the input field
+                $('#imageInput')[0].files = selectedFiles.files;
             });
 
+            // Remove file when clicking "X" button
             $(document).on('click', '.remove-image', function() {
-                $(this).closest('.image-item').remove();
-            });
+                let fileName = $(this).attr('data-name');
 
+                // Remove the file from selectedFiles
+                let newDataTransfer = new DataTransfer();
+                for (let i = 0; i < selectedFiles.files.length; i++) {
+                    if (selectedFiles.files[i].name !== fileName) {
+                        newDataTransfer.items.add(selectedFiles.files[i]);
+                    }
+                }
+
+                selectedFiles = newDataTransfer; // Update DataTransfer object
+                $('#imageInput')[0].files = selectedFiles.files; // Update input field
+
+                $(this).closest('.image-item').remove(); // Remove preview from UI
+            });
         });
     </script>
 </body>

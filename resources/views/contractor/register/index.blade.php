@@ -72,12 +72,17 @@
                         @endif
 
                         <div class="col-md-3">
-                            <div class="profile">
-                                <input type="file" name="profile_photo" class="form-control d-none" id="profileInput"
+                            <div class="profile @error('profile_photo') is-invalid @enderror">
+                                <input type="file" accept="image/*" name="profile_photo" class="form-control d-none" id="profileInput"
                                     required>
                                 <img src="{{ asset('assets/images/team-3.png') }}" alt="" class="img-fluid"
                                     id="profileImage" onclick="document.getElementById('profileInput').click()">
                             </div>
+                            @error('profile_photo')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
 
                         <div class="col-md-9">
@@ -139,6 +144,16 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
+                                    <label class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
+                                        placeholder="Confirm Password" name="password_confirmation" required />
+                                    @error('password_confirmation')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 form-inner">
                                     <label class="form-label">Address</label>
                                     <input type="text" class="form-control @error('address') is-invalid @enderror"
                                         placeholder="Address" name="address" value="{{ old('address') }}"
@@ -151,39 +166,75 @@
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Support Staff Size</label>
-                                    <input type="number" class="form-control" placeholder="Support Staff Size"
-                                        name="support_staff_size" value="{{ old('support_staff_size') }}" required />
+                                    <input type="number"
+                                        class="form-control @error('support_staff_size') is-invalid @enderror"
+                                        placeholder="Support Staff Size" name="support_staff_size"
+                                        value="{{ old('support_staff_size') }}" required />
+                                    @error('support_staff_size')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Years in Business</label>
-                                    <input type="number" class="form-control" placeholder="Years in Business"
-                                        name="years_in_business" value="{{ old('years_in_business') }}" required />
+                                    <input type="number"
+                                        class="form-control @error('years_in_business') is-invalid @enderror"
+                                        placeholder="Years in Business" name="years_in_business"
+                                        value="{{ old('years_in_business') }}" required />
+                                    @error('years_in_business')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Insurances</label>
-                                    <input type="text" class="form-control" placeholder="Insurances"
-                                        name="insurances" value="{{ old('insurances') }}" required />
+                                    <input type="text"
+                                        class="form-control @error('insurances') is-invalid @enderror"
+                                        placeholder="Insurances" name="insurances" value="{{ old('insurances') }}"
+                                        required />
+                                    @error('insurances')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">ABN</label>
-                                    <input type="text" class="form-control" placeholder="ABN" name="abn"
-                                        value="{{ old('abn') }}" required />
+                                    <input type="text" class="form-control @error('abn') is-invalid @enderror"
+                                        placeholder="ABN" name="abn" value="{{ old('abn') }}" required />
+                                    @error('abn')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Licenses</label>
-                                    <input type="text" class="form-control" placeholder="Licenses"
-                                        name="licenses" value="{{ old('licenses') }}" required />
+                                    <input type="text"
+                                        class="form-control @error('licenses') is-invalid @enderror"
+                                        placeholder="Licenses" name="licenses" value="{{ old('licenses') }}"
+                                        required />
+                                    @error('licenses')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Expertise in</label>
-                                    <select name="expertise_in[]" class="form-control" multiple data-multi-select
-                                        required>
-                                        @foreach ($expertise_in as $key => $expertise)
-                                            <option value="{{ $expertise->id }}" {{ $key == 0 ? 'selected' : '' }}>
-                                                {{ $expertise->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <div class="@error('expertise_in') is-invalid @enderror">
+                                        <select name="expertise_in" class="form-control" multiple data-multi-select>
+                                            @foreach ($expertise_in as $key => $expertise)
+                                                <option value="{{ $expertise->id }}"
+                                                    {{ $key == 0 ? 'selected' : '' }}>
+                                                    {{ $expertise->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
                                     @error('expertise_in')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -194,14 +245,16 @@
 
                             <div class="col-md-6 form-inner">
                                 <label class="form-label">Project Types</label>
-                                <select name="project_types[]" class="form-control" multiple data-multi-select
-                                    required>
-                                    @foreach ($project_types as $key => $project)
-                                        <option value="{{ $project->id }}" {{ $key == 0 ? 'selected' : '' }}>
-                                            {{ $project->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <div class="@error('expertise_in') is-invalid @enderror">
+                                    <select name="project_types" class="form-control" multiple data-multi-select
+                                        required>
+                                        @foreach ($project_types as $key => $project)
+                                            <option value="{{ $project->id }}" {{ $key == 0 ? 'selected' : '' }}>
+                                                {{ $project->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 @error('project_types')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -241,7 +294,13 @@
                 <div class="wrapper">
                     <div class="values-item">
                         <h5 class="">Values</h5>
-                        <textarea class="form-control" rows="6" placeholder="Enter values here" name="values" required>{{ old('values') }}</textarea>
+                        <textarea class="form-control @error('values') is-invalid @enderror" rows="6" placeholder="Enter values here"
+                            name="values" required>{{ old('values') }}</textarea>
+                        @error('values')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
                     </div>
 
                 </div>
@@ -249,7 +308,7 @@
                 <div class="save-button link">
 
                     <button type="submit" name="contractor_register" id="contractor_register"
-                        class="btn btn-primary buttons">Save Changes</button>
+                        class="btn btn-primary buttons">Register</button>
                 </div>
         </div>
         </form>
