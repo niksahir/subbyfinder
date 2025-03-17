@@ -42,7 +42,7 @@ class RegisterController extends Controller {
             'contact_name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'email' => 'required|string|email|unique:sub_contractors,email',
-            'password' => 'required|string|max:255',
+            'password' => 'required|string|max:255|confirmed',
             'address' => 'required|string',
             'support_staff_size' => 'required|integer',
             'years_in_business' => 'required|integer',
