@@ -73,8 +73,8 @@
 
                         <div class="col-md-3">
                             <div class="profile @error('profile_photo') is-invalid @enderror">
-                                <input type="file" accept="image/*" name="profile_photo" class="form-control d-none" id="profileInput"
-                                    required>
+                                <input type="file" accept="image/*" name="profile_photo" class="form-control d-none"
+                                    id="profileInput" required>
                                 <img src="{{ asset('assets/images/team-3.png') }}" alt="" class="img-fluid"
                                     id="profileImage" onclick="document.getElementById('profileInput').click()">
                             </div>
@@ -145,7 +145,8 @@
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Confirm Password</label>
-                                    <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
+                                    <input type="password"
+                                        class="form-control @error('password_confirmation') is-invalid @enderror"
                                         placeholder="Confirm Password" name="password_confirmation" required />
                                     @error('password_confirmation')
                                         <span class="invalid-feedback" role="alert">
@@ -362,7 +363,13 @@
         document.getElementById('profileInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
             const profileImage = document.getElementById('profileImage');
-            const defaultImage = "{{ asset('assets/images/files.png') }}";
+            const defaultImage = "{{ asset('assets/images/team-3.png') }}";
+
+            const profilePhoto = $('#profileInput');
+            const profileError = profilePhoto.next('.invalid-feedback');
+
+            profileError.remove();
+            profilePhoto.removeClass('is-invalid');
 
             if (file) {
                 // Check if the file is an image
@@ -375,8 +382,13 @@
                     }
                     reader.readAsDataURL(file);
                 } else {
-                    // If file is not an image, show the default image
-                    profileImage.src = defaultImage;
+                    // Show error if file is not an image
+                    profilePhoto.after(
+                        "<span class='invalid-feedback' role='alert'><strong>Only image files (JPG, PNG) are allowed</strong></span>"
+                    );
+                    profilePhoto.addClass('is-invalid');
+                    event.target.value = ""; // Reset file input
+                    profileImage.src = defaultImage; // Show default image
                 }
             } else {
                 // If no file is selected, show the default image
@@ -490,21 +502,37 @@
                 validateField($("select[name='project_types']"), "Please select at least one project type");
 
 
-                const password = $("input[name='password']").val();
-                const confirmPassword = $("input[name='password_confirmation']").val();
-                const passwordError = $("input[name='password_confirmation']").next('.invalid-feedback');
+                const passwordField = $("input[name='password']");
+                const confirmPasswordField = $("input[name='password_confirmation']");
+                const password = passwordField.val().trim();
+                const confirmPassword = confirmPasswordField.val().trim();
+                const passwordError = confirmPasswordField.next('.invalid-feedback');
 
-                if (password && confirmPassword && password !== confirmPassword) {
+                if (password && confirmPassword) {
+                    if (password !== confirmPassword) {
+                        formValid = false;
+                        if (passwordError.length === 0) {
+                            confirmPasswordField.after(
+                                "<span class='invalid-feedback' role='alert'><strong>Passwords do not match</strong></span>"
+                            );
+                        } else {
+                            passwordError.html("<strong>Passwords do not match</strong>");
+                        }
+                        confirmPasswordField.addClass('is-invalid');
+                    } else {
+                        passwordError.remove();
+                        confirmPasswordField.removeClass('is-invalid');
+                    }
+                } else if (!confirmPassword) {
                     formValid = false;
                     if (passwordError.length === 0) {
-                        $("input[name='password_confirmation']").after(
-                            "<span class='invalid-feedback' role='alert'><strong>Passwords do not match</strong></span>"
+                        confirmPasswordField.after(
+                            "<span class='invalid-feedback' role='alert'><strong>Confirm Password is required</strong></span>"
                         );
                     } else {
-                        passwordError.html("<strong>Passwords do not match</strong>");
+                        passwordError.html("<strong>Confirm Password is required</strong>");
                     }
-                } else {
-                    passwordError.remove();
+                    confirmPasswordField.addClass('is-invalid');
                 }
 
                 if (!formValid) {

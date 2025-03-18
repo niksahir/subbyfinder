@@ -244,7 +244,7 @@
 
                             <div class="col-md-6 form-inner">
                                 <label class="form-label">Project Types</label>
-                                <div class="@error('expertise_in') is-invalid @enderror">
+                                <div class="@error('project_types') is-invalid @enderror">
                                     <select name="project_types" class="form-control" multiple data-multi-select
                                         required>
                                         @foreach ($project_types as $key => $project)
@@ -415,7 +415,13 @@
         document.getElementById('profileInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
             const profileImage = document.getElementById('profileImage');
-            const defaultImage = "{{ asset('assets/images/files.png') }}";
+            const defaultImage = "{{ asset('assets/images/team-3.png') }}";
+
+            const profilePhoto = $('#profileInput');
+            const profileError = profilePhoto.next('.invalid-feedback');
+
+            profileError.remove();
+            profilePhoto.removeClass('is-invalid');
 
             if (file) {
                 // Check if the file is an image
@@ -428,8 +434,13 @@
                     }
                     reader.readAsDataURL(file);
                 } else {
-                    // If file is not an image, show the default image
-                    profileImage.src = defaultImage;
+                    // Show error if file is not an image
+                    profilePhoto.after(
+                        "<span class='invalid-feedback' role='alert'><strong>Only image files (JPG, PNG) are allowed</strong></span>"
+                    );
+                    profilePhoto.addClass('is-invalid');
+                    event.target.value = ""; // Reset file input
+                    profileImage.src = defaultImage; // Show default image
                 }
             } else {
                 // If no file is selected, show the default image
@@ -609,26 +620,124 @@
                 validateField($("input[name='abn']"), "ABN is required");
                 validateField($("input[name='licenses']"), "Licenses are required");
                 validateField($("textarea[name='description']"), "Description is required");
-                validateField($("select[name='expertise_in']"), "Please select at least one expertise");
-                validateField($("select[name='project_types']"), "Please select at least one project type");
+                // validateField($("select[name='expertise_in']"), "Please select at least one expertise");
+                // validateField($("input[name='project_types[]']"),
+                // "Please select at least one project type");
 
 
-                const password = $("input[name='password']").val();
-                const confirmPassword = $("input[name='password_confirmation']").val();
-                const passwordError = $("input[name='password_confirmation']").next('.invalid-feedback');
+                const passwordField = $("input[name='password']");
+                const confirmPasswordField = $("input[name='password_confirmation']");
+                const password = passwordField.val().trim();
+                const confirmPassword = confirmPasswordField.val().trim();
+                const passwordError = confirmPasswordField.next('.invalid-feedback');
 
-                if (password && confirmPassword && password !== confirmPassword) {
+                if (password && confirmPassword) {
+                    if (password !== confirmPassword) {
+                        formValid = false;
+                        if (passwordError.length === 0) {
+                            confirmPasswordField.after(
+                                "<span class='invalid-feedback' role='alert'><strong>Passwords do not match</strong></span>"
+                            );
+                        } else {
+                            passwordError.html("<strong>Passwords do not match</strong>");
+                        }
+                        confirmPasswordField.addClass('is-invalid');
+                    } else {
+                        passwordError.remove();
+                        confirmPasswordField.removeClass('is-invalid');
+                    }
+                } else if (!confirmPassword) {
                     formValid = false;
                     if (passwordError.length === 0) {
-                        $("input[name='password_confirmation']").after(
-                            "<span class='invalid-feedback' role='alert'><strong>Passwords do not match</strong></span>"
+                        confirmPasswordField.after(
+                            "<span class='invalid-feedback' role='alert'><strong>Confirm Password is required</strong></span>"
                         );
                     } else {
-                        passwordError.html("<strong>Passwords do not match</strong>");
+                        passwordError.html("<strong>Confirm Password is required</strong>");
                     }
-                } else {
-                    passwordError.remove();
+                    confirmPasswordField.addClass('is-invalid');
                 }
+
+                // Validate Certificate Images
+                const certificateInput = $('#imageInput');
+                const certificateError = certificateInput.next('.invalid-feedback');
+                const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+
+                if (certificateInput[0].files.length === 0) {
+                    formValid = false;
+                    if (certificateError.length === 0) {
+                        certificateInput.after(
+                            "<span class='invalid-feedback' role='alert'><strong>At least one certificate file is required</strong></span>"
+                        );
+                    } else {
+                        certificateError.html("<strong>At least one certificate file is required</strong>");
+                    }
+                    certificateInput.addClass('is-invalid');
+                } else {
+                    let invalidFile = false;
+                    for (let i = 0; i < certificateInput[0].files.length; i++) {
+                        const certFile = certificateInput[0].files[i];
+                        if (!allowedFileTypes.includes(certFile.type)) {
+                            invalidFile = true;
+                            break;
+                        }
+                    }
+
+                    if (invalidFile) {
+                        formValid = false;
+                        if (certificateError.length === 0) {
+                            certificateInput.after(
+                                "<span class='invalid-feedback' role='alert'><strong>Only JPG, PNG, and PDF files are allowed for certificates</strong></span>"
+                            );
+                        } else {
+                            certificateError.html(
+                                "<strong>Only JPG, PNG, and PDF files are allowed for certificates</strong>"
+                            );
+                        }
+                        certificateInput.addClass('is-invalid');
+                    } else {
+                        certificateError.remove();
+                        certificateInput.removeClass('is-invalid');
+                    }
+                }
+
+                // Validate Expertise In Multi-Select
+                // const expertiseIn = $("input[name='expertise_in[]']");
+                // if (!expertiseIn.val().trim() || expertiseIn.val().length === 0) {
+                //     formValid = false;
+                //     if (expertiseIn.next('.invalid-feedback').length === 0) {
+                //         expertiseIn.after(
+                //             "<span class='invalid-feedback' role='alert'><strong>Please enter expertise</strong></span>"
+                //         );
+                //     } else {
+                //         expertiseIn.next('.invalid-feedback').html(
+                //             "<strong>Please enter expertise</strong>"
+                //         );
+                //     }
+                //     expertiseIn.addClass('is-invalid');
+                // } else {
+                //     expertiseIn.next('.invalid-feedback').remove();
+                //     expertiseIn.removeClass('is-invalid');
+                // }
+
+                // Validate Project Types Multi-Select
+                // const projectTypes = $("select[name='project_types']");
+                // if (projectTypes.val() === null || projectTypes.val().length === 0) {
+                //     formValid = false;
+                //     if (projectTypes.next('.invalid-feedback').length === 0) {
+                //         projectTypes.after(
+                //             "<span class='invalid-feedback' role='alert'><strong>Please select at least one project type</strong></span>"
+                //         );
+                //     } else {
+                //         projectTypes.next('.invalid-feedback').html(
+                //             "<strong>Please select at least one project type</strong>"
+                //         );
+                //     }
+                //     projectTypes.addClass('is-invalid');
+                // } else {
+                //     projectTypes.next('.invalid-feedback').remove();
+                //     projectTypes.removeClass('is-invalid');
+                // }
 
                 if (!formValid) {
                     event.preventDefault();
