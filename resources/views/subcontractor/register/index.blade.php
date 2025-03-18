@@ -414,12 +414,26 @@
     <script>
         document.getElementById('profileInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
+            const profileImage = document.getElementById('profileImage');
+            const defaultImage = "{{ asset('assets/images/files.png') }}";
+
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('profileImage').src = e.target.result;
+                // Check if the file is an image
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+
+                if (allowedTypes.includes(file.type)) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        profileImage.src = e.target.result; // Show selected image
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    // If file is not an image, show the default image
+                    profileImage.src = defaultImage;
                 }
-                reader.readAsDataURL(file);
+            } else {
+                // If no file is selected, show the default image
+                profileImage.src = defaultImage;
             }
         });
     </script>
@@ -491,6 +505,134 @@
                 $('#imageInput')[0].files = selectedFiles.files; // Update input field
 
                 $(this).closest('.image-item').remove(); // Remove preview from UI
+            });
+        });
+        $(document).ready(function() {
+            $('#subcontractor_register').click(function(event) {
+                let formValid = true;
+
+                function validateField(field, message) {
+                    let errorElement = field.next('.invalid-feedback');
+                    // If the field is inside a wrapper like div, handle error properly
+                    if (errorElement.length === 0) {
+                        errorElement = field.parent().find('.invalid-feedback');
+                    }
+                    // Check for input and textarea fields
+                    if ((field.is('input') || field.is('textarea')) && !field.val().trim()) {
+                        formValid = false;
+                        if (errorElement.length === 0) {
+                            field.after(
+                                `<span class='invalid-feedback' role='alert'><strong>${message}</strong></span>`
+                            );
+                        } else {
+                            errorElement.html(`<strong>${message}</strong>`);
+                        }
+                        field.addClass('is-invalid');
+                    }
+                    // Check for select fields
+                    else if (field.is('select') && (field.val() === null || field.val().length === 0)) {
+                        formValid = false;
+                        if (errorElement.length === 0) {
+                            field.after(
+                                `<span class='invalid-feedback' role='alert'><strong>${message}</strong></span>`
+                            );
+                        } else {
+                            errorElement.html(`<strong>${message}</strong>`);
+                        }
+                        field.addClass('is-invalid');
+                    }
+                    // Remove error if valid
+                    else {
+                        errorElement.remove();
+                        field.removeClass('is-invalid');
+                    }
+                }
+
+                const profilePhoto = $('#profileInput');
+                const profileError = profilePhoto.next('.invalid-feedback');
+
+                if (!profilePhoto[0].files.length) {
+                    formValid = false;
+                    if (profileError.length === 0) {
+                        profilePhoto.after(
+                            "<span class='invalid-feedback' role='alert'><strong>Profile photo is required</strong></span>"
+                        );
+                    } else {
+                        profileError.html("<strong>Profile photo is required</strong>");
+                    }
+                    profilePhoto.addClass('is-invalid');
+                } else {
+                    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                    const file = profilePhoto[0].files[0];
+
+                    if (!allowedTypes.includes(file.type)) {
+                        formValid = false;
+                        if (profileError.length === 0) {
+                            profilePhoto.after(
+                                "<span class='invalid-feedback' role='alert'><strong>Only image files (JPG, PNG) are allowed</strong></span>"
+                            );
+                        } else {
+                            profileError.html(
+                                "<strong>Only image files (JPG, PNG) are allowed</strong>");
+                        }
+                        profilePhoto.addClass('is-invalid');
+                    }
+                    // Check file size (optional - 2MB max)
+                    else if (file.size > 2 * 1024 * 1024) {
+                        formValid = false;
+                        if (profileError.length === 0) {
+                            profilePhoto.after(
+                                "<span class='invalid-feedback' role='alert'><strong>File size must be less than 2MB</strong></span>"
+                            );
+                        } else {
+                            profileError.html("<strong>File size must be less than 2MB</strong>");
+                        }
+                        profilePhoto.addClass('is-invalid');
+                    } else {
+                        profileError.remove();
+                        profilePhoto.removeClass('is-invalid');
+                    }
+                }
+
+
+
+                validateField($("input[name='business_name']"), "Business Name is required");
+                validateField($("input[name='contact_name']"), "Contact Name is required");
+                validateField($("input[name='phone']"), "Phone is required");
+                validateField($("input[name='email']"), "Email is required");
+                validateField($("input[name='password']"), "Password is required");
+                validateField($("input[name='password_confirmation']"), "Confirm Password is required");
+                validateField($("input[name='address']"), "Address is required");
+                validateField($("input[name='support_staff_size']"), "Support Staff Size is required");
+                validateField($("input[name='years_in_business']"), "Years in Business is required");
+                validateField($("input[name='insurances']"), "Insurances are required");
+                validateField($("input[name='abn']"), "ABN is required");
+                validateField($("input[name='licenses']"), "Licenses are required");
+                validateField($("textarea[name='description']"), "Description is required");
+                validateField($("select[name='expertise_in']"), "Please select at least one expertise");
+                validateField($("select[name='project_types']"), "Please select at least one project type");
+
+
+                const password = $("input[name='password']").val();
+                const confirmPassword = $("input[name='password_confirmation']").val();
+                const passwordError = $("input[name='password_confirmation']").next('.invalid-feedback');
+
+                if (password && confirmPassword && password !== confirmPassword) {
+                    formValid = false;
+                    if (passwordError.length === 0) {
+                        $("input[name='password_confirmation']").after(
+                            "<span class='invalid-feedback' role='alert'><strong>Passwords do not match</strong></span>"
+                        );
+                    } else {
+                        passwordError.html("<strong>Passwords do not match</strong>");
+                    }
+                } else {
+                    passwordError.remove();
+                }
+
+                if (!formValid) {
+                    event.preventDefault();
+                }
             });
         });
     </script>
