@@ -222,9 +222,9 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
-                                    <label class="form-label">Expertise in</label>
-                                    <div class="@error('expertise_in') is-invalid @enderror">
-                                        <select name="expertise_in" class="form-control" multiple data-multi-select>
+                                    <label class="form-label">Trade Category</label>
+                                    <div class="@error('trade_category') is-invalid @enderror">
+                                        <select name="trade_category" class="form-control" multiple data-multi-select>
                                             @foreach ($expertise_in as $key => $expertise)
                                                 <option value="{{ $expertise->id }}"
                                                     {{ $key == 0 ? 'selected' : '' }}>
@@ -234,6 +234,18 @@
                                         </select>
                                     </div>
 
+                                    @error('expertise_in')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 form-inner">
+                                    <label class="form-label">Expertise in</label>
+                                    <input type="text"
+                                        class="form-control @error('expertise_in') is-invalid @enderror"
+                                        placeholder="Expertise in" name="expertise_in" value="{{ old('expertise_in') }}"
+                                        required />
                                     @error('expertise_in')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -325,9 +337,9 @@
 
                 <div class="wrapper">
                     <div class="description-item">
-                        <h5 for="description">Description</h5>
+                        <h5 for="description">Describe your Business</h5>
                         <textarea class="form-control @error('description') is-invalid @enderror" rows="6"
-                            placeholder="Enter description here" name="description" required>{{ old('description') }}</textarea>
+                            placeholder="Describe your Business" name="description" required>{{ old('description') }}</textarea>
                         @error('description')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -620,6 +632,7 @@
                 validateField($("input[name='abn']"), "ABN is required");
                 validateField($("input[name='licenses']"), "Licenses are required");
                 validateField($("textarea[name='description']"), "Description is required");
+                validateField($("input[name='expertise_in']"), "Expertise in is required");
                 // validateField($("select[name='expertise_in']"), "Please select at least one expertise");
                 // validateField($("input[name='project_types[]']"),
                 // "Please select at least one project type");

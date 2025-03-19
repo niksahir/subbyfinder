@@ -17,7 +17,7 @@
                         <a href="{{  route('front.projectSearch') }}">Find Work</a>
                      </li>
                      <li>
-                        <a href="{{  route('front.subcontractorsearch') }}">For Principal Contractor</a>
+                        <a href="{{  route('front.subcontractorsearch') }}">Find Subcontractors</a>
                      </li>
                      <li>
                         <a href="#">Dashboard</a>
@@ -50,7 +50,7 @@
       <ul>
          <li><a href="#">Home</a></li>
          <li><a href="#">Find Work</a></li>
-         <li><a href="#">For Principal Contractor</a></li>
+         <li><a href="#">Find Subcontractors</a></li>
          <li><a href="#">Dashboard</a></li>
          <li><a href="#">Register</a></li>
          <li><a href="#">Sign In</a></li>

@@ -47,7 +47,7 @@
                <nav>
                   <div class="nav nav-tabs" id="nav-tab" role="tablist">
                      <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Subcontractor </button>
-                     <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Contractor</button>
+                     <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Principal Contractor</button>
                   </div>
                </nav>
 
@@ -123,7 +123,7 @@
                         <p>Or login with email</p>
                      </div>
 
-                     <form method="POST" action="{{ route('subcontractor.login.store') }}">
+                     <form method="POST" action="{{ route('contractor.login.store') }}">
                         @csrf
                         <div class="mb-3">
                            <label for="email" class="form-label">{{ __('Email Address') }}</label>
@@ -161,7 +161,7 @@
                         <button type="submit" class="btn "> {{ __('Login') }}</button>
 
                         <div class="account">
-                           <p>Don’t have an account? <a href="{{ route('subcontractor.register.index') }}"> Sign up</a></p>
+                           <p>Don’t have an account? <a href="{{ route('contractor.register.index') }}"> Sign up</a></p>
                         </div>
                      </form>
                   </div>

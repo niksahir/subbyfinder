@@ -104,7 +104,7 @@
 
             <div class="login-btn-wrapper">
                <a href="{{ route('subcontractor.login.index') }}">Subcontractor</a>
-               <a href="{{ route('contractor.login.index') }}">Contractor</a>
+               <a href="{{ route('contractor.login.index') }}">Principal Contractor</a>
             </div>
 
 

@@ -27,18 +27,20 @@ class SubContractor extends Authenticatable
         'project_types',
         'availability',
         'description',
-        'values'
+        'values',
+        'trade_category'
     ];
 
     protected $casts = [
-        'expertise_in' => 'array',
+        'trade_category' => 'array',
         'project_types' => 'array',
         'availability' => 'array'
     ];
 
-    public function expertises()
+    // $expertiseList = $subContractor->expertise_list; // Returns collection of names
+    public function getExpertiseListAttribute()
     {
-        return $this->belongsToMany(Expertise::class);
+        return collect($this->trade_category)->pluck('name');
     }
 
     public function projectTypes()

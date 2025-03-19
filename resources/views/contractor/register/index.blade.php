@@ -224,9 +224,9 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 form-inner">
-                                    <label class="form-label">Expertise in</label>
-                                    <div class="@error('expertise_in') is-invalid @enderror">
-                                        <select name="expertise_in" class="form-control" multiple data-multi-select>
+                                    <label class="form-label">Trade Category</label>
+                                    <div class="@error('trade_category') is-invalid @enderror">
+                                        <select name="trade_category" class="form-control" multiple data-multi-select>
                                             @foreach ($expertise_in as $key => $expertise)
                                                 <option value="{{ $expertise->id }}"
                                                     {{ $key == 0 ? 'selected' : '' }}>
@@ -236,6 +236,18 @@
                                         </select>
                                     </div>
 
+                                    @error('expertise_in')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 form-inner">
+                                    <label class="form-label">Expertise in</label>
+                                    <input type="text"
+                                        class="form-control @error('expertise_in') is-invalid @enderror"
+                                        placeholder="Expertise in" name="expertise_in"
+                                        value="{{ old('expertise_in') }}" required />
                                     @error('expertise_in')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -263,6 +275,38 @@
                                 @enderror
                             </div>
 
+                            <div class="col-md-6 form-inner">
+                                <label class="form-label">Values</label>
+                                <div class="@error('values') is-invalid @enderror">
+                                    <select name="values" class="form-control" data-max="1" data-multi-select
+                                        required>
+                                        <option value="5K under">
+                                            Under $5k
+                                        </option>
+                                        <option value="10K">
+                                            $5-10K
+                                        </option>
+                                        <option value="25K">
+                                            $10-25K
+                                        </option>
+                                        <option value="50K">
+                                            $25-50K
+                                        </option>
+                                        <option value="100K">
+                                            $50-100K
+                                        </option>
+                                        <option value="$100k above">
+                                            $100k or above
+                                        </option>
+                                    </select>
+                                </div>
+                                @error('values')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
                             {{-- <div class="col-12">
                         <h6>Availability </h6>
                      </div>
@@ -280,9 +324,9 @@
 
                 <div class="wrapper">
                     <div class="description-item">
-                        <h5 for="description">Description</h5>
+                        <h5 for="description">Describe your Business</h5>
                         <textarea class="form-control @error('description') is-invalid @enderror" rows="6"
-                            placeholder="Enter description here" name="description" required>{{ old('description') }}</textarea>
+                            placeholder="Describe your Business" name="description" required>{{ old('description') }}</textarea>
                         @error('description')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -292,19 +336,6 @@
 
                 </div>
 
-                <div class="wrapper">
-                    <div class="values-item">
-                        <h5 class="">Values</h5>
-                        <textarea class="form-control @error('values') is-invalid @enderror" rows="6" placeholder="Enter values here"
-                            name="values" required>{{ old('values') }}</textarea>
-                        @error('values')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-
-                </div>
 
                 <div class="save-button link">
 
@@ -497,9 +528,10 @@
                 validateField($("input[name='abn']"), "ABN is required");
                 validateField($("input[name='licenses']"), "Licenses are required");
                 validateField($("textarea[name='description']"), "Description is required");
-                validateField($("textarea[name='values']"), "Description is required");
-                validateField($("select[name='expertise_in']"), "Please select at least one expertise");
-                validateField($("select[name='project_types']"), "Please select at least one project type");
+                // validateField($("textarea[name='values']"), "Description is required");
+                validateField($("input[name='expertise_in']"), "Expertise in is required");
+                // validateField($("select[name='expertise_in']"), "Please select at least one expertise");
+                // validateField($("select[name='project_types']"), "Please select at least one project type");
 
 
                 const passwordField = $("input[name='password']");
