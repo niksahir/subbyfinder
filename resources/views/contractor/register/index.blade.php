@@ -242,69 +242,6 @@
                                         </span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 form-inner">
-                                    <label class="form-label">Expertise in</label>
-                                    <input type="text"
-                                        class="form-control @error('expertise_in') is-invalid @enderror"
-                                        placeholder="Expertise in" name="expertise_in"
-                                        value="{{ old('expertise_in') }}" required />
-                                    @error('expertise_in')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 form-inner">
-                                <label class="form-label">Project Types</label>
-                                <div class="@error('expertise_in') is-invalid @enderror">
-                                    <select name="project_types" class="form-control" multiple data-multi-select
-                                        required>
-                                        @foreach ($project_types as $key => $project)
-                                            <option value="{{ $project->id }}" {{ $key == 0 ? 'selected' : '' }}>
-                                                {{ $project->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                @error('project_types')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6 form-inner">
-                                <label class="form-label">Values</label>
-                                <div class="@error('values') is-invalid @enderror">
-                                    <select name="values" class="form-control" data-max="1" data-multi-select
-                                        required>
-                                        <option value="5K under">
-                                            Under $5k
-                                        </option>
-                                        <option value="10K">
-                                            $5-10K
-                                        </option>
-                                        <option value="25K">
-                                            $10-25K
-                                        </option>
-                                        <option value="50K">
-                                            $25-50K
-                                        </option>
-                                        <option value="100K">
-                                            $50-100K
-                                        </option>
-                                        <option value="$100k above">
-                                            $100k or above
-                                        </option>
-                                    </select>
-                                </div>
-                                @error('values')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
                             </div>
 
                             {{-- <div class="col-12">
@@ -528,10 +465,6 @@
                 validateField($("input[name='abn']"), "ABN is required");
                 validateField($("input[name='licenses']"), "Licenses are required");
                 validateField($("textarea[name='description']"), "Description is required");
-                // validateField($("textarea[name='values']"), "Description is required");
-                validateField($("input[name='expertise_in']"), "Expertise in is required");
-                // validateField($("select[name='expertise_in']"), "Please select at least one expertise");
-                // validateField($("select[name='project_types']"), "Please select at least one project type");
 
 
                 const passwordField = $("input[name='password']");

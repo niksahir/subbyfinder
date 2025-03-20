@@ -48,11 +48,11 @@ class RegisterController extends Controller {
             'abn' => 'required|string',
             'licenses' => 'required|string',
             'trade_category' => 'required|array',
-            'expertise_in' => 'required|string',
-            'project_types' => 'required|array',
+            // 'expertise_in' => 'required|string',
+            // 'project_types' => 'required|array',
             // 'availability' => 'required|array',
             'description' => 'required|string',
-            'values' => 'required|array',
+            // 'values' => 'required|array',
         ]);
 
         if ($request->hasFile('profile_photo')) {
@@ -71,7 +71,7 @@ class RegisterController extends Controller {
         // }
 
         $validatedData['password'] = Hash::make($validatedData['password']);
-        $validatedData['values'] = is_array($validatedData['values']) ? $validatedData['values'][0] : $validatedData['values'];
+        // $validatedData['values'] = is_array($validatedData['values']) ? $validatedData['values'][0] : $validatedData['values'];
         Contractor::create($validatedData);
 
         return redirect()->route('login')->with('success', 'Registration successful! Please log in.');

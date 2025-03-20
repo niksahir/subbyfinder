@@ -234,43 +234,12 @@
                                         </select>
                                     </div>
 
-                                    @error('expertise_in')
+                                    @error('trade_category')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 form-inner">
-                                    <label class="form-label">Expertise in</label>
-                                    <input type="text"
-                                        class="form-control @error('expertise_in') is-invalid @enderror"
-                                        placeholder="Expertise in" name="expertise_in" value="{{ old('expertise_in') }}"
-                                        required />
-                                    @error('expertise_in')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 form-inner">
-                                <label class="form-label">Project Types</label>
-                                <div class="@error('project_types') is-invalid @enderror">
-                                    <select name="project_types" class="form-control" multiple data-multi-select
-                                        required>
-                                        @foreach ($project_types as $key => $project)
-                                            <option value="{{ $project->id }}" {{ $key == 0 ? 'selected' : '' }}>
-                                                {{ $project->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                @error('project_types')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
                             </div>
 
                             {{-- <div class="col-12">
@@ -632,11 +601,6 @@
                 validateField($("input[name='abn']"), "ABN is required");
                 validateField($("input[name='licenses']"), "Licenses are required");
                 validateField($("textarea[name='description']"), "Description is required");
-                validateField($("input[name='expertise_in']"), "Expertise in is required");
-                // validateField($("select[name='expertise_in']"), "Please select at least one expertise");
-                // validateField($("input[name='project_types[]']"),
-                // "Please select at least one project type");
-
 
                 const passwordField = $("input[name='password']");
                 const confirmPasswordField = $("input[name='password_confirmation']");
