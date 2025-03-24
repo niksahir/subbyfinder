@@ -171,10 +171,10 @@
                     formValid = false;
                     if (profileError.length === 0) {
                         profilePhoto.after(
-                            "<span class='invalid-feedback' role='alert'><strong>Profile photo is required</strong></span>"
+                            "<span class='invalid-feedback' role='alert'><strong>Project logo is required</strong></span>"
                         );
                     } else {
-                        profileError.html("<strong>Profile photo is required</strong>");
+                        profileError.html("<strong>Project logo is required</strong>");
                     }
                     profilePhoto.addClass('is-invalid');
                 } else {
