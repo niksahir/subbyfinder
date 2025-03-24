@@ -3,55 +3,154 @@
 namespace App\Http\Controllers\Contractor;
 
 use App\Http\Controllers\Controller;
+use App\Models\ContractorProject;
 use Illuminate\Http\Request;
+use App\Models\Expertise;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
-class ProjectController extends Controller {
-   /**
-    * Display a listing of the resource.
-    */
-   public function index() {
-      return view("contractor.projects.index");
-   }
+class ProjectController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $projects = ContractorProject::where('contractor_id', Auth::guard('contractor')->id())->latest()->paginate(10);
+        return view("contractor.projects.index", compact('projects'));
+    }
 
-   /**
-    * Show the form for creating a new resource.
-    */
-   public function create() {
-      return view("contractor.projects.create");
-   }
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $expertise_in = Expertise::all();
+        $states = config('constants.states');
+        return view("contractor.projects.create", compact('expertise_in', 'states'));
+    }
 
-   /**
-    * Store a newly created resource in storage.
-    */
-   public function store(Request $request) {
-      //
-   }
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        // try{
 
-   /**
-    * Display the specified resource.
-    */
-   public function show(string $id) {
-      //
-   }
+        $validatedData = $request->validate([
+            'project_logo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'project_name' => 'required|string|max:255',
+            'location' => 'required|array',
+            'description' => 'required|string',
+            'abn' => 'required|string',
+            'license' => 'required|string',
+            'trade_category' => 'required|array',
+            'budget' => 'required|array',
+        ]);
 
-   /**
-    * Show the form for editing the specified resource.
-    */
-   public function edit(string $id) {
-      //
-   }
+        $contractorId = Auth::guard('contractor')->id();
 
-   /**
-    * Update the specified resource in storage.
-    */
-   public function update(Request $request, string $id) {
-      //
-   }
+        $validatedData['location'] = is_array($validatedData['location']) ? $validatedData['location'][0] : $validatedData['location'];
+        $validatedData['budget'] = is_array($validatedData['budget']) ? $validatedData['budget'][0] : $validatedData['budget'];
+        $validatedData['contractor_id'] = $contractorId;
 
-   /**
-    * Remove the specified resource from storage.
-    */
-   public function destroy(string $id) {
-      //
-   }
+        // Upload logo
+        $logoPath = $request->file('project_logo')->store('project_logos', 'public');
+
+        $validatedData['project_logo'] = $logoPath;
+        // Create project with contractor_id
+        ContractorProject::create($validatedData);
+        return redirect()->route('contractor.projects.index');
+        // }catch(\Exception $e){
+        //         return $e->getMessage();
+        //     }
+
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        $project = ContractorProject::where('contractor_id', Auth::guard('contractor')->id())
+                ->where('id', $id)
+                ->firstOrFail();
+
+        $expertise_in = Expertise::all(); // Fetch categories
+        $states = config('constants.states'); // Fetch states if you are using a config for locations
+
+        return view('contractor.projects.edit', compact('project', 'expertise_in', 'states'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        $validatedData = $request->validate([
+            'project_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'project_name' => 'required|string|max:255',
+            'location' => 'required|array',
+            'description' => 'required|string',
+            'abn' => 'required|string',
+            'license' => 'required|string',
+            'trade_category' => 'required|array',
+            'budget' => 'required|array',
+        ]);
+
+        $contractorId = Auth::guard('contractor')->id();
+
+        // Get project
+        $project = ContractorProject::where('contractor_id', $contractorId)
+                    ->where('id', $id)
+                    ->firstOrFail();
+
+        // Set correct values for array fields
+        $validatedData['location'] = is_array($validatedData['location']) ? $validatedData['location'][0] : $validatedData['location'];
+        $validatedData['budget'] = is_array($validatedData['budget']) ? $validatedData['budget'][0] : $validatedData['budget'];
+
+        // Check if a new logo is uploaded
+        if ($request->hasFile('project_logo')) {
+            // Delete old logo if it exists
+            if ($project->project_logo) {
+                Storage::disk('public')->delete($project->project_logo);
+            }
+
+            // Upload new logo
+            $logoPath = $request->file('project_logo')->store('project_logos', 'public');
+            $validatedData['project_logo'] = $logoPath;
+        }
+
+        // Update project
+        $project->update($validatedData);
+
+        return redirect()->route('contractor.projects.index');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $project = ContractorProject::where('contractor_id', Auth::guard('contractor')->id())
+                ->where('id', $id)
+                ->firstOrFail();
+
+        // Delete project logo if exists
+        if ($project->project_logo) {
+            Storage::disk('public')->delete($project->project_logo);
+        }
+
+        $project->delete();
+
+        return redirect()->route('contractor.projects.index');
+    }
 }

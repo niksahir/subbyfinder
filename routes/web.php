@@ -32,7 +32,7 @@ Route::get('subcontractor', [FrontHomeController::class, 'subcontractor'])->name
 Route::get('contractor', [FrontHomeController::class, 'contractor'])->name('front.contractor');
 Route::get('project-search', [FrontHomeController::class, 'projectSearch'])->name('front.projectSearch');
 Route::get('project-details', [FrontHomeController::class, 'projectDetils'])->name('front.projectDetils');
-Route::get('project-details-lock', [FrontHomeController::class, 'projectdetilslock'])->name('front.projectdetilslock');
+Route::get('project-details-lock/{id}', [FrontHomeController::class, 'projectdetilslock'])->name('front.projectdetilslock');
 Route::get('subcontractor-search', [FrontHomeController::class, 'subcontractorsearch'])->name('front.subcontractorsearch');
 Route::get('subcontractor-project-details-lock', [FrontHomeController::class, 'subcontractorprojectdetilslock'])->name('front.subcontractorprojectdetilslock');
 Route::get('subcontractor-project-details', [FrontHomeController::class, 'subcontractorprojectdetils'])->name('front.subcontractorprojectdetils');
@@ -64,7 +64,6 @@ Route::prefix('sub-contractor')->name('subcontractor.')->group(function () {
       Route::resource('messages', MassageController::class);
       Route::resource('reviews', ReviewController::class);
       Route::resource('bookmark', SubContractorBookmarkController::class);
-      Route::resource('projects', SubContractorProjectController::class);
       Route::resource('wallet', SubContractorWalletController::class);
       Route::resource('setting', SubContractorSettingController::class);
    });

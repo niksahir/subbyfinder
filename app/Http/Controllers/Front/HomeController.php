@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Expertise;
+use App\Models\ContractorProject;
 
 class HomeController extends Controller {
    /**
@@ -14,7 +16,42 @@ class HomeController extends Controller {
    }
 
    public function projectSearch(Request $request) {
-      return view('front.projectSearch');
+
+        $query = ContractorProject::query();
+
+        // Search by Location
+        if ($request->has('location') && !empty($request->location)) {
+            $query->where('location', 'LIKE', '%' . $request->location . '%');
+        }
+
+        // Filter by Category
+        if ($request->has('trade_category') && !empty($request->trade_category)) {
+            $query->whereJsonContains('trade_category', $request->trade_category);
+        }
+
+        // Filter by Budget
+        if ($request->has('budget') && !empty($request->budget)) {
+            $budgets = $request->budget;
+
+            $query->where(function ($q) use ($budgets) {
+                foreach ($budgets as $budget) {
+                    $q->orWhere('budget', $budget);
+                }
+            });
+        }
+
+        // Get Paginated Results
+        $projects = $query->latest()->paginate(10);
+
+        // AJAX Request Handling
+        if ($request->ajax()) {
+            $html = view('front.project_partial', compact('projects'))->render();
+            return response()->json(['html' => $html, 'param' => $request->all()]);
+        }
+
+        $expertise_in = Expertise::all();
+        $projects = ContractorProject::latest()->paginate(10);
+        return view('front.projectSearch', compact('expertise_in', 'projects'));
    }
 
    public function projectDetils(Request $request) {
@@ -25,8 +62,9 @@ class HomeController extends Controller {
       return view('front.principalContractor');
    }
 
-   public function projectdetilslock(Request $request) {
-      return view('front.projectdetilslock');
+   public function projectdetilslock($id) {
+     $project = ContractorProject::findOrFail($id);
+      return view('front.projectdetilslock', compact('project'));
    }
 
    public function subcontractorprojectdetilslock(Request $request) {

@@ -236,7 +236,7 @@
                                         </select>
                                     </div>
 
-                                    @error('expertise_in')
+                                    @error('trade_category')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
