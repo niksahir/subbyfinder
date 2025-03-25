@@ -27,6 +27,10 @@
 </head>
 
 <body>
+    <div id="loader-overlay"></div>
+    <div id="loader" style="display: none;">
+        <img src="{{ asset('assets/images/loader-1.gif') }}" alt="Loading..." />
+    </div>
     <header class="py-2">
         <div class="container">
             <div class="row">
@@ -500,6 +504,16 @@
             });
         });
         $(document).ready(function() {
+            function showLoader() {
+                $('#loader-overlay').show(); // Show dim background
+                $('#loader').show(); // Show loader
+            }
+
+            // Hide loader and overlay
+            function hideLoader() {
+                $('#loader-overlay').hide(); // Hide dim background
+                $('#loader').hide(); // Hide loader
+            }
             $('#subcontractor_register').click(function(event) {
                 let formValid = true;
 
@@ -718,6 +732,9 @@
 
                 if (!formValid) {
                     event.preventDefault();
+                    hideLoader();
+                } else {
+                    showLoader();
                 }
             });
         });

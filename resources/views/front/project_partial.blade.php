@@ -1,4 +1,4 @@
-@foreach ($projects as $project)
+@forelse ($projects as $project)
     <div class="full-list mb-4">
         <div class="col-12">
             <div class="row">
@@ -49,7 +49,11 @@
             </div>
         </div>
     </div>
-@endforeach
+@empty
+    <div class="inner-slide text-center">
+        <p>No projects found.</p>
+    </div>
+@endforelse
 
 <!-- Pagination -->
 <div class="pagination-wrapper mt-4">

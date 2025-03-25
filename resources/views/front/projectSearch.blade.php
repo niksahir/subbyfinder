@@ -91,7 +91,6 @@
                 data: $('#filter-form').serialize(),
                 success: function(response) {
                     $('#project-list').html(response.html);
-                    console.log(response.param);
                 },
                 error: function(xhr) {
                     console.log(xhr.responseText);

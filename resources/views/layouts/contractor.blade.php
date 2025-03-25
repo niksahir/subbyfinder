@@ -30,9 +30,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 
     <link href="{{ asset('assets/css/multiSelect.css') }}" rel="stylesheet" type="text/css">
+
 </head>
 
 <body>
+    <div id="loader-overlay"></div>
+    <div id="loader" style="display: none;">
+        <img src="{{ asset('assets/images/loader-1.gif') }}" alt="Loading..." />
+    </div>
+
     @include('include.contractor.header')
     @include('include.contractor.mobilemenu')
     <section class="dashboard">
@@ -124,6 +130,18 @@
         });
 
         $(document).ready(function() {
+            // Show loader with overlay
+            function showLoader() {
+                $('#loader-overlay').show(); // Show dim background
+                $('#loader').show(); // Show loader
+            }
+
+            // Hide loader and overlay
+            function hideLoader() {
+                $('#loader-overlay').hide(); // Hide dim background
+                $('#loader').hide(); // Hide loader
+            }
+
             $('#create_project_link').click(function(event) {
                 let formValid = true;
 
@@ -221,7 +239,9 @@
 
                 if (!formValid) {
                     event.preventDefault();
-                }else{
+                    hideLoader();
+                } else {
+                    showLoader();
                     $('#create_project_form').submit();
                 }
             });
@@ -276,7 +296,9 @@
 
                 if (!formValid) {
                     event.preventDefault();
-                }else{
+                    hideLoader();
+                } else {
+                    showLoader();
                     $('#update_project_form').submit();
                 }
             });

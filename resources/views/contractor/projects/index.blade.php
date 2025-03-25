@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        @foreach ($projects as $project)
+        @forelse ($projects as $project)
             <div class="inner-slide">
                 <div class="inner-wrapper">
                     <!-- Project Logo -->
@@ -82,7 +82,11 @@
                     <i class="fa-solid fa-trash" onclick="deleteProject({{ $project->id }})"></i>
                 </div>
             </div>
-        @endforeach
+        @empty
+            <div class="inner-slide text-center">
+                <p>No projects found.</p>
+            </div>
+        @endforelse
         <div class="pagination-wrapper mt-4">
             {{ $projects->links('pagination::bootstrap-4') }}
         </div>
