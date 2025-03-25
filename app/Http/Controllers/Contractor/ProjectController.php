@@ -40,18 +40,16 @@ class ProjectController extends Controller
         $validatedData = $request->validate([
             'project_logo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'project_name' => 'required|string|max:255',
-            'location' => 'required|array',
+            'location' => 'required',
             'description' => 'required|string',
             'abn' => 'required|string',
             'license' => 'required|string',
             'trade_category' => 'required|array',
-            'budget' => 'required|array',
+            'budget' => 'required',
         ]);
 
         $contractorId = Auth::guard('contractor')->id();
 
-        $validatedData['location'] = is_array($validatedData['location']) ? $validatedData['location'][0] : $validatedData['location'];
-        $validatedData['budget'] = is_array($validatedData['budget']) ? $validatedData['budget'][0] : $validatedData['budget'];
         $validatedData['contractor_id'] = $contractorId;
 
         // Upload logo
@@ -98,12 +96,12 @@ class ProjectController extends Controller
         $validatedData = $request->validate([
             'project_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'project_name' => 'required|string|max:255',
-            'location' => 'required|array',
+            'location' => 'required',
             'description' => 'required|string',
             'abn' => 'required|string',
             'license' => 'required|string',
             'trade_category' => 'required|array',
-            'budget' => 'required|array',
+            'budget' => 'required',
         ]);
 
         $contractorId = Auth::guard('contractor')->id();
@@ -112,10 +110,6 @@ class ProjectController extends Controller
         $project = ContractorProject::where('contractor_id', $contractorId)
                     ->where('id', $id)
                     ->firstOrFail();
-
-        // Set correct values for array fields
-        $validatedData['location'] = is_array($validatedData['location']) ? $validatedData['location'][0] : $validatedData['location'];
-        $validatedData['budget'] = is_array($validatedData['budget']) ? $validatedData['budget'][0] : $validatedData['budget'];
 
         // Check if a new logo is uploaded
         if ($request->hasFile('project_logo')) {

@@ -69,7 +69,7 @@
                                             <label for="exampleInputPassword1" class="form-label">Location</label>
                                             <div class="@error('location') is-invalid @enderror">
                                                 <select class="form-select" name="location"
-                                                    aria-label="Default select example" data-max="1" data-multi-select>
+                                                    aria-label="Default select example">
                                                     @foreach(config('constants.states') as $state)
                                                         <option value="{{ $state }}">
                                                             {{ $state }}
@@ -164,8 +164,7 @@
                                         <div class="mb-3">
                                             <label for="exampleInputEmail1" class="form-label"> Budget</label>
                                             <div class="@error('budget') is-invalid @enderror">
-                                                <select name="budget" class="form-control" data-max="1"
-                                                    data-multi-select required>
+                                                <select name="budget" class="form-select" required>
                                                     <option value="5K under">
                                                         Under $5k
                                                     </option>
