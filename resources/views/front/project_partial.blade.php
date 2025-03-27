@@ -19,13 +19,13 @@
                         </ul>
                         <p>{{ Str::limit($project->description, 100) }}</p>
                         <div class="gender">
-                            <span>
-                                @if (is_array($project->trade_category))
-                                    {{ implode(', ', $project->expertise_names) }}
-                                @else
-                                    {{ $project->trade_category }}
-                                @endif
-                            </span>
+                            @if (is_array($project->trade_category) && count($project->expertise_names))
+                                @foreach ($project->expertise_names as $expertise)
+                                    <span>{{ $expertise }}</span>
+                                @endforeach
+                            @else
+                                <span>{{ $project->trade_category }}</span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -35,8 +35,7 @@
                     <div class="budget">
                         <div class="copy">
                             <i class="{{ $project->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon"
-                                data-id="{{ $project->id }}"
-                                style="cursor: pointer;"></i>
+                                data-id="{{ $project->id }}" style="cursor: pointer;"></i>
                         </div>
                         <h5>{{ $project->budget }}</h5>
                         <p>Budget</p>
