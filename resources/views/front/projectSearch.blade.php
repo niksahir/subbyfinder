@@ -15,8 +15,16 @@
                                 <!-- Location Filter -->
                                 <div class="inner-form">
                                     <label for="location" class="form-label">Location</label>
-                                    <input type="text" id="location" name="location" class="form-control"
-                                        placeholder="Enter location" onkeyup="fetchProjects()">
+                                    <select class="form-select" name="location" aria-label="Default select example" onchange="fetchProjects()">
+                                        <option value="">
+                                            Select location
+                                        </option>
+                                        @foreach (config('constants.states') as $state)
+                                            <option value="{{ $state }}">
+                                                {{ $state }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
 
                                 <!-- Category Filter -->
@@ -43,6 +51,19 @@
                                         <option value="50K">$25K - $50K</option>
                                         <option value="100K">$50K - $100K</option>
                                         <option value="$100k above">$100K or above</option>
+                                    </select>
+                                </div>
+
+                                <!-- Project Types Filter -->
+                                <div style="margin-bottom: 40px">
+                                    <label for="project_type" class="form-label">Project type</label>
+                                    <select name="project_type[]" id="project_type" multiple="multiple"
+                                        class="form-control" onchange="fetchProjects()">
+                                        @foreach ($project_types as $project_type)
+                                            <option value="{{ $project_type->id }}">
+                                                {{ $project_type->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </fieldset>
@@ -73,6 +94,14 @@
         });
         document.addEventListener('DOMContentLoaded', function() {
             const element = document.querySelector('#budget');
+            const choices = new Choices(element, {
+                removeItemButton: true,
+                placeholderValue: 'Select Options',
+                searchEnabled: true
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const element = document.querySelector('#project_type');
             const choices = new Choices(element, {
                 removeItemButton: true,
                 placeholderValue: 'Select Options',

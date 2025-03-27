@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Expertise;
+use App\Models\ProjectType;
 use App\Models\ContractorProject;
 
 class HomeController extends Controller {
@@ -29,6 +30,11 @@ class HomeController extends Controller {
             $query->whereJsonContains('trade_category', $request->trade_category);
         }
 
+        // Filter by Project type
+        if ($request->has('project_type') && !empty($request->project_type)) {
+            $query->whereJsonContains('project_type', $request->project_type);
+        }
+
         // Filter by Budget
         if ($request->has('budget') && !empty($request->budget)) {
             $budgets = $request->budget;
@@ -50,8 +56,9 @@ class HomeController extends Controller {
         }
 
         $expertise_in = Expertise::all();
+        $project_types = ProjectType::all();
         $projects = ContractorProject::latest()->paginate(10);
-        return view('front.projectSearch', compact('expertise_in', 'projects'));
+        return view('front.projectSearch', compact('expertise_in', 'projects', 'project_types'));
    }
 
    public function projectDetils(Request $request) {
