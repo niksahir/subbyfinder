@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ContractorProject;
 use Illuminate\Http\Request;
 use App\Models\Expertise;
+use App\Models\ProjectType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,8 +27,9 @@ class ProjectController extends Controller
     public function create()
     {
         $expertise_in = Expertise::all();
+        $project_types = ProjectType::all();
         $states = config('constants.states');
-        return view("contractor.projects.create", compact('expertise_in', 'states'));
+        return view("contractor.projects.create", compact('expertise_in', 'states', 'project_types'));
     }
 
     /**
@@ -46,6 +48,7 @@ class ProjectController extends Controller
             'license' => 'required|string',
             'trade_category' => 'required|array',
             'budget' => 'required',
+            'project_type' => 'required|array'
         ]);
 
         $contractorId = Auth::guard('contractor')->id();
@@ -84,8 +87,8 @@ class ProjectController extends Controller
 
         $expertise_in = Expertise::all(); // Fetch categories
         $states = config('constants.states'); // Fetch states if you are using a config for locations
-
-        return view('contractor.projects.edit', compact('project', 'expertise_in', 'states'));
+        $project_types = ProjectType::all();
+        return view('contractor.projects.edit', compact('project', 'expertise_in', 'states', 'project_types'));
     }
 
     /**
@@ -102,6 +105,7 @@ class ProjectController extends Controller
             'license' => 'required|string',
             'trade_category' => 'required|array',
             'budget' => 'required',
+            'project_type' => 'required|array'
         ]);
 
         $contractorId = Auth::guard('contractor')->id();

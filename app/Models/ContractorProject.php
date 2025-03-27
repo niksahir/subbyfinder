@@ -21,10 +21,12 @@ class ContractorProject extends Model
         'license',
         'trade_category',
         'budget',
+        'project_type'
     ];
 
     protected $casts = [
         'trade_category' => 'array',
+        'project_type' => 'array',
     ];
 
     // Relationship with Contractor
@@ -39,5 +41,10 @@ class ContractorProject extends Model
             return Expertise::whereIn('id', $this->trade_category)->pluck('name')->toArray();
         }
         return [];
+    }
+
+    public function projectType()
+    {
+        return $this->belongsToMany(ProjectType::class);
     }
 }

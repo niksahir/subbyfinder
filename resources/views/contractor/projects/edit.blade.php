@@ -163,13 +163,13 @@
                                             <div class="@error('budget') is-invalid @enderror">
                                                 <select name="budget" class="form-select">
                                                     @foreach ([
-            '5K under' => 'Under $5k',
-            '10K' => '$5-10K',
-            '25K' => '$10-25K',
-            '50K' => '$25-50K',
-            '100K' => '$50-100K',
-            '$100k above' => '$100k or above',
-        ] as $value => $label)
+                                                        '5K under' => 'Under $5k',
+                                                        '10K' => '$5-10K',
+                                                        '25K' => '$10-25K',
+                                                        '50K' => '$25-50K',
+                                                        '100K' => '$50-100K',
+                                                        '$100k above' => '$100k or above',
+                                                    ] as $value => $label)
                                                         <option value="{{ $value }}"
                                                             {{ $value == old('budget', $project->budget) ? 'selected' : '' }}>
                                                             {{ $label }}
@@ -178,6 +178,28 @@
                                                 </select>
                                             </div>
                                             @error('budget')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-inner">
+                                            <label class="form-label">Project type</label>
+                                            <div class="@error('project_type') is-invalid @enderror">
+                                                <select name="project_type" class="form-control" multiple
+                                                    data-multi-select>
+                                                    @foreach ($project_types as $key => $project_type)
+                                                        <option value="{{ $project_type->id }}"
+                                                            {{ in_array($project_type->id, old('project_type', $project->project_type ?? [])) ? 'selected' : '' }}>
+                                                            {{ $project_type->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            @error('project_type')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>

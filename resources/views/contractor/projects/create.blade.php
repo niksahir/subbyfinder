@@ -193,6 +193,27 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-md-6">
+                                        <div class="form-inner">
+                                            <label class="form-label">Project type</label>
+                                            <div class="@error('project_type') is-invalid @enderror">
+                                                <select name="project_type" class="form-select" multiple
+                                                    data-multi-select>
+                                                    @foreach ($project_types as $key => $project_type)
+                                                        <option value="{{ $project_type->id }}"
+                                                            {{ $key == 0 ? 'selected' : '' }}>
+                                                            {{ $project_type->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            @error('project_type')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="form-btn">
