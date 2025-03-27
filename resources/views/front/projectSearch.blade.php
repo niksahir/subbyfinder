@@ -15,7 +15,8 @@
                                 <!-- Location Filter -->
                                 <div class="inner-form">
                                     <label for="location" class="form-label">Location</label>
-                                    <select class="form-select" name="location" aria-label="Default select example" onchange="fetchProjects()">
+                                    <select class="form-select" name="location" aria-label="Default select example"
+                                        onchange="fetchProjects()">
                                         <option value="">
                                             Select location
                                         </option>
@@ -50,15 +51,15 @@
                                         <option value="25K">$10K - $25K</option>
                                         <option value="50K">$25K - $50K</option>
                                         <option value="100K">$50K - $100K</option>
-                                        <option value="$100k above">$100K or above</option>
+                                        <option value="100k above">$100K or above</option>
                                     </select>
                                 </div>
 
                                 <!-- Project Types Filter -->
                                 <div style="margin-bottom: 40px">
                                     <label for="project_type" class="form-label">Project type</label>
-                                    <select name="project_type[]" id="project_type" multiple="multiple"
-                                        class="form-control" onchange="fetchProjects()">
+                                    <select name="project_type[]" id="project_type" multiple="multiple" class="form-control"
+                                        onchange="fetchProjects()">
                                         @foreach ($project_types as $project_type)
                                             <option value="{{ $project_type->id }}">
                                                 {{ $project_type->name }}
@@ -114,10 +115,17 @@
         function fetchProjects(page = 1) {
             let url = '{{ route('front.projectSearch') }}?page=' + page;
 
+            // Get form data and add sort_by value
+            let formData = $('#filter-form').serializeArray();
+            formData.push({
+                name: 'sort_by',
+                value: $('select[name="sort_by"]').val()
+            });
+
             $.ajax({
                 url: url,
                 type: 'GET',
-                data: $('#filter-form').serialize(),
+                data: $.param(formData),
                 success: function(response) {
                     $('#project-list').html(response.html);
                 },
@@ -139,7 +147,6 @@
             });
 
             $(document).on('click', '.bookmark-icon', function(event) {
-                console.log($(this));
 
                 const projectId = $(this).data('id');
                 const iconElement = $(this);
@@ -151,7 +158,7 @@
                         id: projectId,
                         _token: $('meta[name="csrf-token"]').attr('content')
                     },
-                    success: function (response) {
+                    success: function(response) {
                         console.log(response);
 
                         if (response.status === 'added') {
@@ -159,9 +166,22 @@
                         } else if (response.status === 'removed') {
                             iconElement.removeClass('fa-solid').addClass('fa-regular');
                         }
+                    }
+                });
+            });
+
+            $(document).on('change', '#flexSwitchCheckChecked', function(event) {
+                const emailAlerts = $(this).is(':checked') ? 1 : 0;
+
+                $.ajax({
+                    url: "{{ route('updateEmailAlerts') }}",
+                    type: 'POST',
+                    data: {
+                        email_alerts: emailAlerts,
+                        _token: $('meta[name="csrf-token"]').attr('content')
                     },
-                    error: function (response) {
-                        alert(response);
+                    success: function(response) {
+                        // alert(response.message);
                     }
                 });
             });

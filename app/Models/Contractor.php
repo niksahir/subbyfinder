@@ -28,7 +28,8 @@ class Contractor extends Authenticatable
         'availability',
         'description',
         'values',
-        'trade_category'
+        'trade_category',
+        'email_alerts'
     ];
 
     protected $casts = [

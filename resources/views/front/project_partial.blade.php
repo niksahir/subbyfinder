@@ -1,3 +1,39 @@
+<div class="full-list mb-4">
+    <div class="col-12">
+        <div class="row">
+            <div class="top-bar">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"
+                        {{ $userEmailAlerts ? 'checked' : '' }}>
+                    <label class="form-check-label" for="flexSwitchCheckChecked">Turn on email alerts for this
+                        search</label>
+                </div>
+
+                <div class="filter">
+                    <div class="dropdown d-flex align-items-center">
+                        <span class="me-2">Sort by:</span>
+                        <div class="form-check-label">
+                            <select name="sort_by" class="form-select" onchange="fetchProjects()" style="width: auto;">
+                                <option value="latest" @if ($sortBy == 'latest') selected @endif>
+                                    Latest to Old
+                                </option>
+                                <option value="oldest" @if ($sortBy == 'oldest') selected @endif>
+                                    Old to Latest
+                                </option>
+                                <option value="price_asc" @if ($sortBy == 'price_asc') selected @endif>
+                                    Price Ascending
+                                </option>
+                                <option value="price_desc" @if ($sortBy == 'price_desc') selected @endif>
+                                    Price Descending
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @forelse ($projects as $project)
     <div class="full-list mb-4">
         <div class="col-12">
@@ -5,7 +41,8 @@
                 <!-- Project Logo -->
                 <div class="col-sm-3">
                     <div class="p-logo">
-                        <img src="{{ asset('storage/' . $project->project_logo) }}" alt="Project Logo" class="img-fluid">
+                        <img src="{{ asset('storage/' . $project->project_logo) }}" alt="Project Logo"
+                            class="img-fluid">
                     </div>
                 </div>
 

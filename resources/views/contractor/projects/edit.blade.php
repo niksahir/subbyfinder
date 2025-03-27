@@ -168,7 +168,7 @@
                                                         '25K' => '$10-25K',
                                                         '50K' => '$25-50K',
                                                         '100K' => '$50-100K',
-                                                        '$100k above' => '$100k or above',
+                                                        '100k above' => '$100k or above',
                                                     ] as $value => $label)
                                                         <option value="{{ $value }}"
                                                             {{ $value == old('budget', $project->budget) ? 'selected' : '' }}>

@@ -45,18 +45,21 @@ Route::prefix('contractor')->name('contractor.')->group(function () {
    Route::resource('login', ContractorLoginController::class);
    Route::resource('register', ContractorRegisterController::class);
    Route::post('check-email', [ContractorRegisterController::class, 'checkEmail'])->name('checkEmail');
+   Route::middleware(['auth:contractor,subcontractor'])->group(function () {
+       Route::resource('bookmark', BookmarkController::class);
+   });
    Route::middleware(['auth:contractor'])->group(function () {
       Route::resource('dashboard', HomeController::class);
       Route::resource('messages', ChatController::class);
       Route::resource('reviews', ReviewsController::class);
-      Route::resource('bookmark', BookmarkController::class);
       Route::resource('projects', ProjectController::class);
       Route::resource('wallet', WalletController::class);
       Route::resource('setting', SettingController::class);
    });
 });
-
-
+Route::middleware(['auth:contractor,subcontractor'])->group(function () {
+    Route::post('/update-email-alerts', [FrontHomeController::class, 'updateEmailAlerts'])->name('updateEmailAlerts');
+});
 Route::prefix('sub-contractor')->name('subcontractor.')->group(function () {
    Route::resource('login', SubContractorLoginController::class);
    Route::resource('register', SubContractorRegisterController::class);

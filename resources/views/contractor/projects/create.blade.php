@@ -180,7 +180,7 @@
                                                     <option value="100K">
                                                         $50-100K
                                                     </option>
-                                                    <option value="$100k above">
+                                                    <option value="100k above">
                                                         $100k or above
                                                     </option>
                                                 </select>
