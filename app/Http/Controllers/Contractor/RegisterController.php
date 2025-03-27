@@ -107,4 +107,11 @@ class RegisterController extends Controller {
    public function destroy(string $id) {
       //
    }
+
+   public function checkEmail(Request $request)
+    {
+        $emailExists = Contractor::where('email', $request->email)->exists();
+
+        return response()->json(['exists' => $emailExists]);
+    }
 }

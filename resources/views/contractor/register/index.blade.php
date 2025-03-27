@@ -61,7 +61,7 @@
             <div class="title">
                 <h5>Create Account</h5>
             </div>
-            <form method="POST" action="{{ route('contractor.register.store') }}" enctype="multipart/form-data">
+            <form method="POST" id="contractor_register_form" action="{{ route('contractor.register.store') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="wrapper">
                     <div class="row">
@@ -137,7 +137,8 @@
                                 </div>
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Password</label>
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    <input type="password"
+                                        class="form-control @error('password') is-invalid @enderror"
                                         placeholder="Password" name="password" value="{{ old('password') }}"
                                         required />
                                     @error('password')
@@ -378,6 +379,7 @@
                 $('#loader').hide(); // Hide loader
             }
             $('#contractor_register').click(function(event) {
+                event.preventDefault();
                 let formValid = true;
 
                 function validateField(field, message) {
@@ -514,11 +516,51 @@
                 }
 
                 if (!formValid) {
-                    event.preventDefault();
                     hideLoader();
-                } else {
-                    showLoader();
+                    return false;
                 }
+
+                // Check Email Uniqueness
+                const emailField = $("input[name='email']");
+                const email = emailField.val().trim();
+                const emailError = emailField.next('.invalid-feedback');
+
+                showLoader(); // Show loader before checking
+
+                $.ajax({
+                    url: "{{ route('contractor.checkEmail') }}", // Route to check email in backend
+                    type: 'POST',
+                    data: {
+                        email: email,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.exists) {
+                            hideLoader();
+                            formValid = false;
+                            if (emailError.length === 0) {
+                                emailField.after(
+                                    "<span class='invalid-feedback' role='alert'><strong>Email is already exists.</strong></span>"
+                                );
+                            } else {
+                                emailError.html("<strong>Email is already exists.</strong>");
+                            }
+                            emailField.addClass('is-invalid');
+                        } else {
+                            emailError.remove();
+                            emailField.removeClass('is-invalid');
+
+                            if (formValid) {
+                                $('#contractor_register_form')[0]
+                            .submit(); // Use native JS for submission to avoid reload
+                            }
+                        }
+                    },
+                    error: function() {
+                        hideLoader();
+                        alert('Error checking email. Please try again.');
+                    }
+                });
             });
         });
     </script>
