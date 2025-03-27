@@ -137,6 +137,34 @@
                 var page = $(this).attr('href').split('page=')[1];
                 fetchProjects(page);
             });
+
+            $(document).on('click', '.bookmark-icon', function(event) {
+                console.log($(this));
+
+                const projectId = $(this).data('id');
+                const iconElement = $(this);
+
+                $.ajax({
+                    url: "{{ route('contractor.bookmark.store') }}", // Route to store bookmark
+                    type: 'POST',
+                    data: {
+                        id: projectId,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (response) {
+                        console.log(response);
+
+                        if (response.status === 'added') {
+                            iconElement.removeClass('fa-regular').addClass('fa-solid');
+                        } else if (response.status === 'removed') {
+                            iconElement.removeClass('fa-solid').addClass('fa-regular');
+                        }
+                    },
+                    error: function (response) {
+                        alert(response);
+                    }
+                });
+            });
         });
     </script>
 @endsection

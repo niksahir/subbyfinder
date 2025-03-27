@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class ContractorProject extends Model
 {
@@ -46,5 +47,24 @@ class ContractorProject extends Model
     public function projectType()
     {
         return $this->belongsToMany(ProjectType::class);
+    }
+
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class, 'project_id');
+    }
+
+    public function getIsBookmarkedAttribute()
+    {
+        if (Auth::guard('contractor')->check()) {
+            $userId = Auth::guard('contractor')->id();
+            $userType = 'contractor';
+        } elseif (Auth::guard('subcontractor')->check()) {
+            $userId = Auth::guard('subcontractor')->id();
+            $userType = 'subcontractor';
+        } else {
+            return 0;
+        }
+        return $this->bookmarks()->where(['user_id' => $userId, 'type' => $userType])->exists();
     }
 }

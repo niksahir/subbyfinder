@@ -34,7 +34,9 @@
                 <div class="col-sm-4">
                     <div class="budget">
                         <div class="copy">
-                            <i class="fa-regular fa-bookmark"></i>
+                            <i class="{{ $project->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon"
+                                data-id="{{ $project->id }}"
+                                style="cursor: pointer;"></i>
                         </div>
                         <h5>{{ $project->budget }}</h5>
                         <p>Budget</p>
