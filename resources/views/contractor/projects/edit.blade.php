@@ -73,11 +73,11 @@
                                         <div class="form-inner">
                                             <label for="exampleInputPassword1" class="form-label">Location</label>
                                             <div class="@error('location') is-invalid @enderror">
-                                                <select class="form-select" name="location">
-                                                    @foreach (config('constants.states') as $state)
-                                                        <option value="{{ $state }}"
-                                                            {{ $state == $project->location ? 'selected' : '' }}>
-                                                            {{ $state }}
+                                                <select class="form-control js-example-tags" name="location" id="location">
+                                                    <option value="">Select Location</option>
+                                                    @foreach ($locations as $key => $location)
+                                                        <option value="{{ $location->name }}" {{ $location->name == $project->location ? 'selected' : '' }}>
+                                                            {{ $location->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>

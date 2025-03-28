@@ -25,6 +25,11 @@
                                                 {{ $state }}
                                             </option>
                                         @endforeach
+                                        @foreach ($locations as $location)
+                                            <option value="{{ $location->name }}">
+                                                {{ $location->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
 

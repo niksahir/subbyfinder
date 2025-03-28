@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Expertise;
 use App\Models\ProjectType;
 use App\Models\Contractor;
+use App\Models\Location;
 use App\Models\Subcontractor;
 use App\Models\ContractorProject;
 use Illuminate\Support\Facades\Auth;
@@ -120,7 +121,8 @@ class HomeController extends Controller {
         $expertise_in = Expertise::all();
         $project_types = ProjectType::all();
         $projects = ContractorProject::latest()->paginate(10);
-        return view('front.projectSearch', compact('expertise_in', 'projects', 'project_types', 'userEmailAlerts', 'sortBy'));
+        $locations = Location::all();
+        return view('front.projectSearch', compact('expertise_in', 'projects', 'project_types', 'userEmailAlerts', 'sortBy', 'locations'));
    }
 
    public function projectDetils(Request $request) {

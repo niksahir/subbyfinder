@@ -28,7 +28,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <form method="POST" id="create_project_form" action="{{ route('contractor.projects.store') }}" enctype="multipart/form-data">
+                    <form method="POST" id="create_project_form" action="{{ route('contractor.projects.store') }}"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="wrapper">
                             <legend> <span></span> Add Project</legend>
@@ -55,7 +56,8 @@
                                             <label for="exampleInputEmail1" class="form-label">Project Name</label>
                                             <input type="email"
                                                 class="form-control @error('project_name') is-invalid @enderror"
-                                                id="exampleInputEmail1" aria-describedby="emailHelp" value="{{ old('project_name') }}" name="project_name">
+                                                id="exampleInputEmail1" aria-describedby="emailHelp"
+                                                value="{{ old('project_name') }}" name="project_name">
                                             @error('project_name')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -68,15 +70,14 @@
                                         <div class="form-inner">
                                             <label for="exampleInputPassword1" class="form-label">Location</label>
                                             <div class="@error('location') is-invalid @enderror">
-                                                <select class="form-select" name="location"
-                                                    aria-label="Default select example">
-                                                    @foreach(config('constants.states') as $state)
-                                                        <option value="{{ $state }}">
-                                                            {{ $state }}
+                                                <select class="form-control js-example-tags" name="location" id="location">
+                                                    <option value="" selected>Select Location</option>
+                                                    @foreach ($locations as $key => $location)
+                                                        <option value="{{ $location->name }}">
+                                                            {{ $location->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                <div class="@error('location') is-invalid @enderror">
                                                 </div>
                                                 @error('location')
                                                     <span class="invalid-feedback" role="alert">
@@ -112,8 +113,7 @@
                                                 <label for="exampleInputEmail1" class="form-label">ABN</label>
                                                 <input type="text" value="{{ old('abn') }}"
                                                     class="form-control @error('abn') is-invalid @enderror" id=""
-                                                    placeholder="85637669305" name="abn"
-                                                    aria-describedby="emailHelp">
+                                                    placeholder="85637669305" name="abn" aria-describedby="emailHelp">
                                                 @error('abn')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>

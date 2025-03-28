@@ -7,6 +7,7 @@ use App\Models\ContractorProject;
 use Illuminate\Http\Request;
 use App\Models\Expertise;
 use App\Models\ProjectType;
+use App\Models\Location;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -28,8 +29,9 @@ class ProjectController extends Controller
     {
         $expertise_in = Expertise::all();
         $project_types = ProjectType::all();
+        $locations = Location::all();
         $states = config('constants.states');
-        return view("contractor.projects.create", compact('expertise_in', 'states', 'project_types'));
+        return view("contractor.projects.create", compact('expertise_in', 'states', 'project_types', 'locations'));
     }
 
     /**
@@ -54,6 +56,15 @@ class ProjectController extends Controller
         $contractorId = Auth::guard('contractor')->id();
 
         $validatedData['contractor_id'] = $contractorId;
+
+        // Format location (first letter capital, rest lowercase)
+        $locationName = ucwords(strtolower(trim($request->location)));
+
+        // Check if location exists
+        $location = Location::firstOrCreate(['name' => $locationName]);
+
+        // Set location ID to validated data
+        $validatedData['location'] = $locationName;
 
         // Upload logo
         $logoPath = $request->file('project_logo')->store('project_logos', 'public');
@@ -86,9 +97,9 @@ class ProjectController extends Controller
                 ->firstOrFail();
 
         $expertise_in = Expertise::all(); // Fetch categories
-        $states = config('constants.states'); // Fetch states if you are using a config for locations
+        $locations = Location::all();
         $project_types = ProjectType::all();
-        return view('contractor.projects.edit', compact('project', 'expertise_in', 'states', 'project_types'));
+        return view('contractor.projects.edit', compact('project', 'expertise_in', 'project_types', 'locations'));
     }
 
     /**
@@ -126,7 +137,14 @@ class ProjectController extends Controller
             $logoPath = $request->file('project_logo')->store('project_logos', 'public');
             $validatedData['project_logo'] = $logoPath;
         }
+        // Format location (first letter capital, rest lowercase)
+        $locationName = ucwords(strtolower(trim($request->location)));
 
+        // Check if location exists
+        $location = Location::firstOrCreate(['name' => $locationName]);
+
+        // Set location ID to validated data
+        $validatedData['location'] = $locationName;
         // Update project
         $project->update($validatedData);
 
