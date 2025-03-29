@@ -4,13 +4,22 @@ namespace App\Http\Controllers\SubContractor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\ContractorProject;
+use Illuminate\Support\Facades\Auth;
+
 
 class BookmarkController extends Controller {
    /**
     * Display a listing of the resource.
     */
    public function index() {
-      return view("subcontractor.bookmark.index");
+    $projects = ContractorProject::whereHas('bookmarks', function ($query) {
+        $query->where([
+            'user_id' => Auth::guard('subcontractor')->id(),
+            'type' => 'subcontractor',
+        ]);
+    })->latest()->paginate(10);
+      return view("subcontractor.bookmark.index", compact('projects'));
    }
 
    /**

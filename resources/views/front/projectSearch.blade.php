@@ -164,8 +164,6 @@
                         _token: $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
-                        console.log(response);
-
                         if (response.status === 'added') {
                             iconElement.removeClass('fa-regular').addClass('fa-solid');
                         } else if (response.status === 'removed') {

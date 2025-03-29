@@ -58,7 +58,7 @@
                         <div class="gender">
                             @if (is_array($project->trade_category) && count($project->expertise_names))
                                 @foreach ($project->expertise_names as $expertise)
-                                    <span>{{ $expertise }}</span>
+                                    <span style="margin-bottom: 5px;">{{ $expertise }}</span>
                                 @endforeach
                             @else
                                 <span>{{ $project->trade_category }}</span>

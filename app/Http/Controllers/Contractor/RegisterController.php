@@ -60,16 +60,6 @@ class RegisterController extends Controller {
             $validatedData['profile_photo'] = $path;
         }
 
-        // $availability = "";
-
-        // if (!empty($request->availability)) {
-            //     $availability = implode(', ', array_map(
-        //     fn($key, $value) => "$key: " . json_encode($value),
-        //     array_keys($request->availability),
-        //     $request->availability
-        //     ));
-        // }
-
         $validatedData['password'] = Hash::make($validatedData['password']);
         // $validatedData['values'] = is_array($validatedData['values']) ? $validatedData['values'][0] : $validatedData['values'];
         Contractor::create($validatedData);
