@@ -8,7 +8,7 @@ use App\Models\Expertise;
 use App\Models\ProjectType;
 use App\Models\Contractor;
 use App\Models\Location;
-use App\Models\Subcontractor;
+use App\Models\SubContractor;
 use App\Models\ContractorProject;
 use Illuminate\Support\Facades\Auth;
 
@@ -131,7 +131,7 @@ class HomeController extends Controller {
 
    public function subcontractorsearch(Request $request) {
 
-        $query = Subcontractor::query();
+        $query = SubContractor::query();
         $userEmailAlerts = 0;
         $sortBy = $request->sort_by ? $request->sort_by : 'latest';
 
@@ -156,7 +156,7 @@ class HomeController extends Controller {
         }
 
         $expertise_in = Expertise::all();
-        $subcontractors = Subcontractor::latest()->paginate(10);
+        $subcontractors = SubContractor::latest()->paginate(10);
         // return 0;
       return view('front.principalContractor', compact('expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy'));
    }
