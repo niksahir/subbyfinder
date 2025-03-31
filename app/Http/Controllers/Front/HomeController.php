@@ -130,7 +130,35 @@ class HomeController extends Controller {
    }
 
    public function subcontractorsearch(Request $request) {
-      return view('front.principalContractor');
+
+        $query = Subcontractor::query();
+        $userEmailAlerts = 0;
+        $sortBy = $request->sort_by ? $request->sort_by : 'latest';
+
+        $query->orderBy('created_at', $request->sort_by == 'latest' ? 'desc' : 'asc');
+
+        if (Auth::guard('contractor')->check()) {
+            $userEmailAlerts = Auth::guard('contractor')->user()->subcontractor_email_alerts;
+        } elseif (Auth::guard('subcontractor')->check()) {
+            $userEmailAlerts = Auth::guard('subcontractor')->user()->subcontractor_email_alerts;
+        }
+        // Filter by Category
+        if ($request->has('trade_category') && !empty($request->trade_category)) {
+            $query->whereJsonContains('trade_category', $request->trade_category);
+        }
+        // Get Paginated Results
+        $subcontractors = $query->latest()->paginate(10);
+
+        // AJAX Request Handling
+        if ($request->ajax()) {
+            $html = view('front.subcontractor_partial', compact('subcontractors', 'userEmailAlerts', 'sortBy'))->render();
+            return response()->json(['html' => $html, 'param' => $request->all()]);
+        }
+
+        $expertise_in = Expertise::all();
+        $subcontractors = Subcontractor::latest()->paginate(10);
+        // return 0;
+      return view('front.principalContractor', compact('expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy'));
    }
 
    public function projectdetilslock($id) {
@@ -214,12 +242,16 @@ class HomeController extends Controller {
             return response()->json(['message' => 'Invalid user type'], 400);
         }
 
+        if (isset($request->email_alerts)) {
+            $user->email_alerts = $request->email_alerts;
+        }elseif(isset($request->subcontractor_email_alerts)){
+            $user->subcontractor_email_alerts = $request->subcontractor_email_alerts;
+        }
+
         if ($user) {
-            $user->email_alerts = $emailAlerts;
             $user->save();
             return response()->json(['message' => 'Email alert settings updated successfully!']);
         }
-
         return response()->json(['message' => 'User not found'], 404);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Bookmark;
+use App\Models\Subcontractor;
 
 
 class BookmarkController extends Controller {
@@ -13,7 +14,13 @@ class BookmarkController extends Controller {
     * Display a listing of the resource.
     */
    public function index() {
-      return view("contractor.bookmark.index");
+        $subcontractors = Subcontractor::whereHas('bookmarks', function ($query) {
+            $query->where([
+                'user_id' => Auth::guard('contractor')->id(),
+                'type' => 'contractor',
+            ]);
+        })->latest()->paginate(10);
+      return view("contractor.bookmark.index", compact('subcontractors'));
    }
 
    /**

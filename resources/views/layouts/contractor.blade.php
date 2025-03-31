@@ -311,6 +311,31 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            $(document).on('click', '.bookmark-icon', function(event) {
+
+                const subcontractorId = $(this).data('id');
+                const iconElement = $(this);
+
+                $.ajax({
+                    url: "{{ route('subcontractor.bookmark.store') }}", // Route to store bookmark
+                    type: 'POST',
+                    data: {
+                        id: subcontractorId,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.status === 'added') {
+                            iconElement.removeClass('fa-regular').addClass('fa-solid');
+                        } else if (response.status === 'removed') {
+                            iconElement.removeClass('fa-solid').addClass('fa-regular');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

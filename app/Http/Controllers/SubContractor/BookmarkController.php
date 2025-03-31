@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SubContractor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ContractorProject;
+use App\Models\SubContractorsBookmark;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -33,8 +34,42 @@ class BookmarkController extends Controller {
     * Store a newly created resource in storage.
     */
    public function store(Request $request) {
-      //
-   }
+    try{
+        if (Auth::guard('contractor')->check()) {
+            $userType = 'contractor';
+            $userId = Auth::guard('contractor')->id();
+        } elseif (Auth::guard('subcontractor')->check()) {
+            $userType = 'subcontractor';
+            $userId = Auth::guard('subcontractor')->id();
+        } else {
+            return response()->json(['status' => 'Error']);
+        }
+        // Get logged-in user ID
+        $subcontractor_id = $request->id;
+
+        // Check if bookmark already exists
+        $bookmark = SubContractorsBookmark::where('user_id', $userId)
+            ->where('subcontractor_id', $subcontractor_id)
+            ->where('type', $userType)
+            ->first();
+
+        if ($bookmark) {
+            // Remove bookmark if already exists
+            $bookmark->delete();
+            return response()->json(['status' => 'removed']);
+        } else {
+            // Add new bookmark
+            SubContractorsBookmark::create([
+                'user_id' => $userId,
+                'subcontractor_id' => $subcontractor_id,
+                'type' => $userType
+            ]);
+            return response()->json(['status' => 'added']);
+        }
+    }catch(\Exception $e){
+        return $e->getMessage();
+    }
+}
 
    /**
     * Display the specified resource.

@@ -1,410 +1,126 @@
 @extends('layouts.before')
-@section("title")
-Principal Contractor - Subby Finder
+@section('title')
+    Principal Contractor - Subby Finder
 @endsection
 
-@section("content")
-<section class="job-info">
-   <div class="container">
-      <div class="row">
-         <div class="col-md-4">
-            <div class="left-sidebar">
-               <form>
-                  <fieldset>
-                     <div class="inner-form">
-                        <label for="" class="form-label">Location</label>
-                        <input type="text" id="" class="form-control" placeholder="input">
-                     </div>
-                     <div class="inner-form">
-                        <label for="disabledSelect" class="form-label">Category</label>
-                        <select id="disabledSelect" class="form-select">
-                           <option>All Category</option>
-                        </select>
-                     </div>
-                     <div class="inner-form">
-                        <span>$50 - $2,500</span>
-                        <label for="customRange2" class="form-label">Budget Range</label>
-                        <input type="range" class="form-range" min="0" max="5" id="customRange2">
-                     </div>
+@section('content')
+    <section class="job-info">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="left-sidebar">
+                        <form id="filter-form" method="GET">
+                            <fieldset>
+                                <!-- Category Filter -->
+                                <div style="margin-bottom: 40px">
+                                    <label for="trade_category" class="form-label">Category</label>
+                                    <select name="trade_category[]" id="trade_category" multiple="multiple"
+                                        class="form-control" onchange="fetchProjects()">
+                                        @foreach ($expertise_in as $expertise)
+                                            <option value="{{ $expertise->id }}">
+                                                {{ $expertise->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
 
-
-                     <div class="inner-form">
-                        <label for="disabledSelect" class="form-label">Project Type</label>
-                        <select id="disabledSelect" class="form-select">
-                           <option>Select</option>
-                        </select>
-                     </div>
-
-                     <div class="inner-form">
-                        <label for="disabledSelect" class="form-label">Availability</label>
-                        <select id="disabledSelect" class="form-select">
-                           <option>Immediate</option>
-                        </select>
-                     </div>
-
-                     <div class="inner-form">
-                        <label for="disabledSelect" class="form-label">Certifications</label>
-                        <select id="disabledSelect" class="form-select">
-                           <option>OSHA</option>
-                        </select>
-                     </div>
-                     <div class="inner-form">
-                        <label for="disabledSelect" class="form-label">Language Proficiency</label>
-                        <select id="disabledSelect" class="form-select">
-                           <option>Select</option>
-                        </select>
-                     </div>
-                  </fieldset>
-               </form>
+                <!-- Projects List -->
+                <div class="col-md-8">
+                    <div class="result" id="project-list">
+                        @include('front.subcontractor_partial', ['subcontractors' => $subcontractors])
+                    </div>
+                </div>
             </div>
-         </div>
+        </div>
+    </section>
+@endsection
 
-         <div class="col-md-8">
-            <div class="result">
-               <h6>Search Results</h6>
-               <div class="top-bar">
-                  <div class="form-check form-switch">
-                     <input class="form-check-input" type="checkbox" role="switch"
-                        id="flexSwitchCheckChecked">
-                     <label class="form-check-label" for="flexSwitchCheckChecked">Turn on email alerts for
-                        this search</label>
-                  </div>
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const element = document.querySelector('#trade_category');
+            const choices = new Choices(element, {
+                removeItemButton: true,
+                placeholderValue: 'Select Options',
+                searchEnabled: true
+            });
+        });
 
-                  <div class="filter">
-                     <div class="dropdown">
-                        <span>Sort by:</span>
-                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                           Relevance
-                        </button>
-                        <ul class="dropdown-menu">
-                           <li>
-                              <a class="dropdown-item" href="#">Action</a>
-                           </li>
-                           <li>
-                              <a class="dropdown-item" href="#">Another action</a>
-                           </li>
-                           <li>
-                              <a class="dropdown-item" href="#">Something else here</a>
-                           </li>
-                        </ul>
-                     </div>
-                  </div>
-               </div>
+        function fetchProjects(page = 1) {
+            let url = '{{ route('front.subcontractorsearch') }}?page=' + page;
 
-               <section class="review-dash mt-5">
-                  <div class="inner-slide">
-                     <div class="inner-wrapper">
-                        <div class="image">
-                           <img src="{{ asset('assets/images/team-1.jpg')}}" alt="" class="img-fluid">
+            // Get form data and add sort_by value
+            let formData = $('#filter-form').serializeArray();
+            formData.push({
+                name: 'sort_by',
+                value: $('select[name="sort_by"]').val()
+            });
 
-                           <div class="check">
-                              <img src="{{ asset('assets/images/check.png')}}" alt="" class="img-fluid">
-                           </div>
-                        </div>
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: $.param(formData),
+                success: function(response) {
+                    $('#project-list').html(response.html);
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
 
-                        <div class="content">
-                           <h6>Tom Smith </h6>
+        $(document).ready(function() {
+            // Fetch projects when the page loads
+            fetchProjects();
 
-                           <ul>
-                              <li>Electrician</li>
-                              <li>
-                                 <i class="fa-solid fa-location-dot"></i> San Francisco
-                              </li>
-                           </ul>
+            // Handle Pagination without reload
+            $(document).on('click', '.pagination a', function(event) {
+                event.preventDefault();
+                var page = $(this).attr('href').split('page=')[1];
+                fetchProjects(page);
+            });
 
-                           <div class="ratimg">
-                              <div class="number">
-                                 5.0
-                              </div>
+            $(document).on('click', '.bookmark-icon', function(event) {
 
-                              <div class="star">
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                              </div>
-                           </div>
+                const subcontractorId = $(this).data('id');
+                const iconElement = $(this);
 
+                $.ajax({
+                    url: "{{ route('subcontractor.bookmark.store') }}", // Route to store bookmark
+                    type: 'POST',
+                    data: {
+                        id: subcontractorId,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.status === 'added') {
+                            iconElement.removeClass('fa-regular').addClass('fa-solid');
+                        } else if (response.status === 'removed') {
+                            iconElement.removeClass('fa-solid').addClass('fa-regular');
+                        }
+                    }
+                });
+            });
 
-                           <p>Budget <small> $100 - $150</small></p>
+            $(document).on('change', '#flexSwitchCheckChecked', function(event) {
+                const emailAlerts = $(this).is(':checked') ? 1 : 0;
 
-                        </div>
-                     </div>
-
-                     <div class="buttons">
-                        <div class="copy">
-                           <i class="fa-regular fa-bookmark"></i>
-                        </div>
-                        <a href="#">View Profile </a>
-                        <a href="#">Message </a>
-                     </div>
-                  </div>
-
-                  <div class="inner-slide">
-                     <div class="inner-wrapper">
-                        <div class="image">
-                           <img src="{{ asset('assets/images/team-2.jpg')}}" alt="" class="img-fluid">
-
-                           <div class="check">
-                              <img src="{{ asset('assets/images/check.png')}}" alt="" class="img-fluid">
-                           </div>
-                        </div>
-
-                        <div class="content">
-                           <h6>Tom Smith </h6>
-
-                           <ul>
-                              <li>Electrician</li>
-                              <li>
-                                 <i class="fa-solid fa-location-dot"></i> San Francisco
-                              </li>
-                           </ul>
-
-                           <div class="ratimg">
-                              <div class="number">
-                                 5.0
-                              </div>
-
-                              <div class="star">
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                              </div>
-                           </div>
-
-                           <p>Budget <small> $100 - $150</small></p>
-
-                        </div>
-                     </div>
-
-                     <div class="buttons">
-                        <div class="copy">
-                           <i class="fa-regular fa-bookmark"></i>
-                        </div>
-                        <a href="#">View Profile </a>
-                        <a href="#">Message </a>
-                     </div>
-                  </div>
-                  <div class="inner-slide">
-                     <div class="inner-wrapper">
-                        <div class="image">
-                           <img src="{{ asset('assets/images/team-1.jpg')}}" alt="" class="img-fluid">
-
-                           <div class="check">
-                              <img src="{{ asset('assets/images/check.png')}}" alt="" class="img-fluid">
-                           </div>
-                        </div>
-
-                        <div class="content">
-                           <h6>Tom Smith </h6>
-
-                           <ul>
-                              <li>Electrician</li>
-                              <li>
-                                 <i class="fa-solid fa-location-dot"></i> San Francisco
-                              </li>
-                           </ul>
-
-                           <div class="ratimg">
-                              <div class="number">
-                                 5.0
-                              </div>
-
-                              <div class="star">
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                              </div>
-                           </div>
-
-
-                           <p>Budget <small> $100 - $150</small></p>
-
-                        </div>
-                     </div>
-
-                     <div class="buttons">
-                        <div class="copy">
-                           <i class="fa-regular fa-bookmark"></i>
-                        </div>
-                        <a href="#">View Profile </a>
-                        <a href="#">Message </a>
-                     </div>
-                  </div>
-
-                  <div class="inner-slide">
-                     <div class="inner-wrapper">
-                        <div class="image">
-                           <img src="{{ asset('assets/images/team-2.jpg')}}" alt="" class="img-fluid">
-
-                           <div class="check">
-                              <img src="{{ asset('assets/images/check.png')}}" alt="" class="img-fluid">
-                           </div>
-                        </div>
-
-                        <div class="content">
-                           <h6>Tom Smith </h6>
-
-                           <ul>
-                              <li>Electrician</li>
-                              <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                           </ul>
-
-                           <div class="ratimg">
-                              <div class="number">
-                                 5.0
-                              </div>
-
-                              <div class="star"><i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                              </div>
-                           </div>
-
-                           <p>Budget <small> $100 - $150</small></p>
-
-                        </div>
-                     </div>
-
-                     <div class="buttons">
-                        <div class="copy">
-                           <i class="fa-regular fa-bookmark"></i>
-                        </div>
-                        <a href="#">View Profile </a>
-                        <a href="#">Message </a>
-                     </div>
-                  </div>
-                  <div class="inner-slide">
-                     <div class="inner-wrapper">
-                        <div class="image">
-                           <img src="{{ asset('assets/images/team-1.jpg') }}" alt="" class="img-fluid">
-
-                           <div class="check">
-                              <img src="{{ asset('assets/images/check.png') }}" alt="" class="img-fluid">
-                           </div>
-                        </div>
-
-                        <div class="content">
-                           <h6>Tom Smith </h6>
-
-                           <ul>
-                              <li>Electrician</li>
-                              <li>
-                                 <i class="fa-solid fa-location-dot"></i> San Francisco
-                              </li>
-                           </ul>
-
-                           <div class="ratimg">
-                              <div class="number">
-                                 5.0
-                              </div>
-
-                              <div class="star">
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                              </div>
-                           </div>
-
-
-                           <p>Budget <small> $100 - $150</small></p>
-
-                        </div>
-                     </div>
-
-                     <div class="buttons">
-                        <div class="copy">
-                           <i class="fa-regular fa-bookmark"></i>
-                        </div>
-                        <a href="#">View Profile </a>
-                        <a href="#">Message </a>
-                     </div>
-                  </div>
-
-                  <div class="inner-slide">
-                     <div class="inner-wrapper">
-                        <div class="image">
-                           <img src="{{ asset('assets/images/team-2.jpg') }}" alt="" class="img-fluid">
-
-                           <div class="check">
-                              <img src="{{ asset('assets/images/check.png') }}" alt="" class="img-fluid">
-                           </div>
-                        </div>
-
-                        <div class="content">
-                           <h6>Tom Smith </h6>
-
-                           <ul>
-                              <li>Electrician</li>
-                              <li>
-                                 <i class="fa-solid fa-location-dot"></i> San Francisco
-                              </li>
-                           </ul>
-
-                           <div class="ratimg">
-                              <div class="number">
-                                 5.0
-                              </div>
-
-                              <div class="star"><i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                                 <i class="fa-solid fa-star"></i>
-                              </div>
-                           </div>
-
-                           <p>Budget <small> $100 - $150</small></p>
-
-                        </div>
-                     </div>
-
-                     <div class="buttons">
-                        <div class="copy">
-                           <i class="fa-regular fa-bookmark"></i>
-                        </div>
-                        <a href="#">View Profile </a>
-                        <a href="#">Message </a>
-                     </div>
-                  </div>
-               </section>
-
-
-               <div class="pagination">
-                  <ul>
-                     <li>
-                        <a href="#"><i class="fa-solid fa-angle-left"></i></a>
-                     </li>
-                     <li>
-                        <a href="#">1</a>
-                     </li>
-                     <li>
-                        <a href="#">2</a>
-                     </li>
-                     <li>
-                        <a href="#">3</a>
-                     </li>
-                     <li>
-                        <a href="#">4</a>
-                     </li>
-                     <li>
-                        <a href="#"><i class="fa-solid fa-angle-right"></i></a>
-                     </li>
-                  </ul>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-</section>
+                $.ajax({
+                    url: "{{ route('updateEmailAlerts') }}",
+                    type: 'POST',
+                    data: {
+                        subcontractor_email_alerts: emailAlerts,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        // alert(response.message);
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

@@ -20,11 +20,6 @@
                                         <option value="">
                                             Select location
                                         </option>
-                                        @foreach (config('constants.states') as $state)
-                                            <option value="{{ $state }}">
-                                                {{ $state }}
-                                            </option>
-                                        @endforeach
                                         @foreach ($locations as $location)
                                             <option value="{{ $location->name }}">
                                                 {{ $location->name }}

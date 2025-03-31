@@ -29,7 +29,8 @@ class Contractor extends Authenticatable
         'description',
         'values',
         'trade_category',
-        'email_alerts'
+        'email_alerts',
+        'subcontractor_email_alerts'
     ];
 
     protected $casts = [
