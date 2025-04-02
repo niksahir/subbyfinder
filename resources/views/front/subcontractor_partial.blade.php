@@ -42,11 +42,14 @@
 
                 <div class="content">
                     <h6>{{ $subcontractor->contact_name }} </h6>
-
+                    <ul style="margin-bottom: 10px">
+                        <li><i class="fa-solid fa-location-dot"></i> {{ $subcontractor->location }}</li>
+                        <li><i class="fa-regular fa-clock"></i> {{ $subcontractor->created_at->diffForHumans() }}</li>
+                    </ul>
                     <ul>
                         @if (is_array($subcontractor->trade_category) && count($subcontractor->expertise_names))
                             @foreach ($subcontractor->expertise_names as $expertise)
-                                <span style="margin-bottom: 5px;">{{ $expertise }}</span>
+                                <span style="margin-bottom: 5px; margin-left: 3px; ">{{ $expertise }}</span>
                             @endforeach
                         @else
                             <span>{{ $subcontractor->trade_category }}</span>

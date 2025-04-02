@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class SubContractor extends Authenticatable
 {
     use HasFactory;
-    
+
     protected $guard = 'subcontractor';
     protected $fillable = [
         'profile_photo',
@@ -34,13 +34,13 @@ class SubContractor extends Authenticatable
         'values',
         'trade_category',
         'email_alerts',
-        'subcontractor_email_alerts'
+        'subcontractor_email_alerts',
+        'location'
     ];
 
     protected $casts = [
         'trade_category' => 'array',
         'project_types' => 'array',
-        'availability' => 'array'
     ];
 
     // $expertiseList = $subContractor->expertise_list; // Returns collection of names

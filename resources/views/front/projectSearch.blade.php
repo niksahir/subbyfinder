@@ -163,7 +163,12 @@
                             iconElement.removeClass('fa-regular').addClass('fa-solid');
                         } else if (response.status === 'removed') {
                             iconElement.removeClass('fa-solid').addClass('fa-regular');
+                        }else {
+                            window.location.href = "{{ route('login') }}";
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        window.location.href = "{{ route('login') }}";
                     }
                 });
             });

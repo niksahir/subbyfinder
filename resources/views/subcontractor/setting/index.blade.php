@@ -85,8 +85,8 @@
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Phone</label>
                                     <input type="text" class="form-control @error('phone') is-invalid @enderror"
-                                        placeholder="Phone" name="phone" value="{{ old('phone', $subcontractor->phone) }}"
-                                        required />
+                                        placeholder="Phone" name="phone"
+                                        value="{{ old('phone', $subcontractor->phone) }}" required />
                                     @error('phone')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -215,78 +215,120 @@
                                         </span>
                                     @enderror
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="wrapper">
-                    <div class="description-item">
-                        <h5 for="description">Describe your Business</h5>
-                        <textarea class="form-control @error('description') is-invalid @enderror" rows="6"
-                            placeholder="Describe your Business" name="description" required>{{ old('description', $subcontractor->description) }}</textarea>
-                        @error('description')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="wrapper">
-                    <div class="values-item">
-                        <h5 class="@error('certificates.0') is-invalid @enderror">Certifications &amp; Training </h5>
-                        @error('certificates.0')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                        <div class="link">
-                            <a id="addMore">Add More</a>
-                        </div>
-                    </div>
-
-                    <div class="upload-cer pt-4 d-flex flex-wrap" id="imagePreviewContainer">
-                        <!-- Display existing certificates -->
-                        @if ($subcontractor->certifications && count($subcontractor->certifications) > 0)
-                            @foreach ($subcontractor->certifications as $certificate)
-                                <div class="image-item me-2 position-relative">
-                                    @if (Str::endsWith($certificate->file_path, ['.jpg', '.jpeg', '.png', '.gif']))
-                                        <img src="{{ asset('storage/' . $certificate->file_path) }}" alt="Certificate"
-                                            class="img-fluid" width="150">
-                                    @else
-                                        <img src="{{ asset('assets/images/files.png') }}" alt="PDF Certificate"
-                                            class="img-fluid" width="150">
-                                    @endif
-                                    <button type="button"
-                                        class="btn btn-danger btn-sm position-absolute top-0 end-0 remove-existing-image"
-                                        data-cert="{{ $certificate->file_path }}">X</button>
+                                <div class="col-md-6 form-inner">
+                                    <label class="form-label">Availability</label>
+                                    <div class="@error('availability') is-invalid @enderror">
+                                        <select class="form-control" name="availability" id="availability" required>
+                                            <option value="" selected>Select availability</option>
+                                            @foreach (config('constants.availability') as $availability)
+                                                <option value="{{ $availability }}" {{ $availability == $subcontractor->availability ? 'selected' : '' }}>{{ $availability }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @error('availability')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
-                            @endforeach
-                        @else
-                            <div class="image-item me-2 position-relative">
-                                <img src="{{ asset('assets/images/certificates.png') }}" alt=""
-                                    class="img-fluid default-img" width="150">
                             </div>
-                        @endif
+                            <div class="col-md-6 form-inner">
+                                <label for="exampleInputPassword1" class="form-label">Location</label>
+                                <div class="@error('location') is-invalid @enderror">
+                                    <select class="form-control js-example-tags" name="location" id="location" required>
+                                        <option value="" selected>Select Location</option>
+                                        @foreach ($locations as $key => $location)
+                                        <option value="{{ $location->name }}" {{ $location->name == $subcontractor->location ? 'selected' : '' }}>
+                                                {{ $location->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @error('location')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
-
-                    <input type="file" id="imageInput" name="certificates[]" class="d-none" multiple
-                        accept="image/*,application/pdf">
-                    <!-- Hidden input to track deleted certificates -->
-                    <input type="hidden" id="deleted_certificates" name="deleted_certificates" value="">
                 </div>
-
-                <div class="save-button link">
-                    <a href="#" name="subcontractor_update" id="subcontractor_update"> Save Changes</a>
-                </div>
-            </form>
         </div>
+    </div>
+
+    <div class="wrapper">
+        <div class="description-item">
+            <h5 for="description">Describe your Business</h5>
+            <textarea class="form-control @error('description') is-invalid @enderror" rows="6"
+                placeholder="Describe your Business" name="description" required>{{ old('description', $subcontractor->description) }}</textarea>
+            @error('description')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <div class="values-item">
+            <h5 class="@error('certificates.0') is-invalid @enderror">Certifications &amp; Training </h5>
+            @error('certificates.0')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+            <div class="link">
+                <a id="addMore">Add More</a>
+            </div>
+        </div>
+
+        <div class="upload-cer pt-4 d-flex flex-wrap" id="imagePreviewContainer">
+            <!-- Display existing certificates -->
+            @if ($subcontractor->certifications && count($subcontractor->certifications) > 0)
+                @foreach ($subcontractor->certifications as $certificate)
+                    <div class="image-item me-2 position-relative">
+                        @if (Str::endsWith($certificate->file_path, ['.jpg', '.jpeg', '.png', '.gif']))
+                            <img src="{{ asset('storage/' . $certificate->file_path) }}" alt="Certificate"
+                                class="img-fluid" width="150">
+                        @else
+                            <img src="{{ asset('assets/images/files.png') }}" alt="PDF Certificate" class="img-fluid"
+                                width="150">
+                        @endif
+                        <button type="button"
+                            class="btn btn-danger btn-sm position-absolute top-0 end-0 remove-existing-image"
+                            data-cert="{{ $certificate->file_path }}">X</button>
+                    </div>
+                @endforeach
+            @else
+                <div class="image-item me-2 position-relative">
+                    <img src="{{ asset('assets/images/certificates.png') }}" alt=""
+                        class="img-fluid default-img" width="150">
+                </div>
+            @endif
+        </div>
+
+        <input type="file" id="imageInput" name="certificates[]" class="d-none" multiple
+            accept="image/*,application/pdf">
+        <!-- Hidden input to track deleted certificates -->
+        <input type="hidden" id="deleted_certificates" name="deleted_certificates" value="">
+    </div>
+
+    <div class="save-button link">
+        <a href="#" name="subcontractor_update" id="subcontractor_update"> Save Changes</a>
+    </div>
+    </form>
+    </div>
     </div>
 @endsection
 
 @section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+        $(document).ready(function() {
+            $(".js-example-tags").select2({
+                tags: true
+            });
+        });
         document.getElementById('profileInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
             const profileImage = document.getElementById('profileImage');
@@ -503,6 +545,8 @@
                 validateField($("input[name='years_in_business']"), "Years in Business is required");
                 validateField($("input[name='insurances']"), "Insurances are required");
                 validateField($("input[name='abn']"), "ABN is required");
+                validateField($("select[name='location']"), "location is required");
+                validateField($("select[name='availability']"), "Availability is required");
                 validateField($("input[name='licenses']"), "Licenses are required");
                 validateField($("textarea[name='description']"), "Description is required");
 

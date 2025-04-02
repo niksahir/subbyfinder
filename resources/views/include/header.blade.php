@@ -43,6 +43,24 @@
                         <li><a href="{{ route('front.createaccount') }}">Register</a></li>
                         <li><a href="{{ route('login') }}">Sign In</a></li>
                     </ul>
+                @else
+                    <div class="logged-in">
+                        <ul>
+                            <li><a href="#"> <i class="fa-solid fa-bell"></i> <span>4</span></a>
+                            </li>
+                            <li><a href="#"><i class="fa-regular fa-envelope"></i> <span>6</span></a></li>
+                        </ul>
+
+                        <div class="user">
+                            @if (isset($userLogin) && !empty($userLogin))
+                                <img src="{{ asset('storage/' . $userLogin->profile_photo) }}" alt="Profile Photo"
+                                    class="img-fluid">
+                            @else
+                                <img src="{{ asset('assets/images/team-1.jpg') }}" alt="Default Image" class="img-fluid">
+                            @endif
+                            <span></span>
+                        </div>
+                    </div>
                 @endif
             </div>
         </div>

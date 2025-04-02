@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\ProjectType;
 use App\Models\Certification;
+use App\Models\Location;
 use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller {
@@ -20,8 +21,8 @@ class SettingController extends Controller {
         $userId = Auth::guard('subcontractor')->id();
         $subcontractor = SubContractor::where('id', $userId)->first();
         $expertise_in = Expertise::all();
-        // return $subcontractor->certifications;
-        return view("subcontractor.setting.index", compact('subcontractor', 'expertise_in'));
+        $locations = Location::all();
+        return view("subcontractor.setting.index", compact('subcontractor', 'expertise_in', 'locations'));
    }
 
    /**
@@ -71,6 +72,8 @@ class SettingController extends Controller {
             'insurances' => 'required|string',
             'abn' => 'required|string',
             'licenses' => 'required|string',
+            'location' => 'required|string',
+            'availability' => 'required|string',
             'trade_category' => 'required|array',
             'description' => 'required|string',
             'certificates.*' => 'mimes:jpeg,png,jpg,gif,pdf|max:2048',
@@ -99,7 +102,13 @@ class SettingController extends Controller {
         } else {
             unset($validatedData['password']);
         }
+        $locationName = ucwords(strtolower(trim($request->location)));
 
+        // Check if location exists
+        $location = Location::firstOrCreate(['name' => $locationName]);
+
+        // Set location ID to validated data
+        $validatedData['location'] = $locationName;
         // Update subcontractor details
         $subContractor->update($validatedData);
 

@@ -11,6 +11,21 @@
                     <div class="left-sidebar">
                         <form id="filter-form" method="GET">
                             <fieldset>
+                                <!-- Location Filter -->
+                                <div class="inner-form">
+                                    <label for="location" class="form-label">Location</label>
+                                    <select class="form-select" name="location" aria-label="Default select example"
+                                        onchange="fetchProjects()">
+                                        <option value="">
+                                            Select location
+                                        </option>
+                                        @foreach ($locations as $location)
+                                            <option value="{{ $location->name }}">
+                                                {{ $location->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <!-- Category Filter -->
                                 <div style="margin-bottom: 40px">
                                     <label for="trade_category" class="form-label">Category</label>
@@ -20,6 +35,20 @@
                                             <option value="{{ $expertise->id }}">
                                                 {{ $expertise->name }}
                                             </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <!-- Location Filter -->
+                                <div class="inner-form">
+                                    <label for="availability" class="form-label">Availability</label>
+                                    <select class="form-select" name="availability" aria-label="Default select example"
+                                        onchange="fetchProjects()">
+                                        <option value="">
+                                            Select availability
+                                        </option>
+                                        @foreach (config('constants.availability') as $availability)
+                                            <option value="{{ $availability }}">
+                                                {{ $availability }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -101,7 +130,12 @@
                             iconElement.removeClass('fa-regular').addClass('fa-solid');
                         } else if (response.status === 'removed') {
                             iconElement.removeClass('fa-solid').addClass('fa-regular');
+                        } else {
+                            window.location.href = "{{ route('login') }}";
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        window.location.href = "{{ route('login') }}";
                     }
                 });
             });

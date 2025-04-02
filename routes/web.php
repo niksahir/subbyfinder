@@ -37,8 +37,6 @@ Route::get('subcontractor-search', [FrontHomeController::class, 'subcontractorse
 Route::get('subcontractor-project-details-lock', [FrontHomeController::class, 'subcontractorprojectdetilslock'])->name('front.subcontractorprojectdetilslock');
 Route::get('subcontractor-project-details', [FrontHomeController::class, 'subcontractorprojectdetils'])->name('front.subcontractorprojectdetils');
 
-Route::get('subcontractor-search', [FrontHomeController::class, 'subcontractorsearch'])->name('front.subcontractorsearch');
-
 Route::get('/front', [App\Http\Controllers\HomeController::class, 'index'])->name('front');
 
 Route::prefix('contractor')->name('contractor.')->group(function () {

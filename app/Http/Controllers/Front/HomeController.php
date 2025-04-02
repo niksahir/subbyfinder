@@ -46,11 +46,13 @@ class HomeController extends Controller {
         $query = ContractorProject::query();
         $userEmailAlerts = 0;
         $sortBy = $request->sort_by ? $request->sort_by : 'latest';
-
+        $userLogin = null;
         if (Auth::guard('contractor')->check()) {
             $userEmailAlerts = Auth::guard('contractor')->user()->email_alerts;
+            $userLogin = Auth::guard('contractor')->user();
         } elseif (Auth::guard('subcontractor')->check()) {
             $userEmailAlerts = Auth::guard('subcontractor')->user()->email_alerts;
+            $userLogin = Auth::guard('subcontractor')->user();
         }
 
         // Search by Location
@@ -122,7 +124,7 @@ class HomeController extends Controller {
         $project_types = ProjectType::all();
         $projects = ContractorProject::latest()->paginate(10);
         $locations = Location::all();
-        return view('front.projectSearch', compact('expertise_in', 'projects', 'project_types', 'userEmailAlerts', 'sortBy', 'locations'));
+        return view('front.projectSearch', compact('expertise_in', 'projects', 'project_types', 'userEmailAlerts', 'sortBy', 'locations', 'userLogin'));
    }
 
    public function projectDetils(Request $request) {
@@ -134,17 +136,27 @@ class HomeController extends Controller {
         $query = SubContractor::query();
         $userEmailAlerts = 0;
         $sortBy = $request->sort_by ? $request->sort_by : 'latest';
-
+        $userLogin = null;
         $query->orderBy('created_at', $request->sort_by == 'latest' ? 'desc' : 'asc');
 
         if (Auth::guard('contractor')->check()) {
             $userEmailAlerts = Auth::guard('contractor')->user()->subcontractor_email_alerts;
+            $userLogin = Auth::guard('contractor')->user();
         } elseif (Auth::guard('subcontractor')->check()) {
             $userEmailAlerts = Auth::guard('subcontractor')->user()->subcontractor_email_alerts;
+            $userLogin = Auth::guard('subcontractor')->user();
         }
         // Filter by Category
         if ($request->has('trade_category') && !empty($request->trade_category)) {
             $query->whereJsonContains('trade_category', $request->trade_category);
+        }
+
+        if ($request->has('location') && !empty($request->location)) {
+            $query->where('location', 'LIKE', '%' . $request->location . '%');
+        }
+
+        if ($request->has('availability') && !empty($request->availability)) {
+            $query->where('availability', 'LIKE', '%' . $request->availability . '%');
         }
         // Get Paginated Results
         $subcontractors = $query->latest()->paginate(10);
@@ -157,8 +169,8 @@ class HomeController extends Controller {
 
         $expertise_in = Expertise::all();
         $subcontractors = SubContractor::latest()->paginate(10);
-        // return 0;
-      return view('front.principalContractor', compact('expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy'));
+        $locations = Location::all();
+      return view('front.principalContractor', compact('expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
    }
 
    public function projectdetilslock($id) {
