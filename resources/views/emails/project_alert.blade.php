@@ -103,7 +103,7 @@
                 @foreach ($projects as $project)
                     <li>
                         <a href="{{ route('front.projectdetilslock', $project->id) }}">{{ $project->project_name }}</a>
-                        <p><strong>Budget:</strong> ${{ number_format($project->budget, 2) }}</p>
+                        <p><strong>Budget:</strong> ${{ $project->budget }}</p>
                         <p><strong>Category:</strong>
                             @if (!empty($project->expertise_names))
                                 @foreach ($project->expertise_names as $expertise)

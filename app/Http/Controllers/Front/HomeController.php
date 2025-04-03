@@ -17,8 +17,23 @@ class HomeController extends Controller {
    /**
     * Display a listing of the resource.
     */
+
+    protected $userLogin;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::guard('contractor')->check()) {
+                $this->userLogin = Auth::guard('contractor')->user();
+            } elseif (Auth::guard('subcontractor')->check()) {
+                $this->userLogin = Auth::guard('subcontractor')->user();
+            }
+            return $next($request);
+        });
+    }
+
    public function index(Request $request) {
-      return view('front.home');
+        return view('front.home', ['userLogin' => $this->userLogin]);
    }
 
    private function convertBudgetToOrder($budget)

@@ -12,8 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Schedule your command here
-        $schedule->command('send:project-alerts')->weekly();
+        // Schedule your command here: Run Every Monday at 3 AM
+        $schedule->command('send:project-alerts')->weeklyOn(1, '03:00');
     }
 
     /**
