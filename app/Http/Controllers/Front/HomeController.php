@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Expertise;
 use App\Models\ProjectType;
 use App\Models\Contractor;
+use App\Models\Plan;
 use App\Models\Location;
 use App\Models\SubContractor;
 use App\Models\ContractorProject;
@@ -35,6 +36,14 @@ class HomeController extends Controller {
    public function index(Request $request) {
         return view('front.home', ['userLogin' => $this->userLogin]);
    }
+
+   public function showPlans()
+    {
+        $monthlyPlans = Plan::where('billing_type', 'monthly')->get();
+        $yearlyPlans = Plan::where('billing_type', 'yearly')->get();
+        $userLogin = $this->userLogin;
+        return view('front.plans', compact('monthlyPlans', 'yearlyPlans', 'userLogin'));
+    }
 
    private function convertBudgetToOrder($budget)
     {

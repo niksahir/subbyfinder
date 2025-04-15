@@ -13,6 +13,9 @@
                         <ul>
                             <li><a href="{{ route('front.home') }}">Home</a></li>
                             <li><a href="{{ route('front.subcontractorsearch') }}">Find Subcontractors</a></li>
+                            <li>
+                                <a href="{{ route('front.pricing') }}">Pricing</a>
+                            </li>
                             <li><a href="{{ route('contractor.dashboard.index') }}">Dashboard</a></li>
                         </ul>
                     </div>

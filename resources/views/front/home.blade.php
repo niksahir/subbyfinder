@@ -678,8 +678,8 @@ Subby Finder
                </div>
 
                <div class="radio-item">
-                  <input type="radio" class="" id="month">
-                  <label for="month">Billed Yearly <span>Save 10%</span></label>
+                  <input type="radio" class="" id="year">
+                  <label for="year">Billed Yearly <span>Save 10%</span></label>
                </div>
             </div>
          </div>

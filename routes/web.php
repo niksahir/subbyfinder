@@ -21,6 +21,7 @@ use App\Http\Controllers\SubContractor\RegisterController as SubContractorRegist
 use App\Http\Controllers\SubContractor\ReviewController;
 use App\Http\Controllers\SubContractor\SettingController as SubContractorSettingController;
 use App\Http\Controllers\SubContractor\WalletController as SubContractorWalletController;
+use App\Http\Controllers\StripeController;
 use Illuminate\Support\Facades\Route;
 
 Auth::routes();
@@ -36,6 +37,7 @@ Route::get('project-details-lock/{id}', [FrontHomeController::class, 'projectdet
 Route::get('subcontractor-search', [FrontHomeController::class, 'subcontractorsearch'])->name('front.subcontractorsearch');
 Route::get('subcontractor-project-details-lock', [FrontHomeController::class, 'subcontractorprojectdetilslock'])->name('front.subcontractorprojectdetilslock');
 Route::get('subcontractor-project-details', [FrontHomeController::class, 'subcontractorprojectdetils'])->name('front.subcontractorprojectdetils');
+Route::get('pricing', [FrontHomeController::class, 'showPlans'])->name('front.pricing');
 
 Route::get('/front', [App\Http\Controllers\HomeController::class, 'index'])->name('front');
 
@@ -73,3 +75,7 @@ Route::prefix('sub-contractor')->name('subcontractor.')->group(function () {
       Route::resource('setting', SubContractorSettingController::class);
    });
 });
+
+Route::post('checkout', [StripeController::class, 'checkout'])->name('stripe.checkout');
+Route::get('success', [StripeController::class, 'success'])->name('stripe.success');
+Route::get('cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');

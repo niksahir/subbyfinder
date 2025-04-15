@@ -20,6 +20,9 @@
                                 <a href="{{ route('front.subcontractorsearch') }}">Find Subcontractors</a>
                             </li>
                             <li>
+                                <a href="{{ route('front.pricing') }}">Pricing</a>
+                            </li>
+                            <li>
                                 @if (Auth::guard('contractor')->check())
                                     <a href="{{ route('contractor.dashboard.index') }}">Dashboard</a>
                                 @elseif(Auth::guard('subcontractor')->check())
