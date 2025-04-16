@@ -71,8 +71,9 @@
 
                         <div class="info">
                             <div class="lock-button">
-                                <a href="{{ '/unloack-project/' . $project->id }}" class="text-decoration-none @if ($unlockProject == false) pe-none @else pe-auto @endif"
-                                   >Unlock Contact</a>
+                                <a href="{{ '/unloack-project/' . $project->id }}"
+                                    class="text-decoration-none @if ($unlockProject == false) pe-none @else pe-auto @endif">Unlock
+                                    Contact</a>
                             </div>
 
                             <div class="info-inner">
@@ -103,25 +104,7 @@
                         <div class="list mt-5">
                             <h6>Expertise in</h6>
                             <ul>
-                                <li>
-                                    <div>Lighting</div>
-                                </li>
-                                <li>
-                                    <div>Cabling</div>
-                                </li>
-                                <li>
-                                    <div>Decommissioning</div>
-                                </li>
-                                <li>
-                                    <div>Power</div>
-                                </li>
-                                <li>
-                                    <div>Repairs</div>
-                                </li>
-                                <li>
-                                    <div>Rough-in &amp; Fitoff</div>
-                                </li>
-
+                                {{ $project->contractor->expertise_in ?? '-' }}
                             </ul>
                         </div>
 
@@ -214,7 +197,53 @@
                                 <h6>Past Project Completed : </h6>
                             </div>
 
-                            <div class="prject-with-images mb-5 pb-3">
+                            @if ($protfolio->isNotEmpty())
+                                @foreach ($protfolio as $p)
+                                    <div class="prject-with-images mb-5 pb-3">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <div class="img-with-text">
+                                                    <h6>{{ $p->project_name }}</h6>
+
+                                                    <ul class="list-unstyled">
+                                                        <li><i class="fa-solid fa-location-dot"></i> {{ $p->location }}
+                                                        </li>
+                                                    </ul>
+
+                                                    <p>{{ $p->description }}</p>
+                                                    @php
+                                                        $images = json_decode($p->images, true);
+                                                    @endphp
+
+                                                    <div class="img-wrapper">
+                                                        <input type="hidden" name="dh" value="{{ $p->images }}">
+                                                        @if ($images && is_array($images))
+                                                            @foreach ($images as $image)
+                                                                <img src="{{ asset('storage/' . $image) }}" alt=""
+                                                                    class="img-fluid">
+                                                            @endforeach
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="price">
+                                                    <h6>{{ $p->price }}</h6>
+                                                    <p>outcomes</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="prject-with-images mb-5 pb-3">
+                                    <p>No past project available.</p>
+                                </div>
+                            @endif
+
+
+                            {{-- <div class="prject-with-images mb-5 pb-3">
                                 <div class="row">
                                     <div class="col-md-9">
                                         <div class="img-with-text">
@@ -250,46 +279,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-
-                            <div class="prject-with-images mb-5 pb-3">
-                                <div class="row">
-                                    <div class="col-md-9">
-                                        <div class="img-with-text">
-                                            <h6>Project Name</h6>
-
-                                            <ul class="list-unstyled">
-                                                <li><i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                                            </ul>
-
-                                            <p>Capitalize on low hanging fruit to identify a ballpark value added
-                                                activity to beta test. Override the digital divide with additional
-                                                clickthroughs from .....</p>
-
-                                            <div class="img-wrapper">
-                                                <img src="{{ asset('assets/images/project-1.png') }}" alt=""
-                                                    class="img-fluid">
-                                                <img src="{{ asset('assets/images/project-2.png') }}" alt=""
-                                                    class="img-fluid">
-                                                <img src="{{ asset('assets/images/project-3.png') }}" alt=""
-                                                    class="img-fluid">
-                                                <img src="{{ asset('assets/images/project-4.png') }}" alt=""
-                                                    class="img-fluid">
-                                                <img src="{{ asset('assets/images/project-5.png') }}" alt=""
-                                                    class="img-fluid">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <div class="price">
-                                            <h6>$100 - $150 </h6>
-                                            <p>outcomes</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            </div> --}}
 
                             <div class="full-label">
                                 <h6>Reviews </h6>

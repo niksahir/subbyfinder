@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Models\UnlockedProject;
+use App\Models\UnlockSubcontractorProject;
 use Illuminate\Http\Request;
 use App\Models\Expertise;
 use App\Models\ProjectType;
@@ -12,6 +13,7 @@ use App\Models\Plan;
 use App\Models\Location;
 use App\Models\SubContractor;
 use App\Models\ContractorProject;
+use App\Models\SubcontractorProtfolio;
 use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Auth;
 
@@ -182,6 +184,11 @@ class HomeController extends Controller
         $userType = $this->getUserType();
 
         $project = ContractorProject::with('contractor')->findOrFail($id);
+
+        $projectTypes = $project->project_type_models;
+
+        $protfolio = SubcontractorProtfolio::get();
+
         $unloackedProject = UnlockedProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
             ->where('project_id', $id)
@@ -195,7 +202,7 @@ class HomeController extends Controller
 
         if ($userSubcription == null) {
             $unlockProject = false;
-            return view('front.projectdetilslock', compact('project', 'unlockProject'));
+            return view('front.projectdetilslock', compact('project', 'unlockProject','projectTypes','protfolio'));
         }
         $unloackedProjectCount = UnlockedProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
@@ -234,9 +241,9 @@ class HomeController extends Controller
         }
 
         if ($unloackedProject) {
-            return view('front.projectdetils', compact('project'));
+            return view('front.projectdetils', compact('project','projectTypes','protfolio'));
         } else {
-            return view('front.projectdetilslock', compact('project', 'unlockProject'));
+            return view('front.projectdetilslock', compact('project', 'unlockProject','projectTypes','protfolio'));
         }
     }
 
@@ -303,15 +310,91 @@ class HomeController extends Controller
         return redirect()->route('front.projectDetils', $id);
     }
 
-
-    public function subcontractorprojectdetilslock(Request $request)
+    public function unloackSubcontractorProject($id)
     {
-        return view('front.subcontractorprojectdetilslock');
+        $userId = $this->userLogin;
+        $userType = $this->getUserType();
+
+        $uloackedProject = new UnlockSubcontractorProject();
+        $uloackedProject->user_id = $userId->id;
+        $uloackedProject->project_id = $id;
+        $uloackedProject->user_type = $userType;
+        $uloackedProject->save();
+
+        return redirect()->route('front.subcontractorprojectdetils', $id);
     }
 
-    public function subcontractorprojectdetils(Request $request)
+    public function subcontractorprojectdetilslock($id)
     {
-        return view('front.subcontractorprojectdetils'); // Desin not ready
+        $project =SubContractor::findOrfail($id);
+        return view('front.subcontractorprojectdetilslock',compact('project'));
+    }
+
+    public function subcontractorprojectdetils($id)
+    {
+
+        $userId = $this->userLogin;
+        $userType = $this->getUserType();
+
+        $project = SubContractor::findOrFail($id);
+        $projectTypes = $project->project_type_models;
+        $protfolio = SubcontractorProtfolio::where('user_id',$id)->get();
+
+        $unloackedProject = UnlockSubcontractorProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
+            ->where('project_id', $id)
+            ->first();
+
+        $userSubcription = UserSubscription::where('user_id', $userId->id)
+            ->where('is_active', 1)
+            ->where('user_type', $userType)
+            ->latest()
+            ->first();
+
+        if ($userSubcription == null) {
+            $unlockProject = false;
+            return view('front.subcontractorprojectdetils', compact('project', 'unlockProject','projectTypes','protfolio'));
+        }
+        $unloackedProjectCount = UnlockSubcontractorProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
+            ->count();
+
+        $unlockProject = false;
+        $now = now();
+        $startDate = $userSubcription->start_date;
+        $endDate = $userSubcription->end_date;
+
+        $monthsSinceStart = $startDate->diffInMonths($now);
+
+        $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
+        $currentBillingEnd = $currentBillingStart->copy()->addMonth();
+
+        $unlockedThisMonth = UnlockSubcontractorProject::where('user_id', $userId->id)
+            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+            ->count();
+
+        $planId = $userSubcription->plan_id;
+        $unlockLimit = null;
+
+        if (in_array($planId, [1, 2])) {
+            $unlockLimit = 2;
+        } elseif (in_array($planId, [3, 4])) {
+            $unlockLimit = 5;
+        } elseif (in_array($planId, [5, 6])) {
+            $unlockLimit = null; // Unlimited
+        }
+
+        // Final decision
+        if ($endDate >= $now) {
+            if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
+                $unlockProject = true;
+            }
+        }
+        if($unloackedProject){
+            return view('front.subcontractorprojectdetils', compact('project','protfolio')); // Desin not ready
+        }else{
+            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject','protfolio'));
+        }
     }
 
     public function contractor(Request $request)

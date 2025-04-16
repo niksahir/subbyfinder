@@ -17,7 +17,85 @@
                     <li><a href="{{ route('front.home') }}">Home</a></li>
                     <li><a href="{{ route('subcontractor.dashboard.index') }}">Dashboard</a></li>
                     <li><a href="#">Settings</a></li>
+                    <button class="bg-transparent border-none text-white box-shadow" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">Add protfolio</button>
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('subcontractor.protfolio.index') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group mb-3 @error('project_name') is-invalid @enderror">
+                            <label for="name">Project Name</label>
+                            <input type="text" class="form-control" id="name" name="project_name">
+                            @error('project_name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-inner">
+                            <label for="exampleInputPassword1" class="form-label">Location</label>
+                            <div class="@error('location') is-invalid @enderror">
+                                <select class="form-control js-example-tags" name="location" id="location">
+                                    <option value="" selected>Select Location</option>
+                                    @foreach ($locations as $key => $location)
+                                        <option value="{{ $location->name }}">
+                                            {{ $location->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @error('location')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('protfolio_image[]') is-invalid @enderror">
+                            <label for="name">Image</label>
+                            <input type="file" class="form-control" id="protfolio_image" name="protfolio_image[]"
+                                accept="jpg,jpeg,png" multiple>
+                            @error('location')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('description') is-invalid @enderror">
+                            <label for="name">Description</label>
+                            <input type="text" class="form-control" id="description" name="description">
+                            @error('description')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('price') is-invalid @enderror">
+                            <label for="name">Price</label>
+                            <input type="text" class="form-control" id="price" name="price">
+                            @error('price')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary @if($protfolioAdd == false) disabled @endif" value="Save changes" >
+                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -62,7 +140,8 @@
                             <div class="row g-3">
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Business Name</label>
-                                    <input type="text" class="form-control @error('business_name') is-invalid @enderror"
+                                    <input type="text"
+                                        class="form-control @error('business_name') is-invalid @enderror"
                                         name="business_name" placeholder="Business Name"
                                         value="{{ old('business_name', $subcontractor->business_name) }}" required />
                                     @error('business_name')
@@ -221,7 +300,9 @@
                                         <select class="form-control" name="availability" id="availability" required>
                                             <option value="" selected>Select availability</option>
                                             @foreach (config('constants.availability') as $availability)
-                                                <option value="{{ $availability }}" {{ $availability == $subcontractor->availability ? 'selected' : '' }}>{{ $availability }}</option>
+                                                <option value="{{ $availability }}"
+                                                    {{ $availability == $subcontractor->availability ? 'selected' : '' }}>
+                                                    {{ $availability }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -238,7 +319,8 @@
                                     <select class="form-control js-example-tags" name="location" id="location" required>
                                         <option value="" selected>Select Location</option>
                                         @foreach ($locations as $key => $location)
-                                        <option value="{{ $location->name }}" {{ $location->name == $subcontractor->location ? 'selected' : '' }}>
+                                            <option value="{{ $location->name }}"
+                                                {{ $location->name == $subcontractor->location ? 'selected' : '' }}>
                                                 {{ $location->name }}
                                             </option>
                                         @endforeach

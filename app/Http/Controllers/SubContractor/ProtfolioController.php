@@ -1,0 +1,90 @@
+<?php
+
+namespace App\Http\Controllers\Subcontractor;
+
+use App\Http\Controllers\Controller;
+use App\Models\SubcontractorProtfolio;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ProtfolioController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create() {}
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'project_name' => 'required',
+                'location' => 'required',
+                'protfolio_image' => 'required|array',
+                'protfolio_image.*' => 'image|max:2048',
+                'description' => 'required',
+                'price' => 'required',
+            ]);
+
+            $imagePaths = [];
+
+            foreach ($request->file('protfolio_image') as $image) {
+                $imagePath = $image->store('protfolio_image', 'public');
+                $imagePaths[] = $imagePath;
+            }
+
+            $validated['images'] = json_encode($imagePaths, true);
+            $validated['user_id'] = Auth::guard('subcontractor')->id();
+
+            SubcontractorProtfolio::create($validated);
+
+            return redirect()->back()->with('success', 'Protfolio added successfully!');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try again.');
+        }
+    }
+
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
+}

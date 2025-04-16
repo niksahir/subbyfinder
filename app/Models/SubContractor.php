@@ -85,4 +85,10 @@ class SubContractor extends Authenticatable
         }
         return $this->bookmarks()->where(['user_id' => $userId, 'type' => $userType])->exists();
     }
+
+    public function unlockedProjects()
+{
+    return $this->hasMany(UnlockSubcontractorProject::class, 'user_id');
+}
+
 }

@@ -44,10 +44,14 @@ class ContractorProject extends Model
         return [];
     }
 
-    public function projectType()
+    public function getProjectTypeModelsAttribute()
     {
-        return $this->belongsToMany(ProjectType::class);
+        if (is_array($this->project_type)) {
+            return ProjectType::whereIn('id', $this->project_type)->get();
+        }
+        return collect();
     }
+
 
     public function bookmarks()
     {

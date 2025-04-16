@@ -77,7 +77,7 @@
                     <i class="{{ $subcontractor->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon"
                         data-id="{{ $subcontractor->id }}" style="cursor: pointer;"></i>
                 </div>
-                <a href="{{ route('front.subcontractorprojectdetilslock', $subcontractor->id) }}">View Profile</a>
+                <a href="{{ route('front.subcontractorprojectdetils', $subcontractor->id) }}">View Profile</a>
                 <a href="#">Message </a>
             </div>
         </div>
