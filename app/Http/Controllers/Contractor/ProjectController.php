@@ -42,7 +42,7 @@ class ProjectController extends Controller
 
         $canPostProject = true;
 
-        if ($purchasedPlans && in_array($purchasedPlans->plan_id, [5, 6])) {
+        if ($purchasedPlans && in_array($purchasedPlans->plan_id, [3, 4])) {
             // Billing month start based on plan start date
             $startDate = $purchasedPlans->start_date;
             $now = now();

@@ -28,7 +28,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    @if ($purchasedPlans['plan_id'] == 1 || $purchasedPlans['plan_id'] == 2 || $purchasedPlans['plan_id'] == 3 || $purchasedPlans['plan_id'] == 4 || $canPostProject == false)
+                    @if ($purchasedPlans['plan_id'] == 1 || $purchasedPlans['plan_id'] == 2 || $canPostProject == false)
                         <div class="form-wrapper" style="position: relative;">
                             <div id="formLockOverlay" class="lock-overlay">
                                 <a href="" class="purchase-btn">Unlock Adding Project</a>
