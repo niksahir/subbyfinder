@@ -31,6 +31,48 @@
 
     <link href="{{ asset('assets/css/multiSelect.css') }}" rel="stylesheet" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+
+.create_project_form_lock {
+    filter: blur(5px);
+    pointer-events: none; /* disables interactions while blurred */
+    opacity: 0.6; /* optional: makes the blur look better */
+  }
+
+  /* Overlay container */
+  /* This wrapper should be as wide and tall as the form */
+.form-wrapper {
+    position: relative;
+}
+
+/* Overlay that covers the form only */
+.lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(255, 255, 255, 0.5); /* optional: soft background */
+}
+
+/* Centered button */
+.purchase-btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: #F77A36;;
+    background-color: rgba(247, 122, 54, 0.1019607843);
+    text-decoration: none;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+    </style>
 </head>
 
 <body>

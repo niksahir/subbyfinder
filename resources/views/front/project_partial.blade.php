@@ -77,7 +77,7 @@
                         <h5>{{ $project->budget }}</h5>
                         <p>Budget</p>
                         <div class="link-light">
-                            <a href="{{ route('front.projectdetilslock', $project->id) }}">View Profile</a>
+                            <a href="{{ route('front.projectDetils', $project->id) }}">View Profile</a>
                         </div>
                         <div class="link">
                             <a href="#">Message</a>

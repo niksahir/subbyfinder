@@ -59,14 +59,10 @@ Project Details - Subby Finder
          <div class="col-md-8">
             <div class="left-content">
                <h5>Description</h5>
-               <p>Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative
-                  approaches to
-                  corporate strategy foster collaborative thinking to further the overall value proposition.
-                  Organically grow
-                  the holistic world view of disruptive innovation via workplace diversity and empowerment.
+               <p>{{$project->description}}</p>
                </p>
 
-               <p>Bring to the table win-win survival strategies to ensure proactive domination. At the end of
+               {{-- <p>Bring to the table win-win survival strategies to ensure proactive domination. At the end of
                   the day, going
                   forward, a new normal that has evolved from generation X is on the runway heading towards a
                   streamlined cloud solution. User generated content in real-time will have multiple
@@ -77,29 +73,29 @@ Project Details - Subby Finder
                   Override the digital
                   divide with additional clickthroughs from DevOps. Nanotechnology immersion along the
                   information
-                  highway will close the loop on focusing solely on the bottom line.</p>
+                  highway will close the loop on focusing solely on the bottom line.</p> --}}
 
                <div class="info">
                   <div class="item">
-                     <p>Business Name: <span>Dylan's Mowing</span></p>
-                     <p>Contact Name: <span>Jhon jacy</span></p>
+                     <p>Business Name: <span>{{ $project->contractor->business_name }}</span></p>
+                     <p>Contact Name: <span>{{ $project->contractor->contact_name }}</span></p>
                   </div>
                   <div class="item">
-                     <p>Phone: <span>9876543210</span></p>
-                     <p>Email: <span>jhonjack@gmail.com</span></p>
+                     <p>Phone: <span>{{ $project->contractor->phone }}</span></p>
+                     <p>Email: <span>{{ $project->contractor->email }}</span></p>
                   </div>
                   <div class="item">
-                     <p>Address: <span>San Francisco</span></p>
-                     <p>Support staff size: <span>Jhon jacy</span></p>
+                     <p>Address: <span>{{ $project->contractor->address }}</span></p>
+                     <p>Support staff size: <span>{{ $project->contractor->support_staff_size }}</span></p>
                   </div>
                   <div class="item">
-                     <p>Years In Business: <span>10 Years</span></p>
-                     <p>Insurances: <span>67543156 <small>Verified</small></span></p>
+                     <p>Years In Business: <span>{{ $project->contractor->years_in_business }}</span></p>
+                     <p>Insurances: <span>{{ $project->contractor->insurances }} <small>Verified</small></span></p>
 
                   </div>
                   <div class="item">
-                     <p>ABN: <span>98765432567 </span></p>
-                     <p>License: <span>79252 <small>Verified</small></span></p>
+                     <p>ABN: <span>{{ $project->contractor->abn }} </span></p>
+                     <p>License: <span>{{ $project->contractor->licenses }} <small>Verified</small></span></p>
                   </div>
                </div>
 

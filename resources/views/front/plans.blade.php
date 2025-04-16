@@ -58,7 +58,14 @@
                         </div>
                         <h6>Features of ${plan.name}</h6>
                         <ul>
-                            ${(Array.isArray(plan.features) ? plan.features : JSON.parse(plan.features)).map(f => `<li>${f}</li>`).join('')}
+                            ${
+                                Array.isArray(plan.features)
+                                    ? plan.features
+                                    : (typeof plan.features === 'string'
+                                        ? JSON.parse(plan.features)
+                                        : [])
+                                    .map(f => `<li>${f}</li>`).join('')
+                            }
                         </ul>
                         <div class="link border">
                             <a href="#" onclick="handleBuyNow('${plan.id}')">Buy Now</a>
@@ -67,6 +74,7 @@
                 </div>`;
                 container.innerHTML += html;
             });
+
         }
 
         function handleBuyNow(planId) {
@@ -93,3 +101,6 @@
         });
     </script>
 @endsection
+{{-- // <ul>
+    //     ${(Array.isArray(plan.features) ? plan.features : JSON.parse(plan.features)).map(f => `<li>${f}</li>`).join('')}
+    // </ul> --}}

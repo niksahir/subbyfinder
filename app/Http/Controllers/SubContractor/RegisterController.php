@@ -10,6 +10,7 @@ use App\Models\Expertise;
 use App\Models\ProjectType;
 use App\Models\SubContractor;
 use App\Models\Certification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class RegisterController extends Controller {
@@ -78,8 +79,8 @@ class RegisterController extends Controller {
             ]);
         }
     }
-
-    return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
+    Auth::guard('subcontractor')->login($subContractor);
+    return redirect()->route('front.pricing')->with('success', 'Registration successful!');
 
    }
 

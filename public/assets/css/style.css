@@ -2642,7 +2642,7 @@ header .sign-in li:nth-child(2) a {
 }
 
 .form-btn {
-  padding-top: 30px;
+  padding-top: 305px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3005,7 +3005,9 @@ header .sign-in li:nth-child(2) a {
           justify-content: center;
   z-index: 2;
 }
-.description-section .left-content .info .lock-button p {
+
+
+.description-section .left-content .info .lock-button a {
   padding: 10px 20px;
   color: var(--c-primary);
   background-color: rgba(247, 122, 54, 0.1019607843);

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Expertise;
 use App\Models\ProjectType;
 use App\Models\Location;
+use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -31,8 +32,45 @@ class ProjectController extends Controller
         $project_types = ProjectType::all();
         $locations = Location::all();
         $states = config('constants.states');
-        return view("contractor.projects.create", compact('expertise_in', 'states', 'project_types', 'locations'));
+        $userId = Auth::guard('contractor')->id();
+
+        $purchasedPlans = UserSubscription::where('user_id', $userId)
+            ->where('is_active', 1)
+            ->where('end_date', '>=', now())
+            ->latest()
+            ->first();
+
+        $canPostProject = true;
+
+        if ($purchasedPlans && in_array($purchasedPlans->plan_id, [5, 6])) {
+            // Billing month start based on plan start date
+            $startDate = $purchasedPlans->start_date;
+            $now = now();
+            $monthsSinceStart = $startDate->diffInMonths($now);
+            $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
+            $currentBillingEnd = $currentBillingStart->copy()->addMonth();
+
+            // Count user's posted projects in this billing cycle
+            $projectsThisMonth = ContractorProject::where('contractor_id', $userId)
+                ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+                ->count();
+
+            // Only 3 projects allowed per billing month
+            if ($projectsThisMonth >= 3) {
+                $canPostProject = false;
+            }
+        }
+
+        return view("contractor.projects.create", compact(
+            'purchasedPlans',
+            'expertise_in',
+            'states',
+            'project_types',
+            'locations',
+            'canPostProject'
+        ));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -93,8 +131,8 @@ class ProjectController extends Controller
     public function edit(string $id)
     {
         $project = ContractorProject::where('contractor_id', Auth::guard('contractor')->id())
-                ->where('id', $id)
-                ->firstOrFail();
+            ->where('id', $id)
+            ->firstOrFail();
 
         $expertise_in = Expertise::all(); // Fetch categories
         $locations = Location::all();
@@ -123,8 +161,8 @@ class ProjectController extends Controller
 
         // Get project
         $project = ContractorProject::where('contractor_id', $contractorId)
-                    ->where('id', $id)
-                    ->firstOrFail();
+            ->where('id', $id)
+            ->firstOrFail();
 
         // Check if a new logo is uploaded
         if ($request->hasFile('project_logo')) {
@@ -157,8 +195,8 @@ class ProjectController extends Controller
     public function destroy(string $id)
     {
         $project = ContractorProject::where('contractor_id', Auth::guard('contractor')->id())
-                ->where('id', $id)
-                ->firstOrFail();
+            ->where('id', $id)
+            ->firstOrFail();
 
         // Delete project logo if exists
         if ($project->project_logo) {

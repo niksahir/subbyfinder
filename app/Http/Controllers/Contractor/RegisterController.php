@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Contractor;
 use App\Models\Expertise;
 use App\Models\ProjectType;
-use Illuminate\Container\Attributes\Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -62,9 +62,10 @@ class RegisterController extends Controller {
 
         $validatedData['password'] = Hash::make($validatedData['password']);
         // $validatedData['values'] = is_array($validatedData['values']) ? $validatedData['values'][0] : $validatedData['values'];
-        Contractor::create($validatedData);
+        $contractor = Contractor::create($validatedData);
 
-        return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
+        Auth::guard('contractor')->login($contractor);
+        return redirect()->route('front.pricing')->with('success', 'Registration successful!');
     // }catch(\Exception $e){
     //     return $e->getMessage();
     // }

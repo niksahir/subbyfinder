@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Models\UnlockedProject;
 use Illuminate\Http\Request;
 use App\Models\Expertise;
 use App\Models\ProjectType;
@@ -11,13 +12,15 @@ use App\Models\Plan;
 use App\Models\Location;
 use App\Models\SubContractor;
 use App\Models\ContractorProject;
+use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Auth;
 
 
-class HomeController extends Controller {
-   /**
-    * Display a listing of the resource.
-    */
+class HomeController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
 
     protected $userLogin;
 
@@ -33,11 +36,32 @@ class HomeController extends Controller {
         });
     }
 
-   public function index(Request $request) {
-        return view('front.home', ['userLogin' => $this->userLogin]);
-   }
+    protected function getLoggedInUser()
+    {
+        if (Auth::guard('subcontractor')->check()) {
+            return Auth::guard('subcontractor')->user();
+        } elseif (Auth::guard('contractor')->check()) {
+            return Auth::guard('contractor')->user();
+        }
+        return null;
+    }
 
-   public function showPlans()
+    protected function getUserType()
+    {
+        if (Auth::guard('subcontractor')->check()) {
+            return 'subcontractor';
+        } elseif (Auth::guard('contractor')->check()) {
+            return 'contractor';
+        }
+        return null;
+    }
+
+    public function index(Request $request)
+    {
+        return view('front.home', ['userLogin' => $this->userLogin]);
+    }
+
+    public function showPlans()
     {
         $monthlyPlans = Plan::where('billing_type', 'monthly')->get();
         $yearlyPlans = Plan::where('billing_type', 'yearly')->get();
@@ -45,7 +69,7 @@ class HomeController extends Controller {
         return view('front.plans', compact('monthlyPlans', 'yearlyPlans', 'userLogin'));
     }
 
-   private function convertBudgetToOrder($budget)
+    private function convertBudgetToOrder($budget)
     {
         switch ($budget) {
             case '5K under':
@@ -65,7 +89,8 @@ class HomeController extends Controller {
         }
     }
 
-   public function projectSearch(Request $request) {
+    public function projectSearch(Request $request)
+    {
 
         $query = ContractorProject::query();
         $userEmailAlerts = 0;
@@ -149,13 +174,74 @@ class HomeController extends Controller {
         $projects = ContractorProject::latest()->paginate(10);
         $locations = Location::all();
         return view('front.projectSearch', compact('expertise_in', 'projects', 'project_types', 'userEmailAlerts', 'sortBy', 'locations', 'userLogin'));
-   }
+    }
 
-   public function projectDetils(Request $request) {
-      return view('front.projectdetils');
-   }
+    public function projectDetils($id)
+    {
+        $userId = $this->userLogin;
+        $userType = $this->getUserType();
 
-   public function subcontractorsearch(Request $request) {
+        $project = ContractorProject::with('contractor')->findOrFail($id);
+        $unloackedProject = UnlockedProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
+            ->where('project_id', $id)
+            ->first();
+
+        $userSubcription = UserSubscription::where('user_id', $userId->id)
+            ->where('is_active', 1)
+            ->where('user_type', $userType)
+            ->latest()
+            ->first();
+
+        if ($userSubcription == null) {
+            $unlockProject = false;
+            return view('front.projectdetilslock', compact('project', 'unlockProject'));
+        }
+        $unloackedProjectCount = UnlockedProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
+            ->count();
+
+        $unlockProject = false;
+        $now = now();
+        $startDate = $userSubcription->start_date;
+        $endDate = $userSubcription->end_date;
+
+        $monthsSinceStart = $startDate->diffInMonths($now);
+
+        $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
+        $currentBillingEnd = $currentBillingStart->copy()->addMonth();
+
+        $unlockedThisMonth = UnlockedProject::where('user_id', $userId->id)
+            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+            ->count();
+
+        $planId = $userSubcription->plan_id;
+        $unlockLimit = null;
+
+        if (in_array($planId, [1, 2])) {
+            $unlockLimit = 2;
+        } elseif (in_array($planId, [3, 4])) {
+            $unlockLimit = 5;
+        } elseif (in_array($planId, [5, 6])) {
+            $unlockLimit = null; // Unlimited
+        }
+
+        // Final decision
+        if ($endDate >= $now) {
+            if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
+                $unlockProject = true;
+            }
+        }
+
+        if ($unloackedProject) {
+            return view('front.projectdetils', compact('project'));
+        } else {
+            return view('front.projectdetilslock', compact('project', 'unlockProject'));
+        }
+    }
+
+    public function subcontractorsearch(Request $request)
+    {
 
         $query = SubContractor::query();
         $userEmailAlerts = 0;
@@ -194,73 +280,99 @@ class HomeController extends Controller {
         $expertise_in = Expertise::all();
         $subcontractors = SubContractor::latest()->paginate(10);
         $locations = Location::all();
-      return view('front.principalContractor', compact('expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
-   }
+        return view('front.principalContractor', compact('expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
+    }
 
-   public function projectdetilslock($id) {
-     $project = ContractorProject::findOrFail($id);
-      return view('front.projectdetilslock', compact('project'));
-   }
+    public function projectdetilslock($id)
+    {
+        $project = ContractorProject::with('contractor')->findOrFail($id);
+        return view('front.projectdetilslock', compact('project'));
+    }
 
-   public function subcontractorprojectdetilslock(Request $request) {
-      return view('front.subcontractorprojectdetilslock');
-   }
+    public function unloackproject($id)
+    {
+        $userId = $this->userLogin;
+        $userType = $this->getUserType();
 
-   public function subcontractorprojectdetils(Request $request) {
-      return view('front.subcontractorprojectdetils'); // Desin not ready
-   }
+        $uloackedProject = new UnlockedProject();
+        $uloackedProject->user_id = $userId->id;
+        $uloackedProject->project_id = $id;
+        $uloackedProject->user_type = $userType;
+        $uloackedProject->save();
 
-   public function contractor(Request $request) {
-      return view('front.contractor');
-   }
+        return redirect()->route('front.projectDetils', $id);
+    }
 
-   public function subcontractor(Request $request) {
-      return view('front.subcontractor');
-   }
 
-   /**
-    * Show the form for creating a new resource.
-    */
-   public function create() {
-      //
-   }
+    public function subcontractorprojectdetilslock(Request $request)
+    {
+        return view('front.subcontractorprojectdetilslock');
+    }
 
-   /**
-    * Store a newly created resource in storage.
-    */
-   public function store(Request $request) {
-      //
-   }
+    public function subcontractorprojectdetils(Request $request)
+    {
+        return view('front.subcontractorprojectdetils'); // Desin not ready
+    }
 
-   /**
-    * Display the specified resource.
-    */
-   public function show(string $id) {
-      //
-   }
+    public function contractor(Request $request)
+    {
+        return view('front.contractor');
+    }
 
-   /**
-    * Show the form for editing the specified resource.
-    */
-   public function edit(string $id) {
-      //
-   }
+    public function subcontractor(Request $request)
+    {
+        return view('front.subcontractor');
+    }
 
-   /**
-    * Update the specified resource in storage.
-    */
-   public function update(Request $request, string $id) {
-      //
-   }
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
 
-   /**
-    * Remove the specified resource from storage.
-    */
-   public function destroy(string $id) {
-      //
-   }
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
 
-   public function updateEmailAlerts(Request $request)
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
+
+    public function updateEmailAlerts(Request $request)
     {
         $emailAlerts = $request->email_alerts;
         if (Auth::guard('contractor')->check()) {
@@ -280,7 +392,7 @@ class HomeController extends Controller {
 
         if (isset($request->email_alerts)) {
             $user->email_alerts = $request->email_alerts;
-        }elseif(isset($request->subcontractor_email_alerts)){
+        } elseif (isset($request->subcontractor_email_alerts)) {
             $user->subcontractor_email_alerts = $request->subcontractor_email_alerts;
         }
 

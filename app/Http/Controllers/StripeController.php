@@ -81,7 +81,8 @@ class StripeController extends Controller
             ->first();
 
         if ($existing) {
-            return view('stripe.success'); // already subscribed
+             // already subscribed
+             return view('stripe.success');
         }
 
         $plan = Plan::where('plan_key', $session->metadata['plan_key'])->first();
@@ -100,7 +101,12 @@ class StripeController extends Controller
             'stripe_session_id' => $session->id,
         ]);
 
-        return view('stripe.success', compact('plan'));
+        // if($userType == 'contractor'){
+        //     return redirect()->route('contractor.dashboard.index')->with('success', 'Subscription successful!');
+        // } else {
+        //     return redirect()->route('subcontractor.dashboard.index')->with('success', 'Subscription successful!');
+        // }
+        return view('stripe.success');
     }
 
     public function cancel()
