@@ -79,10 +79,10 @@
                             information
                             highway will close the loop on focusing solely on the bottom line.</p>
 
-                        <div class="info">
+                       <div class="info">
                             <div class="lock-button">
-                                <a href={{ '/unloack-subcontractor-project/' . $project->id }}
-                                    class="text-decoration-none  @if ($unlockProject == false) pe-none @else pe-auto @endif">Unlock
+                                <a href="{{ '/unloack-project/' . $project->id }}"
+                                    class="text-decoration-none @if ($unlockProject == false) pe-none @else pe-auto @endif">Unlock
                                     Contact</a>
                             </div>
 
@@ -115,9 +115,9 @@
                             <h6>Expertise in</h6>
                             <ul>
                                 <li>
-                                    <div>Lighting</div>
+                                    {{ $project->expertise_in ?? '-' }}
                                 </li>
-                                <li>
+                                {{-- <li>
                                     <div>Cabling</div>
                                 </li>
                                 <li>
@@ -131,7 +131,7 @@
                                 </li>
                                 <li>
                                     <div>Rough-in &amp; Fitoff</div>
-                                </li>
+                                </li> --}}
 
                             </ul>
                         </div>
@@ -139,10 +139,18 @@
                         <div class="list mt-3">
                             <h6>Project types</h6>
                             <ul>
+                                @if ($projectTypes != null)
+                                    @foreach ($projectTypes as $projectType)
+                                        <li>
+                                            <div>{{ $projectType->name }}</div>
+                                        </li>
+                                    @endforeach
+                                @else
                                 <li>
-                                    <div>Lighting</div>
+                                    -
                                 </li>
-                                <li>
+                                @endif
+                                {{-- <li>
                                     <div>Cabling</div>
                                 </li>
                                 <li>
@@ -156,7 +164,7 @@
                                 </li>
                                 <li>
                                     <div>Rough-in &amp; Fitoff</div>
-                                </li>
+                                </li> --}}
 
                             </ul>
                         </div>
@@ -259,8 +267,8 @@
                                 <h6>Past Project Completed : </h6>
                             </div>
 
-                            @if ($protfolio->isNotEmpty())
-                                @foreach ($protfolio as $p)
+                            @if ($protfolio->subContractorProtfolio->isNotEmpty())
+                                @foreach ($protfolio->subContractorProtfolio as $p)
                                     <div class="prject-with-images mb-5 pb-3">
                                         <div class="row">
                                             <div class="col-md-9">
@@ -497,33 +505,34 @@
                             <img src="{{ asset('assets/images/map.png') }}" alt="" class="img-fluid">
                         </div>
 
-                        <div class="working-hours">
+                        {{-- <div class="working-hours">
                             <div class="full-label">
                                 <h6>Service Area Map</h6>
                             </div>
 
-                            <p>Mon <span>07:00 AM - 03:00 PM</span></p>
-                            <p>Tue <span>07:00 AM - 03:00 PM</span></p>
+                            <p>{{ $protfolio->availability  ?? '-'}}</p>
+                            {{-- <p>Tue <span>07:00 AM - 03:00 PM</span></p>
                             <p>Wed <span>07:00 AM - 03:00 PM</span></p>
                             <p>Thu <span>07:00 AM - 03:00 PM</span></p>
                             <p>Fir <span>07:00 AM - 03:00 PM</span></p>
                             <p>Sat <span>Close</span></p>
                             <p>Sun <span>Close</span></p>
-                        </div>
+                        </div> --}}
 
                         <div class="post-item">
                             <img src="{{ asset('assets/images/m-1.png') }}" alt="" class="img-fluid">
-                            <h3>20+</h3>
+                            <h3>{{ $protfolioCount ?? '0' }}</h3>
                             <p>Project Posted</p>
                         </div>
-
 
                         <div class="certificates-item">
                             <div class="full-label">
                                 <h6>Certificates </h6>
                             </div>
-
-                            <img src="{{ asset('assets/images/certificates.png') }}" alt="" class="img-fluid">
+                            @foreach ($protfolio->certifications as $certificat)
+                                <img src="{{ asset('storage/' . $certificat->file_path) }}" alt=""
+                                    class="img-fluid">
+                            @endforeach
                         </div>
                     </div>
                 </div>

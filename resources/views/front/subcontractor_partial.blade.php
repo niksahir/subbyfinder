@@ -89,7 +89,7 @@
 
 
     <!-- Pagination -->
-    <div class="pagination-wrapper mt-4">
+    <div class="pagination-wrapper mt-4 d-flex justify-content-center">
         {{ $subcontractors->appends(request()->except('page'))->links('pagination::bootstrap-4') }}
     </div>
 </section>

@@ -1,1190 +1,1188 @@
 @extends('layouts.before')
-@section("title")
-Subby Finder
+@section('title')
+    Subby Finder
 @endsection
 
-@section("content")
-<section class="banner-sec">
-   <div class="wrapper">
-      <div class="bg-img">
-         <img src="assets/images/banner.png" alt="" class="img-fluid">
-      </div>
-
-      <div class="banner-content">
-         <div class="container">
-            <h4>Hire experts or be hired for any job, any time.</h4>
-            <p> Thousands of small businesses use <span>Subby Finder</span> to turn <br>
-               their ideas into reality</p>
-
-
-            <div class="form-wrapper">
-               <form>
-                  <div class="form-item">
-                     <label for="" class="form-label">Where?</label>
-                     <input type="email" class="form-control" id="" placeholder="Online Job"
-                        aria-describedby="emailHelp">
-                  </div>
-
-                  <div class="project form-item">
-                     <label for="exampleInputPassword1" class="form-label">What project you want?</label>
-                     <div class="input-with-btn">
-                        <input type="text" class="form-control" id="exampleInputPassword1"
-                           placeholder="Job Title or Keywords">
-                        <button type="submit" class="btn btn-primary">Search</button>
-                     </div>
-                  </div>
-               </form>
+@section('content')
+    <section class="banner-sec">
+        <div class="wrapper">
+            <div class="bg-img">
+                <img src="assets/images/banner.png" alt="" class="img-fluid">
             </div>
 
-
-            <ul>
-               <li>
-                  <h3>3,543</h3><span>Project Posted</span>
-               </li>
-               <li>
-                  <h3>1,232</h3><span>Sub Contractor </span>
-               </li>
-               <li>
-                  <h3>1,100</h3><span>Principal Contractor</span>
-               </li>
-            </ul>
-         </div>
-      </div>
-   </div>
-</section>
-
-<section class="popular-sec">
-   <div class="container">
-      <div class="row">
-         <div class="title col-12">
-            <h2>Popular Categories</h2>
-         </div>
+            <div class="banner-content">
+                <div class="container">
+                    <h4>Hire experts or be hired for any job, any time.</h4>
+                    <p> Thousands of small businesses use <span>Subby Finder</span> to turn <br>
+                        their ideas into reality</p>
 
 
-         <div class="col-md-3">
-            <div class="img-wrapper">
-               <img src="assets/images/p-1.png" alt="" class="img-fluid">
+                    <div class="form-wrapper">
+                        <form action="{{ route('front.jobsearch') }}" method="GET">
+                            <div class="form-item">
+                                <label for="" class="form-label">Where?</label>
+                                <input type="text" class="form-control" name="location" id="" placeholder="Online Job"
+                                    aria-describedby="emailHelp">
+                            </div>
 
-               <div class="content">
-                  <span>612</span>
-                  <h5>Electrician</h5>
-               </div>
+                            <div class="project form-item">
+                                <label for="exampleInputPassword1" class="form-label">What project you want?</label>
+                                <div class="input-with-btn">
+                                    <input type="text" class="form-control" id="exampleInputPassword1"
+                                        placeholder="Job Title or Keywords" name="project">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+
+                    <ul>
+                        <li>
+                            <h3>3,543</h3><span>Project Posted</span>
+                        </li>
+                        <li>
+                            <h3>1,232</h3><span>Sub Contractor </span>
+                        </li>
+                        <li>
+                            <h3>1,100</h3><span>Principal Contractor</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
-         </div>
-         <div class="col-md-3">
-            <div class="img-wrapper">
-               <img src="assets/images/p-2.png" alt="" class="img-fluid">
+        </div>
+    </section>
 
-               <div class="content">
-                  <span>612</span>
-                  <h5>Electrician</h5>
-               </div>
-            </div>
-         </div>
-         <div class="col-md-3">
-            <div class="img-wrapper">
-               <img src="assets/images/p-3.png" alt="" class="img-fluid">
+    <section class="popular-sec">
+        <div class="container">
+            <div class="row">
+                <div class="title col-12">
+                    <h2>Popular Categories</h2>
+                </div>
 
-               <div class="content">
-                  <span>612</span>
-                  <h5>Electrician</h5>
-               </div>
-            </div>
-         </div>
-         <div class="col-md-3">
-            <div class="img-wrapper">
-               <img src="assets/images/p-4.png" alt="" class="img-fluid">
 
-               <div class="content">
-                  <span>612</span>
-                  <h5>Electrician</h5>
-               </div>
-            </div>
-         </div>
-         <div class="col-md-3">
-            <div class="img-wrapper">
-               <img src="assets/images/p-5.png" alt="" class="img-fluid">
+                <div class="col-md-3">
+                    <div class="img-wrapper">
+                        <img src="assets/images/p-1.png" alt="" class="img-fluid">
 
-               <div class="content">
-                  <span>612</span>
-                  <h5>Electrician</h5>
-               </div>
-            </div>
-         </div>
-         <div class="col-md-3">
-            <div class="img-wrapper">
-               <img src="assets/images/p-6.png" alt="" class="img-fluid">
-
-               <div class="content">
-                  <span>612</span>
-                  <h5>Electrician</h5>
-               </div>
-            </div>
-         </div>
-         <div class="col-md-3">
-            <div class="img-wrapper">
-               <img src="assets/images/p-7.png" alt="" class="img-fluid">
-
-               <div class="content">
-                  <span>612</span>
-                  <h5>Electrician</h5>
-               </div>
-            </div>
-         </div>
-         <div class="col-md-3">
-            <div class="img-wrapper">
-               <img src="assets/images/p-8.png" alt="" class="img-fluid">
-
-               <div class="content">
-                  <span>612</span>
-                  <h5>Electrician</h5>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-</section>
-
-<section class="feature-sec">
-   <div class="container">
-      <div class="row">
-         <div class="col-12">
-            <div class="title">
-               <h2>Features Section</h2>
-               <p>Lorem ipsum dolor sit amet consectetur. Sit ut gravida aenean potenti.
-                  Metus in eu vel morbi dui nunc tellus. Non a massa maecenas massa.</p>
-            </div>
-         </div>
-
-         <div class="col-md-6">
-            <div class="accordion-wrapper">
-               <div class="accordion" id="accordionExample">
-                  <div class="accordion-item">
-                     <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                           data-bs-target="#collapseOne" aria-expanded="true"
-                           aria-controls="collapseOne">
-                           1. ⁠Project management tools
-                        </button>
-                     </h2>
-                     <div id="collapseOne" class="accordion-collapse collapse show"
-                        data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                           <p>Lorem ipsum dolor sit amet consectetur vitae
-                              purus quis metus sed semper diam iaculis duis
-                              vitae purus amet sagittis leo elit vitae dolor.</p>
+                        <div class="content">
+                            <span>612</span>
+                            <h5>Electrician</h5>
                         </div>
-                     </div>
-                  </div>
-                  <div class="accordion-item">
-                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                           data-bs-target="#collapseTwo" aria-expanded="false"
-                           aria-controls="collapseTwo">
-                           2. Discounted supplier rates
-                        </button>
-                     </h2>
-                     <div id="collapseTwo" class="accordion-collapse collapse"
-                        data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                           <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae,
-                              accusamus. Illum sapiente deleniti ad assumenda sit sint consequuntur
-                              quisquam modi?</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="img-wrapper">
+                        <img src="assets/images/p-2.png" alt="" class="img-fluid">
+
+                        <div class="content">
+                            <span>612</span>
+                            <h5>Electrician</h5>
                         </div>
-                     </div>
-                     <div class="accordion-item">
-                        <h2 class="accordion-header">
-                           <button class="accordion-button collapsed" type="button"
-                              data-bs-toggle="collapse" data-bs-target="#collapseThree"
-                              aria-expanded="false" aria-controls="collapseThree">
-                              3. ⁠Industry insights and reports
-                           </button>
-                        </h2>
-                        <div id="collapseThree" class="accordion-collapse collapse"
-                           data-bs-parent="#accordionExample">
-                           <div class="accordion-body">
-                              <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quibusdam,
-                                 voluptatem aperiam, esse ratione tenetur amet tempore inventore
-                                 consectetur voluptates ipsam ad! Quo, corrupti!</p>
-                           </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="img-wrapper">
+                        <img src="assets/images/p-3.png" alt="" class="img-fluid">
+
+                        <div class="content">
+                            <span>612</span>
+                            <h5>Electrician</h5>
                         </div>
-                     </div>
-                     <div class="accordion-item">
-                        <h2 class="accordion-header">
-                           <button class="accordion-button collapsed" type="button"
-                              data-bs-toggle="collapse" data-bs-target="#collapsefour"
-                              aria-expanded="false" aria-controls="collapsefour">
-                              4. Networking opportunities
-                           </button>
-                        </h2>
-                        <div id="collapsefour" class="accordion-collapse collapse"
-                           data-bs-parent="#accordionExample">
-                           <div class="accordion-body">
-                              <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quibusdam,
-                                 voluptatem aperiam, esse ratione tenetur amet tempore inventore
-                                 consectetur voluptates ipsam ad! Quo, corrupti!</p>
-                           </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="img-wrapper">
+                        <img src="assets/images/p-4.png" alt="" class="img-fluid">
+
+                        <div class="content">
+                            <span>612</span>
+                            <h5>Electrician</h5>
                         </div>
-                     </div>
-                  </div>
-               </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="img-wrapper">
+                        <img src="assets/images/p-5.png" alt="" class="img-fluid">
+
+                        <div class="content">
+                            <span>612</span>
+                            <h5>Electrician</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="img-wrapper">
+                        <img src="assets/images/p-6.png" alt="" class="img-fluid">
+
+                        <div class="content">
+                            <span>612</span>
+                            <h5>Electrician</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="img-wrapper">
+                        <img src="assets/images/p-7.png" alt="" class="img-fluid">
+
+                        <div class="content">
+                            <span>612</span>
+                            <h5>Electrician</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="img-wrapper">
+                        <img src="assets/images/p-8.png" alt="" class="img-fluid">
+
+                        <div class="content">
+                            <span>612</span>
+                            <h5>Electrician</h5>
+                        </div>
+                    </div>
+                </div>
             </div>
-         </div>
+        </div>
+    </section>
+
+    <section class="feature-sec">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="title">
+                        <h2>Features Section</h2>
+                        <p>Lorem ipsum dolor sit amet consectetur. Sit ut gravida aenean potenti.
+                            Metus in eu vel morbi dui nunc tellus. Non a massa maecenas massa.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="accordion-wrapper">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        1. ⁠Project management tools
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show"
+                                    data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <p>Lorem ipsum dolor sit amet consectetur vitae
+                                            purus quis metus sed semper diam iaculis duis
+                                            vitae purus amet sagittis leo elit vitae dolor.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        2. Discounted supplier rates
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse"
+                                    data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae,
+                                            accusamus. Illum sapiente deleniti ad assumenda sit sint consequuntur
+                                            quisquam modi?</p>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                                            aria-expanded="false" aria-controls="collapseThree">
+                                            3. ⁠Industry insights and reports
+                                        </button>
+                                    </h2>
+                                    <div id="collapseThree" class="accordion-collapse collapse"
+                                        data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quibusdam,
+                                                voluptatem aperiam, esse ratione tenetur amet tempore inventore
+                                                consectetur voluptates ipsam ad! Quo, corrupti!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapsefour"
+                                            aria-expanded="false" aria-controls="collapsefour">
+                                            4. Networking opportunities
+                                        </button>
+                                    </h2>
+                                    <div id="collapsefour" class="accordion-collapse collapse"
+                                        data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quibusdam,
+                                                voluptatem aperiam, esse ratione tenetur amet tempore inventore
+                                                consectetur voluptates ipsam ad! Quo, corrupti!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
-         <div class="col-md-6">
-            <div class="img-item">
-               <img src="assets/images/feature.png" alt="" class="img-fluid">
-               <img src="assets/images/feature2.png" alt="" class="img-fluid small">
+                <div class="col-md-6">
+                    <div class="img-item">
+                        <img src="assets/images/feature.png" alt="" class="img-fluid">
+                        <img src="assets/images/feature2.png" alt="" class="img-fluid small">
+                    </div>
+                </div>
             </div>
-         </div>
-      </div>
-   </div>
-</section>
+        </div>
+    </section>
 
-<section class="subb-sec">
-   <div class="container">
-      <div class="row">
-         <div class="col-lg-10">
-            <div class="content">
-               <h2>SUBBYFINDER.COM</h2>
-               <p>Trades-based businesses are undergoing a revolutionary transformation, making it easier than
-                  ever for everyone to thrive in the marketplace! Major companies can effortlessly source the
-                  labor they need, leveraging substantial marketing budgets to drive growth and enhance their
-                  bottom lines. Small businesses, rejoice! Finding work is now just a click away, allowing you
-                  to bypass traditional marketing expenses. Let the big players handle that, your only task is
-                  to show up, complete your projects, and watch your earnings soar! This shift not only
-                  simplifies team expansion but also allows you to travel the country, relocate or take a
-                  break with the confidence that work will be easy to find afterwards.</p>
+    <section class="subb-sec">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10">
+                    <div class="content">
+                        <h2>SUBBYFINDER.COM</h2>
+                        <p>Trades-based businesses are undergoing a revolutionary transformation, making it easier than
+                            ever for everyone to thrive in the marketplace! Major companies can effortlessly source the
+                            labor they need, leveraging substantial marketing budgets to drive growth and enhance their
+                            bottom lines. Small businesses, rejoice! Finding work is now just a click away, allowing you
+                            to bypass traditional marketing expenses. Let the big players handle that, your only task is
+                            to show up, complete your projects, and watch your earnings soar! This shift not only
+                            simplifies team expansion but also allows you to travel the country, relocate or take a
+                            break with the confidence that work will be easy to find afterwards.</p>
 
-               <div class="link wrapper">
-                  <a href="#">Register</a>
-                  <a href="#">Contact Us</a>
-               </div>
+                        <div class="link wrapper">
+                            <a href="#">Register</a>
+                            <a href="#">Contact Us</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-         </div>
-      </div>
-   </div>
-</section>
+        </div>
+    </section>
 
-<section class="card-sec">
-   <div class="container">
-      <div class="row">
-         <div class="col-md-4">
-            <div class="card-inner">
-               <img src="assets/images/card-1.png" alt="" class="img-fluid">
-               <h4>UILDERS & PRINCIPLE CONTRACTORS</h4>
-               <p>Create a business listing for subcontractors to find you easily. You will also have the
-                  ability to post jobs or expressions of interest for more urgent matters. You will also have
-                  the ability to search the sub contractors in the area you need the work done.</p>
+    <section class="card-sec">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card-inner">
+                        <img src="assets/images/card-1.png" alt="" class="img-fluid">
+                        <h4>UILDERS & PRINCIPLE CONTRACTORS</h4>
+                        <p>Create a business listing for subcontractors to find you easily. You will also have the
+                            ability to post jobs or expressions of interest for more urgent matters. You will also have
+                            the ability to search the sub contractors in the area you need the work done.</p>
 
-               <div class="link-normal">
-                  <a href="#">Read More</a>
-               </div>
+                        <div class="link-normal">
+                            <a href="#">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-inner">
+                        <img src="assets/images/card-2.png" alt="" class="img-fluid">
+                        <h4>UILDERS & PRINCIPLE CONTRACTORS</h4>
+                        <p>Create a business listing for subcontractors to find you easily. You will also have the
+                            ability to post jobs or expressions of interest for more urgent matters. You will also have
+                            the ability to search the sub contractors in the area you need the work done.</p>
+
+                        <div class="link-normal">
+                            <a href="#">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-inner">
+                        <img src="assets/images/card-3.png" alt="" class="img-fluid">
+
+                        <h4>UILDERS & PRINCIPLE CONTRACTORS</h4>
+                        <p>Create a business listing for subcontractors to find you easily. You will also have the
+                            ability to post jobs or expressions of interest for more urgent matters. You will also have
+                            the ability to search the sub contractors in the area you need the work done.</p>
+
+                        <div class="link-normal">
+                            <a href="#">Read More</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-         </div>
-         <div class="col-md-4">
-            <div class="card-inner">
-               <img src="assets/images/card-2.png" alt="" class="img-fluid">
-               <h4>UILDERS & PRINCIPLE CONTRACTORS</h4>
-               <p>Create a business listing for subcontractors to find you easily. You will also have the
-                  ability to post jobs or expressions of interest for more urgent matters. You will also have
-                  the ability to search the sub contractors in the area you need the work done.</p>
+        </div>
+    </section>
 
-               <div class="link-normal">
-                  <a href="#">Read More</a>
-               </div>
+    <section class="featured-projects">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="title">
+                        <h4>Featured Projects</h4>
+
+                        <div class="link-normal-type2">
+                            <a href="#">Browse All Project</a>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="full-list">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="p-logo">
+                                    <img src="assets/images/f-logo.png" alt="" class="img-fluid">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-8">
+                                <div class="content">
+                                    <h6>Dylan's Mowing</h6>
+                                    <ul>
+                                        <li><i class="fa-solid fa-location-dot"></i> San Francisco</li>
+                                        <li><i class="fa-regular fa-clock"></i> 2 minutes ago</li>
+                                    </ul>
+
+
+                                    <p>Lawn Mowing & Gardening Services</p>
+
+                                    <div class="gender">
+                                        <span>Gardener</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <div class="budget">
+                                    <div class="copy"><i></i></div>
+                                    <h5>$100 - $150</h5>
+                                    <p>Budget</p>
+
+                                    <div class="link-light">
+                                        <a href="#">View Profile</a>
+                                    </div>
+
+                                    <div class="link">
+                                        <a href="#">Message</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="full-list">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="p-logo">
+                                    <img src="assets/images/f-logo.png" alt="" class="img-fluid">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-8">
+                                <div class="content">
+                                    <h6>Dylan's Mowing</h6>
+                                    <ul>
+                                        <li><i class="fa-solid fa-location-dot"></i> San Francisco</li>
+                                        <li><i class="fa-regular fa-clock"></i> 2 minutes ago</li>
+                                    </ul>
+
+
+                                    <p>Lawn Mowing & Gardening Services</p>
+
+                                    <div class="gender">
+                                        <span>Gardener</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <div class="budget">
+                                    <div class="copy"><i></i></div>
+                                    <h5>$100 - $150</h5>
+                                    <p>Budget</p>
+
+                                    <div class="link-light">
+                                        <a href="#">View Profile</a>
+                                    </div>
+
+                                    <div class="link">
+                                        <a href="#">Message</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-         </div>
-         <div class="col-md-4">
-            <div class="card-inner">
-               <img src="assets/images/card-3.png" alt="" class="img-fluid">
+        </div>
+    </section>
 
-               <h4>UILDERS & PRINCIPLE CONTRACTORS</h4>
-               <p>Create a business listing for subcontractors to find you easily. You will also have the
-                  ability to post jobs or expressions of interest for more urgent matters. You will also have
-                  the ability to search the sub contractors in the area you need the work done.</p>
+    <section class="subbyfinder-sec">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="title">
+                        <h2>How Subbyfinder came to be.</h2>
+                    </div>
+                </div>
 
-               <div class="link-normal">
-                  <a href="#">Read More</a>
-               </div>
+
+                <div class="col-md-6">
+                    <div class="content">
+                        <p>I had my own air conditioning company for 11 years with two employees. Searching for enough
+                            work to keep all three of us busy often took me off the tools and cost thousands of dollars
+                            on marketing and pages like “Hipages,” with no guarantee of winning the work. Not to mention
+                            the countless hours and phone calls with everyday customers. After COVID, I sold the
+                            business and worked for a major company as a project manager. We had so much commercial and
+                            domestic work and not enough workers to complete it. We went through many subcontractors
+                            (some truly terrible) in an effort to find the right fit, which cost us money in late fees
+                            and resulted in poor workmanship, ultimately turning away additional work. If only there
+                            were a resource that provided ratings of contractors, making it easier to find the right
+                            subcontractors for the job. From a subcontractor’s point of view, it would also be helpful
+                            to see how the company you are considering working for is rated. Do they pay on time? Are
+                            they organized, etc.?
+                            Well here it is subbyfinder.com Memberships available soon (early 2025)</p>
+
+                        <p>Principle Contractors can now confidently embrace that additional project or extra work,
+                            knowing they have a reliable workforce at their fingertips to seamlessly execute the tasks
+                            at hand. This newfound assurance not only enhances their operational capabilities but also
+                            opens doors to greater opportunities for growth and success in an increasingly competitive
+                            market.</p>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="img-item">
+                        <img src="assets/images/finder.png" alt="" class="img-fluid">
+
+                        <div class="link">
+                            <a href="#">Register</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-         </div>
-      </div>
-   </div>
-</section>
+        </div>
+    </section>
 
-<section class="featured-projects">
-   <div class="container">
-      <div class="row">
-         <div class="col-12">
-            <div class="title">
-               <h4>Featured Projects</h4>
-
-               <div class="link-normal-type2">
-                  <a href="#">Browse All Project</a>
-               </div>
+    <section class="counter-sec">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-lg-3">
+                    <div class="counter-item">
+                        <img src="assets/images/m-1.png" alt="" class="img-fluid">
+                        <h3>100k+</h3>
+                        <p>Expected Members</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="counter-item">
+                        <img src="assets/images/m-2.png" alt="" class="img-fluid">
+                        <h3>70k+</h3>
+                        <p>Sub-contractors</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="counter-item">
+                        <img src="assets/images/m-3.png" alt="" class="img-fluid">
+                        <h3>100k+</h3>
+                        <p>Approval Rate </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="counter-item">
+                        <img src="assets/images/m-4.png" alt="" class="img-fluid">
+                        <h3>100k+</h3>
+                        <p>Connection made</p>
+                    </div>
+                </div>
             </div>
-         </div>
+        </div>
+    </section>
 
+    <section class="contractor-sec">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="title-wtapper">
+                        <h4>Highest Rated Sub Contractor </h4>
+                        <a href="#"> Browse All Sub Contractor </a>
+                    </div>
+                </div>
+            </div>
 
-         <div class="full-list">
+            <div class="swiper highestSwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="inner-slide">
+                            <div class="image">
+                                <img src="assets/images/team-1.jpg" alt="" class="img-fluid">
+                            </div>
+
+                            <div class="content">
+                                <h6>Tom Smith </h6>
+
+                                <ul>
+                                    <li>Electrician</li>
+                                    <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
+                                </ul>
+
+                                <div class="ratimg">
+                                    <div class="number">
+                                        5.0
+                                    </div>
+
+                                    <div class="star"><i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                </div>
+
+                                <div class="buttons">
+                                    <a href="#">View Profile </a>
+                                    <a href="#">Message </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="inner-slide">
+                            <div class="image">
+                                <img src="assets/images/team-2.jpg" alt="" class="img-fluid">
+                            </div>
+
+                            <div class="content">
+                                <h6>David Peterson </h6>
+
+                                <ul>
+                                    <li>Electrician</li>
+                                    <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
+                                </ul>
+
+                                <div class="ratimg">
+                                    <div class="number">
+                                        5.0
+                                    </div>
+
+                                    <div class="star"><i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                </div>
+
+                                <div class="buttons">
+                                    <a href="#">View Profile </a>
+                                    <a href="#">Message </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="inner-slide">
+                            <div class="image">
+                                <img src="assets/images/team-3.png" alt="" class="img-fluid">
+                            </div>
+
+                            <div class="content">
+                                <h6>Marcin Kowalski </h6>
+
+                                <ul>
+                                    <li>Electrician</li>
+                                    <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
+                                </ul>
+
+                                <div class="ratimg">
+                                    <div class="number">
+                                        5.0
+                                    </div>
+
+                                    <div class="star"><i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                </div>
+
+                                <div class="buttons">
+                                    <a href="#">View Profile </a>
+                                    <a href="#">Message </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="inner-slide">
+                            <div class="image">
+                                <img src="assets/images/team-1.jpg" alt="" class="img-fluid">
+                            </div>
+
+                            <div class="content">
+                                <h6>Tom Smith </h6>
+
+                                <ul>
+                                    <li>Electrician</li>
+                                    <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
+                                </ul>
+                                <div class="ratimg">
+                                    <div class="number">
+                                        5.0
+                                    </div>
+
+                                    <div class="star"><i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                </div>
+
+                                <div class="buttons">
+                                    <a href="#">View Profile </a>
+                                    <a href="#">Message </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper-contols">
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="plans-sec">
+        <div class="container">
             <div class="col-12">
-               <div class="row">
-                  <div class="col-sm-2">
-                     <div class="p-logo">
-                        <img src="assets/images/f-logo.png" alt="" class="img-fluid">
-                     </div>
-                  </div>
+                <div class="title">
+                    <h4>Membership Plans</h4>
 
-                  <div class="col-sm-8">
-                     <div class="content">
-                        <h6>Dylan's Mowing</h6>
+
+                    <div class="radio-btn">
+                        <div class="radio-item">
+                            <input type="radio" class="" id="month">
+                            <label for="month">Billed Monthly</label>
+                        </div>
+
+                        <div class="radio-item">
+                            <input type="radio" class="" id="year">
+                            <label for="year">Billed Yearly <span>Save 10%</span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row m-0">
+                <div class="col-md-4 p-0">
+                    <div class="plan-inner">
+                        <h5>Basic Plan</h5>
+                        <p>One time fee for one listing or task
+                            highlighted in search results.</p>
+
+                        <div class="price">
+                            <h3>$15 <span>/ monthly</span></h3>
+                        </div>
+
+                        <h6>Features of Basic Plan</h6>
+
                         <ul>
-                           <li><i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                           <li><i class="fa-regular fa-clock"></i> 2 minutes ago</li>
+                            <li>2 Business Contact unlocks per month</li>
+                            <li>2 images on profile</li>
+                            <li>No Job Postings</li>
                         </ul>
 
-
-                        <p>Lawn Mowing & Gardening Services</p>
-
-                        <div class="gender">
-                           <span>Gardener</span>
+                        <div class="link border">
+                            <a href="#">Buy Now</a>
                         </div>
-                     </div>
-                  </div>
+                    </div>
+                </div>
+                <div class="col-md-4 p-0">
+                    <div class="plan-inner orange">
+                        <div class="Recommended">
+                            <p>Recommended</p>
+                        </div>
+                        <h5>Standard Plan</h5>
+                        <p>One time fee for one listing or task
+                            highlighted in search results.</p>
 
-                  <div class="col-sm-2">
-                     <div class="budget">
-                        <div class="copy"><i></i></div>
-                        <h5>$100 - $150</h5>
-                        <p>Budget</p>
-
-                        <div class="link-light">
-                           <a href="#">View Profile</a>
+                        <div class="price">
+                            <h3>$29 <span>/ monthly</span></h3>
                         </div>
 
-                        <div class="link">
-                           <a href="#">Message</a>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
+                        <h6>Features of Standard Plan</h6>
 
-
-         <div class="full-list">
-            <div class="col-sm-12">
-               <div class="row">
-                  <div class="col-sm-2">
-                     <div class="p-logo">
-                        <img src="assets/images/f-logo.png" alt="" class="img-fluid">
-                     </div>
-                  </div>
-
-                  <div class="col-sm-8">
-                     <div class="content">
-                        <h6>Dylan's Mowing</h6>
                         <ul>
-                           <li><i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                           <li><i class="fa-regular fa-clock"></i> 2 minutes ago</li>
+                            <li>5 Business Contact unlocks per month</li>
+                            <li>3 Job Postings Per Month</li>
+                            <li>3 Images on Profile</li>
                         </ul>
 
-
-                        <p>Lawn Mowing & Gardening Services</p>
-
-                        <div class="gender">
-                           <span>Gardener</span>
+                        <div class="link">
+                            <a href="#">Buy Now</a>
                         </div>
-                     </div>
-                  </div>
+                    </div>
+                </div>
+                <div class="col-md-4 p-0">
+                    <div class="plan-inner">
+                        <h5>Extended Plan</h5>
+                        <p>One time fee for one listing or task
+                            highlighted in search results.</p>
 
-                  <div class="col-sm-2">
-                     <div class="budget">
-                        <div class="copy"><i></i></div>
-                        <h5>$100 - $150</h5>
-                        <p>Budget</p>
-
-                        <div class="link-light">
-                           <a href="#">View Profile</a>
+                        <div class="price">
+                            <h3>$59 <span>/ monthly</span></h3>
                         </div>
+
+                        <h6>Features of Extended Plan</h6>
+
+                        <ul>
+                            <li>Unlimited Contacts & Job Posting</li>
+                            <li>Option to have Listing in Both Principal and Sub Contractors</li>
+                            <li>Showcase of projects and work</li>
+                        </ul>
+
+                        <div class="link border">
+                            <a href="#">Buy Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="trust-building-sec">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="title">
+                        <h2>Trust-Building </h2>
+                        <p>Unlock simplicity in your job search journey – explore 'How It Works' on
+                            our platform.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="iner-item">
+                        <img src="assets/images/bill-list.png" alt="" class="img-fluid">
+                        <h4>⁠Security </h4>
+                        <p>Job seekers start by creating an
+                            account on the job portal.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-md-5 pt-md-3">
+                    <div class="iner-item">
+                        <img src="assets/images/shield.svg" alt="" class="img-fluid">
+                        <h4>Money-back guarantee </h4>
+                        <p>Utilize our powerful search engine to
+                            find jobs that align with your career
+                            goals.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="iner-item">
+                        <img src="assets/images/security.png" alt="" class="img-fluid">
+                        <h4>Certifications or partnerships with industry organizations.
+                        </h4>
+                        <p>Expand your professional network by
+                            connecting with industry peers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="blog-sec">
+        <div class="container">
+            <div class="col-12">
+                <h2>Blogs</h2>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="blog-inner">
+                        <img src="assets/images/blog-1.png" alt="" class="img-fluid">
+                        <h4>The Art of Connection</h4>
+                        <p>In the ever-evolving world, the art of forging genuine connections remains timeless.…</p>
+                        <div class="link-normal">
+                            <a href="#"> Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="blog-inner">
+                        <img src="assets/images/blog-2.png" alt="" class="img-fluid">
+                        <h4>Beyond the Obstacle</h4>
+                        <p>Challenges in business are a given, but it’s our response to them…</p>
+                        <div class="link-normal">
+                            <a href="#"> Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="blog-inner">
+                        <img src="assets/images/blog-3.png" alt="" class="img-fluid">
+                        <h4>Growth Unlocked</h4>
+                        <p>Every business has a unique potential waiting to be tapped. Recognizing the…</p>
+                        <div class="link-normal">
+                            <a href="#"> Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonal-sec">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="title">
+                        <h2>What did happy clients have <br>
+                            to say about us?</h2>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="swiper testimonalSwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="inner-item">
+
+
+
+                            <div class="star">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <p>"We’ve been using this customer
+                                support platform for six months, and
+                                our response times have improved
+                                by 40%. The analytics dashboard
+                                provides happier, and so are we!"</p>
+
+                            <div class="client">
+                                <div class="photo">
+                                    <img src="assets/images/client-1.png" alt="" class="img-fluid">
+                                </div>
+
+                                <div class="name">
+                                    <h6>Benny Bartlett</h6>
+                                    <p>Interactive Designer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="inner-item">
+
+
+                            <div class="star">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+
+                            <p>"Switching to this CRM has been a
+                                game changer for our sales team.
+                                The interface is intuitive, and the
+                                automation features have saved us
+                                countless hours.</p>
+
+                            <div class="client">
+                                <div class="photo">
+                                    <img src="assets/images/client-2.png" alt="" class="img-fluid">
+                                </div>
+
+                                <div class="name">
+                                    <h6>Jaeden Reilly</h6>
+                                    <p>Director</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="inner-item">
+
+
+                            <div class="star">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+
+                            <p>"This marketing automation tool has
+                                been a lifesaver for our team. It’s
+                                easy to set up campaigns, track
+                                performance, and make data-driven
+                                decisions made.."</p>
+
+                            <div class="client">
+                                <div class="photo">
+                                    <img src="assets/images/client-3.png" alt="" class="img-fluid">
+                                </div>
+
+                                <div class="name">
+                                    <h6>Adrian Murphy</h6>
+                                    <p>Brokerage Manager</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="inner-item">
+                            <div class="star">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+
+                            <p>"Switching to this CRM has been a
+                                game changer for our sales team.
+                                The interface is intuitive, and the
+                                automation features have saved us
+                                countless hours."</p>
+
+                            <div class="client">
+                                <div class="photo">
+                                    <img src="assets/images/client-3.png" alt="" class="img-fluid">
+                                </div>
+
+                                <div class="name">
+                                    <h6>Jonatan Moss</h6>
+                                    <p>CEO & Founder</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="inner-item">
+
+
+                            <div class="star">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+
+                            <p>On the other hand, we denounce with righteous indignation and dislike men who are so
+                                beguiled and.</p>
+
+                            <div class="client">
+                                <div class="photo">
+                                    <img src="assets/images/photo1.png" alt="" class="img-fluid">
+                                </div>
+
+                                <div class="name">
+                                    <h6>Serhiy Hipskyy</h6>
+                                    <p>Student</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper testimonalSwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="inner-item">
+
+
+
+                            <div class="star">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <p>"We’ve been using this customer
+                                support platform for six months, and
+                                our response times have improved
+                                by 40%. The analytics dashboard
+                                provides happier, and so are we!"</p>
+
+                            <div class="client">
+                                <div class="photo">
+                                    <img src="assets/images/client-1.png" alt="" class="img-fluid">
+                                </div>
+
+                                <div class="name">
+                                    <h6>Benny Bartlett</h6>
+                                    <p>Interactive Designer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="inner-item">
+
+
+                            <div class="star">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+
+                            <p>"Switching to this CRM has been a
+                                game changer for our sales team.
+                                The interface is intuitive, and the
+                                automation features have saved us
+                                countless hours.</p>
+
+                            <div class="client">
+                                <div class="photo">
+                                    <img src="assets/images/client-2.png" alt="" class="img-fluid">
+                                </div>
+
+                                <div class="name">
+                                    <h6>Jaeden Reilly</h6>
+                                    <p>Director</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="inner-item">
+
+
+                            <div class="star">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+
+                            <p>"This marketing automation tool has
+                                been a lifesaver for our team. It’s
+                                easy to set up campaigns, track
+                                performance, and make data-driven
+                                decisions made.."</p>
+
+                            <div class="client">
+                                <div class="photo">
+                                    <img src="assets/images/client-3.png" alt="" class="img-fluid">
+                                </div>
+
+                                <div class="name">
+                                    <h6>Adrian Murphy</h6>
+                                    <p>Brokerage Manager</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="inner-item">
+                            <div class="star">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+
+                            <p>"Switching to this CRM has been a
+                                game changer for our sales team.
+                                The interface is intuitive, and the
+                                automation features have saved us
+                                countless hours."</p>
+
+                            <div class="client">
+                                <div class="photo">
+                                    <img src="assets/images/client-3.png" alt="" class="img-fluid">
+                                </div>
+
+                                <div class="name">
+                                    <h6>Jonatan Moss</h6>
+                                    <p>CEO & Founder</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="inner-item">
+
+
+                            <div class="star">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+
+                            <p>On the other hand, we denounce with righteous indignation and dislike men who are so
+                                beguiled and.</p>
+
+                            <div class="client">
+                                <div class="photo">
+                                    <img src="assets/images/photo1.png" alt="" class="img-fluid">
+                                </div>
+
+                                <div class="name">
+                                    <h6>Serhiy Hipskyy</h6>
+                                    <p>Student</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="footer-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="left">
+                        <h3>Begin your new journey with us.</h3>
+                        <p>We value your input and continuously strive to improve our
+                            platform based on users.</p>
+
+                        <div class="link white">
+                            <a href="#"> Try It Free for 14 Days</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="right">
+                        <h3>24/7 Customer support</h3>
+                        <p>Our dedicated support team is available around the clock to
+                            assist you with any inquiries or issues.</p>
 
                         <div class="link">
-                           <a href="#">Message</a>
+                            <a href="#">Contact now</a>
                         </div>
-                     </div>
-                  </div>
-               </div>
+                    </div>
+                </div>
             </div>
-         </div>
-
-      </div>
-   </div>
-</section>
-
-<section class="subbyfinder-sec">
-   <div class="container">
-      <div class="row">
-         <div class="col-12">
-            <div class="title">
-               <h2>How Subbyfinder came to be.</h2>
-            </div>
-         </div>
-
-
-         <div class="col-md-6">
-            <div class="content">
-               <p>I had my own air conditioning company for 11 years with two employees. Searching for enough
-                  work to keep all three of us busy often took me off the tools and cost thousands of dollars
-                  on marketing and pages like “Hipages,” with no guarantee of winning the work. Not to mention
-                  the countless hours and phone calls with everyday customers. After COVID, I sold the
-                  business and worked for a major company as a project manager. We had so much commercial and
-                  domestic work and not enough workers to complete it. We went through many subcontractors
-                  (some truly terrible) in an effort to find the right fit, which cost us money in late fees
-                  and resulted in poor workmanship, ultimately turning away additional work. If only there
-                  were a resource that provided ratings of contractors, making it easier to find the right
-                  subcontractors for the job. From a subcontractor’s point of view, it would also be helpful
-                  to see how the company you are considering working for is rated. Do they pay on time? Are
-                  they organized, etc.?
-                  Well here it is subbyfinder.com Memberships available soon (early 2025)</p>
-
-               <p>Principle Contractors can now confidently embrace that additional project or extra work,
-                  knowing they have a reliable workforce at their fingertips to seamlessly execute the tasks
-                  at hand. This newfound assurance not only enhances their operational capabilities but also
-                  opens doors to greater opportunities for growth and success in an increasingly competitive
-                  market.</p>
-            </div>
-         </div>
-
-
-         <div class="col-md-6">
-            <div class="img-item">
-               <img src="assets/images/finder.png" alt="" class="img-fluid">
-
-               <div class="link">
-                  <a href="#">Register</a>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-</section>
-
-<section class="counter-sec">
-   <div class="container">
-      <div class="row">
-         <div class="col-md-6 col-lg-3">
-            <div class="counter-item">
-               <img src="assets/images/m-1.png" alt="" class="img-fluid">
-               <h3>100k+</h3>
-               <p>Expected Members</p>
-            </div>
-         </div>
-         <div class="col-md-6 col-lg-3">
-            <div class="counter-item">
-               <img src="assets/images/m-2.png" alt="" class="img-fluid">
-               <h3>70k+</h3>
-               <p>Sub-contractors</p>
-            </div>
-         </div>
-         <div class="col-md-6 col-lg-3">
-            <div class="counter-item">
-               <img src="assets/images/m-3.png" alt="" class="img-fluid">
-               <h3>100k+</h3>
-               <p>Approval Rate </p>
-            </div>
-         </div>
-         <div class="col-md-6 col-lg-3">
-            <div class="counter-item">
-               <img src="assets/images/m-4.png" alt="" class="img-fluid">
-               <h3>100k+</h3>
-               <p>Connection made</p>
-            </div>
-         </div>
-      </div>
-   </div>
-</section>
-
-<section class="contractor-sec">
-   <div class="container">
-      <div class="row">
-         <div class="col-12">
-            <div class="title-wtapper">
-               <h4>Highest Rated Sub Contractor </h4>
-               <a href="#"> Browse All Sub Contractor </a>
-            </div>
-         </div>
-      </div>
-
-      <div class="swiper highestSwiper">
-         <div class="swiper-wrapper">
-            <div class="swiper-slide">
-               <div class="inner-slide">
-                  <div class="image">
-                     <img src="assets/images/team-1.jpg" alt="" class="img-fluid">
-                  </div>
-
-                  <div class="content">
-                     <h6>Tom Smith </h6>
-
-                     <ul>
-                        <li>Electrician</li>
-                        <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                     </ul>
-
-                     <div class="ratimg">
-                        <div class="number">
-                           5.0
-                        </div>
-
-                        <div class="star"><i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                        </div>
-                     </div>
-
-                     <div class="buttons">
-                        <a href="#">View Profile </a>
-                        <a href="#">Message </a>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="swiper-slide">
-               <div class="inner-slide">
-                  <div class="image">
-                     <img src="assets/images/team-2.jpg" alt="" class="img-fluid">
-                  </div>
-
-                  <div class="content">
-                     <h6>David Peterson </h6>
-
-                     <ul>
-                        <li>Electrician</li>
-                        <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                     </ul>
-
-                     <div class="ratimg">
-                        <div class="number">
-                           5.0
-                        </div>
-
-                        <div class="star"><i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                        </div>
-                     </div>
-
-                     <div class="buttons">
-                        <a href="#">View Profile </a>
-                        <a href="#">Message </a>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="swiper-slide">
-               <div class="inner-slide">
-                  <div class="image">
-                     <img src="assets/images/team-3.png" alt="" class="img-fluid">
-                  </div>
-
-                  <div class="content">
-                     <h6>Marcin Kowalski </h6>
-
-                     <ul>
-                        <li>Electrician</li>
-                        <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                     </ul>
-
-                     <div class="ratimg">
-                        <div class="number">
-                           5.0
-                        </div>
-
-                        <div class="star"><i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                        </div>
-                     </div>
-
-                     <div class="buttons">
-                        <a href="#">View Profile </a>
-                        <a href="#">Message </a>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="swiper-slide">
-               <div class="inner-slide">
-                  <div class="image">
-                     <img src="assets/images/team-1.jpg" alt="" class="img-fluid">
-                  </div>
-
-                  <div class="content">
-                     <h6>Tom Smith </h6>
-
-                     <ul>
-                        <li>Electrician</li>
-                        <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                     </ul>
-                     <div class="ratimg">
-                        <div class="number">
-                           5.0
-                        </div>
-
-                        <div class="star"><i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                           <i class="fa-solid fa-star"></i>
-                        </div>
-                     </div>
-
-                     <div class="buttons">
-                        <a href="#">View Profile </a>
-                        <a href="#">Message </a>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div>
-
-      <div class="swiper-contols">
-         <div class="swiper-button-next"></div>
-         <div class="swiper-button-prev"></div>
-      </div>
-   </div>
-</section>
-
-<section class="plans-sec">
-   <div class="container">
-      <div class="col-12">
-         <div class="title">
-            <h4>Membership Plans</h4>
-
-
-            <div class="radio-btn">
-               <div class="radio-item">
-                  <input type="radio" class="" id="month">
-                  <label for="month">Billed Monthly</label>
-               </div>
-
-               <div class="radio-item">
-                  <input type="radio" class="" id="year">
-                  <label for="year">Billed Yearly <span>Save 10%</span></label>
-               </div>
-            </div>
-         </div>
-      </div>
-
-      <div class="row m-0">
-         <div class="col-md-4 p-0">
-            <div class="plan-inner">
-               <h5>Basic Plan</h5>
-               <p>One time fee for one listing or task
-                  highlighted in search results.</p>
-
-               <div class="price">
-                  <h3>$15 <span>/ monthly</span></h3>
-               </div>
-
-               <h6>Features of Basic Plan</h6>
-
-               <ul>
-                  <li>2 Business Contact unlocks per month</li>
-                  <li>2 images on profile</li>
-                  <li>No Job Postings</li>
-               </ul>
-
-               <div class="link border">
-                  <a href="#">Buy Now</a>
-               </div>
-            </div>
-         </div>
-         <div class="col-md-4 p-0">
-            <div class="plan-inner orange">
-               <div class="Recommended">
-                  <p>Recommended</p>
-               </div>
-               <h5>Standard Plan</h5>
-               <p>One time fee for one listing or task
-                  highlighted in search results.</p>
-
-               <div class="price">
-                  <h3>$29 <span>/ monthly</span></h3>
-               </div>
-
-               <h6>Features of Standard Plan</h6>
-
-               <ul>
-                  <li>5 Business Contact unlocks per month</li>
-                  <li>3 Job Postings Per Month</li>
-                  <li>3 Images on Profile</li>
-               </ul>
-
-               <div class="link">
-                  <a href="#">Buy Now</a>
-               </div>
-            </div>
-         </div>
-         <div class="col-md-4 p-0">
-            <div class="plan-inner">
-               <h5>Extended Plan</h5>
-               <p>One time fee for one listing or task
-                  highlighted in search results.</p>
-
-               <div class="price">
-                  <h3>$59 <span>/ monthly</span></h3>
-               </div>
-
-               <h6>Features of Extended Plan</h6>
-
-               <ul>
-                  <li>Unlimited Contacts & Job Posting</li>
-                  <li>Option to have Listing in Both Principal and Sub Contractors</li>
-                  <li>Showcase of projects and work</li>
-               </ul>
-
-               <div class="link border">
-                  <a href="#">Buy Now</a>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-</section>
-
-<section class="trust-building-sec">
-   <div class="container">
-      <div class="row">
-         <div class="col-12">
-            <div class="title">
-               <h2>Trust-Building </h2>
-               <p>Unlock simplicity in your job search journey – explore 'How It Works' on
-                  our platform.</p>
-            </div>
-         </div>
-
-         <div class="col-md-4">
-            <div class="iner-item">
-               <img src="assets/images/bill-list.png" alt="" class="img-fluid">
-               <h4>⁠Security </h4>
-               <p>Job seekers start by creating an
-                  account on the job portal.</p>
-            </div>
-         </div>
-         <div class="col-md-4 mt-md-5 pt-md-3">
-            <div class="iner-item">
-               <img src="assets/images/shield.svg" alt="" class="img-fluid">
-               <h4>Money-back guarantee </h4>
-               <p>Utilize our powerful search engine to
-                  find jobs that align with your career
-                  goals.</p>
-            </div>
-         </div>
-         <div class="col-md-4">
-            <div class="iner-item">
-               <img src="assets/images/security.png" alt="" class="img-fluid">
-               <h4>Certifications or partnerships with industry organizations.
-               </h4>
-               <p>Expand your professional network by
-                  connecting with industry peers.</p>
-            </div>
-         </div>
-      </div>
-   </div>
-</section>
-
-<section class="blog-sec">
-   <div class="container">
-      <div class="col-12">
-         <h2>Blogs</h2>
-      </div>
-
-      <div class="row">
-         <div class="col-md-4">
-            <div class="blog-inner">
-               <img src="assets/images/blog-1.png" alt="" class="img-fluid">
-               <h4>The Art of Connection</h4>
-               <p>In the ever-evolving world, the art of forging genuine connections remains timeless.…</p>
-               <div class="link-normal">
-                  <a href="#"> Read More</a>
-               </div>
-            </div>
-         </div>
-         <div class="col-md-4">
-            <div class="blog-inner">
-               <img src="assets/images/blog-2.png" alt="" class="img-fluid">
-               <h4>Beyond the Obstacle</h4>
-               <p>Challenges in business are a given, but it’s our response to them…</p>
-               <div class="link-normal">
-                  <a href="#"> Read More</a>
-               </div>
-            </div>
-         </div>
-         <div class="col-md-4">
-            <div class="blog-inner">
-               <img src="assets/images/blog-3.png" alt="" class="img-fluid">
-               <h4>Growth Unlocked</h4>
-               <p>Every business has a unique potential waiting to be tapped. Recognizing the…</p>
-               <div class="link-normal">
-                  <a href="#"> Read More</a>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-</section>
-
-<section class="testimonal-sec">
-   <div class="container">
-      <div class="row">
-         <div class="col-12">
-            <div class="title">
-               <h2>What did happy clients have <br>
-                  to say about us?</h2>
-            </div>
-         </div>
-      </div>
-
-
-      <div class="swiper testimonalSwiper">
-         <div class="swiper-wrapper">
-            <div class="swiper-slide">
-               <div class="inner-item">
-
-
-
-                  <div class="star">
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                  </div>
-                  <p>"We’ve been using this customer
-                     support platform for six months, and
-                     our response times have improved
-                     by 40%. The analytics dashboard
-                     provides happier, and so are we!"</p>
-
-                  <div class="client">
-                     <div class="photo">
-                        <img src="assets/images/client-1.png" alt="" class="img-fluid">
-                     </div>
-
-                     <div class="name">
-                        <h6>Benny Bartlett</h6>
-                        <p>Interactive Designer</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="swiper-slide">
-               <div class="inner-item">
-
-
-                  <div class="star">
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                  </div>
-
-                  <p>"Switching to this CRM has been a
-                     game changer for our sales team.
-                     The interface is intuitive, and the
-                     automation features have saved us
-                     countless hours.</p>
-
-                  <div class="client">
-                     <div class="photo">
-                        <img src="assets/images/client-2.png" alt="" class="img-fluid">
-                     </div>
-
-                     <div class="name">
-                        <h6>Jaeden Reilly</h6>
-                        <p>Director</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="swiper-slide">
-               <div class="inner-item">
-
-
-                  <div class="star">
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                  </div>
-
-                  <p>"This marketing automation tool has
-                     been a lifesaver for our team. It’s
-                     easy to set up campaigns, track
-                     performance, and make data-driven
-                     decisions made.."</p>
-
-                  <div class="client">
-                     <div class="photo">
-                        <img src="assets/images/client-3.png" alt="" class="img-fluid">
-                     </div>
-
-                     <div class="name">
-                        <h6>Adrian Murphy</h6>
-                        <p>Brokerage Manager</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="swiper-slide">
-               <div class="inner-item">
-                  <div class="star">
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                  </div>
-
-                  <p>"Switching to this CRM has been a
-                     game changer for our sales team.
-                     The interface is intuitive, and the
-                     automation features have saved us
-                     countless hours."</p>
-
-                  <div class="client">
-                     <div class="photo">
-                        <img src="assets/images/client-3.png" alt="" class="img-fluid">
-                     </div>
-
-                     <div class="name">
-                        <h6>Jonatan Moss</h6>
-                        <p>CEO & Founder</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="swiper-slide">
-               <div class="inner-item">
-
-
-                  <div class="star">
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                  </div>
-
-                  <p>On the other hand, we denounce with righteous indignation and dislike men who are so
-                     beguiled and.</p>
-
-                  <div class="client">
-                     <div class="photo">
-                        <img src="assets/images/photo1.png" alt="" class="img-fluid">
-                     </div>
-
-                     <div class="name">
-                        <h6>Serhiy Hipskyy</h6>
-                        <p>Student</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div>
-
-      <div class="swiper testimonalSwiper">
-         <div class="swiper-wrapper">
-            <div class="swiper-slide">
-               <div class="inner-item">
-
-
-
-                  <div class="star">
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                  </div>
-                  <p>"We’ve been using this customer
-                     support platform for six months, and
-                     our response times have improved
-                     by 40%. The analytics dashboard
-                     provides happier, and so are we!"</p>
-
-                  <div class="client">
-                     <div class="photo">
-                        <img src="assets/images/client-1.png" alt="" class="img-fluid">
-                     </div>
-
-                     <div class="name">
-                        <h6>Benny Bartlett</h6>
-                        <p>Interactive Designer</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="swiper-slide">
-               <div class="inner-item">
-
-
-                  <div class="star">
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                  </div>
-
-                  <p>"Switching to this CRM has been a
-                     game changer for our sales team.
-                     The interface is intuitive, and the
-                     automation features have saved us
-                     countless hours.</p>
-
-                  <div class="client">
-                     <div class="photo">
-                        <img src="assets/images/client-2.png" alt="" class="img-fluid">
-                     </div>
-
-                     <div class="name">
-                        <h6>Jaeden Reilly</h6>
-                        <p>Director</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="swiper-slide">
-               <div class="inner-item">
-
-
-                  <div class="star">
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                  </div>
-
-                  <p>"This marketing automation tool has
-                     been a lifesaver for our team. It’s
-                     easy to set up campaigns, track
-                     performance, and make data-driven
-                     decisions made.."</p>
-
-                  <div class="client">
-                     <div class="photo">
-                        <img src="assets/images/client-3.png" alt="" class="img-fluid">
-                     </div>
-
-                     <div class="name">
-                        <h6>Adrian Murphy</h6>
-                        <p>Brokerage Manager</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="swiper-slide">
-               <div class="inner-item">
-                  <div class="star">
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                  </div>
-
-                  <p>"Switching to this CRM has been a
-                     game changer for our sales team.
-                     The interface is intuitive, and the
-                     automation features have saved us
-                     countless hours."</p>
-
-                  <div class="client">
-                     <div class="photo">
-                        <img src="assets/images/client-3.png" alt="" class="img-fluid">
-                     </div>
-
-                     <div class="name">
-                        <h6>Jonatan Moss</h6>
-                        <p>CEO & Founder</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="swiper-slide">
-               <div class="inner-item">
-
-
-                  <div class="star">
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-star"></i>
-                  </div>
-
-                  <p>On the other hand, we denounce with righteous indignation and dislike men who are so
-                     beguiled and.</p>
-
-                  <div class="client">
-                     <div class="photo">
-                        <img src="assets/images/photo1.png" alt="" class="img-fluid">
-                     </div>
-
-                     <div class="name">
-                        <h6>Serhiy Hipskyy</h6>
-                        <p>Student</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-</section>
-
-<section class="footer-top">
-   <div class="container">
-      <div class="row">
-         <div class="col-md-6">
-            <div class="left">
-               <h3>Begin your new journey with us.</h3>
-               <p>We value your input and continuously strive to improve our
-                  platform based on users.</p>
-
-               <div class="link white">
-                  <a href="#"> Try It Free for 14 Days</a>
-               </div>
-            </div>
-         </div>
-
-         <div class="col-md-6">
-            <div class="right">
-               <h3>24/7 Customer support</h3>
-               <p>Our dedicated support team is available around the clock to
-                  assist you with any inquiries or issues.</p>
-
-               <div class="link">
-                  <a href="#">Contact now</a>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-</section>
+        </div>
+    </section>
 @endsection

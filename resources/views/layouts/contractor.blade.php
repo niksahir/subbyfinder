@@ -72,7 +72,43 @@
     transition: background 0.3s ease;
 }
 
-    </style>
+.pagination{
+    padding-top: 0px !important;
+    border: none !important;
+    --bs-pagination-border-width: 0px !important;
+    --bs-pagination-border-radius: 0px !important;
+    height: auto !important;
+
+
+}
+
+.page-link{
+    color: black !important;
+}
+
+.pagination .page-item {
+    margin-right: 10px !important;
+    border-radius: 4px !important;
+    /* height: 44px !important;
+    width: 44px !important; */
+    -webkit-box-sizing: border-box;
+    --bs-pagination-focus-bg: transparent;
+    --bs-pagination-focus-box-shadow: none;
+}
+
+
+.active>.page-link,.page-link.active {
+    background-color: #F77A36 !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0px 2px 8px 0px #2A41E840 !important;
+    border-radius: 4px !important;
+}
+.pagination .disabled{
+    border-radius: 4px !important;
+}
+
+</style>
 </head>
 
 <body>

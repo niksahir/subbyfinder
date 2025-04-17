@@ -189,6 +189,8 @@ class HomeController extends Controller
 
         $protfolio = SubcontractorProtfolio::get();
 
+        $projectCount = ContractorProject::where('contractor_id', $project->contractor_id)->with('contractor')->count();
+
         $unloackedProject = UnlockedProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
             ->where('project_id', $id)
@@ -202,7 +204,7 @@ class HomeController extends Controller
 
         if ($userSubcription == null) {
             $unlockProject = false;
-            return view('front.projectdetilslock', compact('project', 'unlockProject','projectTypes','protfolio'));
+            return view('front.projectdetilslock', compact('project', 'unlockProject','projectTypes','protfolio','projectCount'));
         }
         $unloackedProjectCount = UnlockedProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
@@ -241,9 +243,9 @@ class HomeController extends Controller
         }
 
         if ($unloackedProject) {
-            return view('front.projectdetils', compact('project','projectTypes','protfolio'));
+            return view('front.projectdetils', compact('project','projectTypes','protfolio','projectCount'));
         } else {
-            return view('front.projectdetilslock', compact('project', 'unlockProject','projectTypes','protfolio'));
+            return view('front.projectdetilslock', compact('project', 'unlockProject','projectTypes','protfolio','projectCount'));
         }
     }
 
@@ -338,7 +340,8 @@ class HomeController extends Controller
 
         $project = SubContractor::findOrFail($id);
         $projectTypes = $project->project_type_models;
-        $protfolio = SubcontractorProtfolio::where('user_id',$id)->get();
+        $protfolio = Subcontractor::where('id',$id)->with('subContractorProtfolio','certifications')->first();
+        $protfolioCount = SubContractorProtfolio::where('user_id',$id)->count();
 
         $unloackedProject = UnlockSubcontractorProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
@@ -353,7 +356,7 @@ class HomeController extends Controller
 
         if ($userSubcription == null) {
             $unlockProject = false;
-            return view('front.subcontractorprojectdetils', compact('project', 'unlockProject','projectTypes','protfolio'));
+            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject','projectTypes','protfolio','protfolioCount'));
         }
         $unloackedProjectCount = UnlockSubcontractorProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
@@ -383,7 +386,6 @@ class HomeController extends Controller
         } elseif (in_array($planId, [5, 6])) {
             $unlockLimit = null; // Unlimited
         }
-
         // Final decision
         if ($endDate >= $now) {
             if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
@@ -391,9 +393,9 @@ class HomeController extends Controller
             }
         }
         if($unloackedProject){
-            return view('front.subcontractorprojectdetils', compact('project','protfolio')); // Desin not ready
+            return view('front.subcontractorprojectdetils', compact('project','protfolio','protfolioCount')); // Desin not ready
         }else{
-            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject','protfolio'));
+            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject','protfolio','protfolioCount'));
         }
     }
 
@@ -484,5 +486,25 @@ class HomeController extends Controller
             return response()->json(['message' => 'Email alert settings updated successfully!']);
         }
         return response()->json(['message' => 'User not found'], 404);
+    }
+
+    public function jobSearch(Request $request)
+    {
+        $location = $request->input('location');
+        $project = $request->input('project');
+
+        // Paginate the results instead of getting a collection
+        $projects = ContractorProject::where('location', 'like', '%' . $location . '%')
+                    ->where('project_name', 'like', '%' . $project . '%')
+                    ->paginate(10); // You can change the number of items per page
+
+        // If no results, send a message
+        if ($projects->isEmpty()) {
+            $message = "No jobs found for '$project' in '$location'.";
+            return view('front.jobSearch', compact('message'));
+        }
+
+        // Return the results page with paginated jobs
+        return view('front.jobSearch', compact('projects'));
     }
 }

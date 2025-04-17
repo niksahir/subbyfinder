@@ -67,7 +67,7 @@
                     <i class="{{ $subcontractor->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon"
                         data-id="{{ $subcontractor->id }}" style="cursor: pointer;"></i>
 
-                    <a href="{{ route('front.subcontractorprojectdetilslock', $subcontractor->id) }}">View Profile</a>
+                    <a href="{{ route('front.subcontractorprojectdetils', $subcontractor->id) }}">View Profile</a>
                     <a href="#">Messages</a>
                 </div>
             </div>
@@ -79,7 +79,7 @@
 
 
         <!-- Pagination -->
-        <div class="pagination-wrapper mt-4">
+        <div class="pagination-wrapper mt-4 d-flex justify-content-center">
             {{ $subcontractors->appends(request()->except('page'))->links('pagination::bootstrap-4') }}
         </div>
     </section>

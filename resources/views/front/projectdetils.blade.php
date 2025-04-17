@@ -470,7 +470,7 @@
                             <img src="{{ asset('assets/images/map.png') }}" alt="" class="img-fluid">
                         </div>
 
-                        <div class="working-hours">
+                        {{-- <div class="working-hours">
                             <div class="full-label">
                                 <h6>Service Area Map</h6>
                             </div>
@@ -482,12 +482,12 @@
                             <p>Fir <span>07:00 AM - 03:00 PM</span></p>
                             <p>Sat <span>Close</span></p>
                             <p>Sun <span>Close</span></p>
-                        </div>
+                        </div> --}}
 
 
                         <div class="post-item">
                             <img src="{{ asset('assets/images/m-1.png') }}" alt="" class="img-fluid">
-                            <h3>20+</h3>
+                            <h3>{{ $projectCount ?? 0 }}</h3>
                             <p>Project Posted</p>
                         </div>
 

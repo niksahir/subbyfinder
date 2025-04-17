@@ -87,8 +87,12 @@ class SubContractor extends Authenticatable
     }
 
     public function unlockedProjects()
-{
-    return $this->hasMany(UnlockSubcontractorProject::class, 'user_id');
-}
+    {
+        return $this->hasMany(UnlockSubcontractorProject::class, 'user_id');
+    }
 
+    public function subContractorProtfolio()
+    {
+        return $this->hasMany(SubcontractorProtfolio::class, 'user_id');
+    }
 }
