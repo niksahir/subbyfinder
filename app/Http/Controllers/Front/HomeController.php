@@ -393,9 +393,9 @@ class HomeController extends Controller
             }
         }
         if($unloackedProject){
-            return view('front.subcontractorprojectdetils', compact('project','protfolio','protfolioCount')); // Desin not ready
+            return view('front.subcontractorprojectdetils', compact('project','protfolio','protfolioCount','projectTypes')); // Desin not ready
         }else{
-            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject','protfolio','protfolioCount'));
+            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject','protfolio','protfolioCount','projectTypes'));
         }
     }
 
