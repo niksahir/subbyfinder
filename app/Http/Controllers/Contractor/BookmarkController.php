@@ -14,7 +14,7 @@ class BookmarkController extends Controller {
     * Display a listing of the resource.
     */
    public function index() {
-        $subcontractors = Subcontractor::whereHas('bookmarks', function ($query) {
+        $subcontractors = SubContractor::whereHas('bookmarks', function ($query) {
             $query->where([
                 'user_id' => Auth::guard('contractor')->id(),
                 'type' => 'contractor',
