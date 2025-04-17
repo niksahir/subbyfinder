@@ -526,10 +526,10 @@ class HomeController extends Controller
         $url = url()->current();  // Or any other URL you want to pass
         try {
             Mail::to('maan81150@gmail.com')->send(new SendEnquireMail($name, $email, $phone, $message, $url));
-            dd('Email sent successfully!');
+
             return redirect()->back()->with('success', 'Inquiry sent successfully!');
         } catch (\Throwable $th) {
-            dd($th);
+           
         }
 
     }
