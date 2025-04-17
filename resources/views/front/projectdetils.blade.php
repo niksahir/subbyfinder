@@ -434,7 +434,7 @@
                         <div class="enquire-box">
                             <h6>Enquire</h6>
 
-                            <form>
+                            <form action="{{ route('front.sendEnquiryMail') }}">
                                 <div class="mb-3">
                                     <label for="exampleInputEmail1" class="form-label">EName</label>
                                     <input type="email" class="form-control" id="exampleInputEmail1"
@@ -451,9 +451,12 @@
 
                                 <div class="mb-3">
                                     <label for="floatingTextarea">Message</label>
-                                    <textarea class="form-control" placeholder="" rows="4" floatingTextarea"></textarea>
+                                    <textarea class="form-control" placeholder="" rows="4" floatingTextarea></textarea>
                                 </div>
 
+                                <div class="mb-3">
+                                    <input type="hidden" class="form-control" id="exampleInputPassword1" value="{{ Request::url() }}">
+                                </div>
                                 <button type="submit" class="btn btn-primary">Send</button>
                             </form>
                         </div>

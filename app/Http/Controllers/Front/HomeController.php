@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SendEnquireMail;
 use App\Models\UnlockedProject;
 use App\Models\UnlockSubcontractorProject;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ use App\Models\ContractorProject;
 use App\Models\SubcontractorProtfolio;
 use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -506,5 +507,30 @@ class HomeController extends Controller
 
         // Return the results page with paginated jobs
         return view('front.jobSearch', compact('projects'));
+    }
+
+
+    public function sendEnquiryMail(Request $request)
+    {
+        // $data = $request->validate([
+        //     'name' => 'required|string|max:255',
+        //     'email' => 'required|email|max:255',
+        //     'description' => 'required|string',
+        //     'phone' => 'required|string|max:15',
+        // ]);
+
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $phone = $request->input('phone');
+        $message = $request->input('description');  // The message from the textarea
+        $url = url()->current();  // Or any other URL you want to pass
+        try {
+            Mail::to('maan81150@gmail.com')->send(new SendEnquireMail($name, $email, $phone, $message, $url));
+            dd('Email sent successfully!');
+            return redirect()->back()->with('success', 'Inquiry sent successfully!');
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+
     }
 }

@@ -42,6 +42,7 @@ Route::get('subcontractor-project-details-lock/{id}', [FrontHomeController::clas
 Route::get('subcontractor-project-details/{id}', [FrontHomeController::class, 'subcontractorprojectdetils'])->name('front.subcontractorprojectdetils');
 Route::get('pricing', [FrontHomeController::class, 'showPlans'])->name('front.pricing');
 Route::get('job-search', [FrontHomeController::class, 'jobSearch'])->name('front.jobsearch');
+Route::post('send-enquiry-mail', [FrontHomeController::class, 'sendEnquiryMail'])->name('front.sendEnquiryMail');
 
 Route::get('/front', [App\Http\Controllers\HomeController::class, 'index'])->name('front');
 
