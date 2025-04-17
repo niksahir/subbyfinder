@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Bookmark;
-use App\Models\Subcontractor;
+use App\Models\SubContractor;
 
 
 class BookmarkController extends Controller {
