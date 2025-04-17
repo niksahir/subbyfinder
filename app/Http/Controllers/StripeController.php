@@ -101,12 +101,17 @@ class StripeController extends Controller
             'stripe_session_id' => $session->id,
         ]);
 
+        $UserSubscription = UserSubscription::where('user_id', $user->id)
+            ->where('user_type', $userType)
+            ->where('stripe_session_id', $session->id)
+            ->with('plan')
+            ->first();
         // if($userType == 'contractor'){
         //     return redirect()->route('contractor.dashboard.index')->with('success', 'Subscription successful!');
         // } else {
         //     return redirect()->route('subcontractor.dashboard.index')->with('success', 'Subscription successful!');
         // }
-        return view('stripe.success');
+        return view('stripe.success',compact('UserSubscription','userType'));
     }
 
     public function cancel()
