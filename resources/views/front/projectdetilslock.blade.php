@@ -50,9 +50,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="bookmark"><span><i class="{{ $project->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon"
-                                data-id="{{ $project->id }}"
-                                style="cursor: pointer;"></i> Bookmark</span> </div>
+                            <div class="bookmark"><span><i
+                                        class="{{ $project->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon"
+                                        data-id="{{ $project->id }}" style="cursor: pointer;"></i> Bookmark</span> </div>
 
                         </div>
                     </div>
@@ -73,9 +73,16 @@
 
                         <div class="info">
                             <div class="lock-button">
-                                <a href="{{ '/unloack-project/' . $project->id }}"
-                                    class="text-decoration-none @if ($unlockProject == false) pe-none @else pe-auto @endif">Unlock
-                                    Contact</a>
+                                @if ($unlockProject == false)
+                                    <a href="{{ '/unloack-project/' . $project->id }}"
+                                        class="text-decoration-none" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal">Unlock
+                                        Contact</a>
+                                @else
+                                    <a href="{{ '/unloack-project/' . $project->id }}"
+                                        class="text-decoration-none">Unlock
+                                        Contact</a>
+                                @endif
                             </div>
 
                             <div class="info-inner">
@@ -495,6 +502,22 @@
                 </div>
             </div>
     </section>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Limit Over</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2>Your Unlock Contact Limit Is Over</h2>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('scripts')
     <script>
@@ -518,7 +541,7 @@
                         } else if (response.status === 'removed') {
                             toastr.success(response.message);
                             iconElement.removeClass('fa-solid').addClass('fa-regular');
-                        }else {
+                        } else {
                             window.location.href = "{{ route('login') }}";
                         }
                     }
