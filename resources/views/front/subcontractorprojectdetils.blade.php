@@ -17,11 +17,11 @@
 
                                 <div class="text">
                                     <div class="content">
-                                        <h6>Dylan's Mowing </h6>
+                                        <h6>{{ $project->contact_name }} </h6>
 
                                         <ul>
-                                            <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                                            <li>Electrician</li>
+                                            <li> <i class="fa-solid fa-location-dot"></i>
+                                                {{ $project->contact_name ?? '-' }} </li>
                                         </ul>
 
                                         <div class="ratimg">
@@ -43,8 +43,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="bookmark"><span><i class="fa-regular fa-bookmark"></i> Bookmark</span> </div>
-
+                            <div class="bookmark"><span><i
+                                        class="{{ $project->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon-1"
+                                        data-id="{{ $project->id }}" style="cursor: pointer;"></i> Bookmark</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -138,9 +140,9 @@
                                         </li>
                                     @endforeach
                                 @else
-                                <li>
-                                    -
-                                </li>
+                                    <li>
+                                        -
+                                    </li>
                                 @endif
                                 {{-- <li>
                                     <div>Cabling</div>
@@ -175,47 +177,70 @@
                                 <h6>Current Opportunities:</h6>
                             </div>
 
-                            <div class="full-list">
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="content">
-                                                <h6>A2 Electrical Services Pty Ltd</h6>
-                                                <ul>
-                                                    <li><i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                                                    <li><i class="fa-regular fa-clock"></i> 2 minutes ago</li>
-                                                </ul>
+                            @if ($contractorProjects->isNotEmpty())
+                                @foreach ($contractorProjects as $contractorProject)
+                                    <div class="full-list">
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="content">
+                                                        <h6>{{ $contractorProject->project_name }}</h6>
+                                                        <ul>
+                                                            <li><i class="fa-solid fa-location-dot"></i>
+                                                                {{ $contractorProject->location }}</li>
+                                                            <li><i class="fa-regular fa-clock"></i>
+                                                                {{ $contractorProject->created_at->diffForHumans() }}</li>
+                                                        </ul>
 
-                                                <p>Capitalize on low hanging fruit to identify a ballpark value added
-                                                    activity to beta test. Override the digital divide with additional
-                                                    clickthroughs from .....</p>
+                                                        <p>{{ Str::limit($contractorProject->description, 100) }}</p>
 
-                                                <div class="gender">
-                                                    <span>Electrician</span>
+                                                        <div class="gender">
+                                                            @if (is_array($contractorProject->trade_category) && count($contractorProject->expertise_names))
+                                                                @foreach ($contractorProject->expertise_names as $expertise)
+                                                                    <span
+                                                                        style="margin-bottom: 5px;">{{ $expertise }}</span>
+                                                                @endforeach
+                                                            @else
+                                                                <span>{{ $contractorProject->trade_category }}</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
 
-                                        <div class="col-md-4">
-                                            <div class="budget">
-                                                <div class="copy"><i class="fa-regular fa-bookmark"></i></div>
-                                                <h5>$100 - $150</h5>
-                                                <p>Budget</p>
+                                                <div class="col-md-4">
+                                                    <div class="budget">
+                                                        <div class="copy">
+                                                            <i class="{{ $contractorProject->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon"
+                                                                data-id="{{ $contractorProject->id }}"
+                                                                style="cursor: pointer;"></i>
+                                                        </div>
+                                                        <h5>{{ $contractorProject->budget }}</h5>
+                                                        <p>Budget</p>
 
-                                                <div class="link-light">
-                                                    <a href="#">View Profile</a>
-                                                </div>
+                                                        <div class="link-light">
+                                                            <a
+                                                                href="{{ route('front.projectDetils', $contractorProject->id) }}">View
+                                                                Profile</a>
+                                                        </div>
 
-                                                <div class="link">
-                                                    <a href="#">Message</a>
+                                                        <div class="link">
+                                                            <a href="#">Message</a>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                @endforeach
+                            @else
+                                <div class="full-list">
+                                    <div class="col-12">
+                                        <p>No current opportunities available.</p>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
 
-                            <div class="full-list">
+                            {{-- <div class="full-list">
                                 <div class="col-12">
                                     <div class="row">
                                         <div class="col-md-8">
@@ -253,7 +278,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="full-label">
                                 <h6>Past Project Completed : </h6>
@@ -458,46 +483,49 @@
                             <a href="#">Message</a>
                         </div>
 
-                        <div class="enquire-box">
-                            <h6>Enquire</h6>
-
-                            <form>
-                                <div class="mb-3">
-                                    <label for="exampleInputEmail1" class="form-label">EName</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1"
-                                        aria-describedby="emailHelp">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="exampleInputPassword1" class="form-label">Phone </label>
-                                    <input type="text" class="form-control" id="exampleInputPassword1">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="exampleInputPassword1" class="form-label">Email </label>
-                                    <input type="text" class="form-control" id="exampleInputPassword1">
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="floatingTextarea">Message</label>
-                                    <textarea class="form-control" placeholder="" rows="4" floatingTextarea"></textarea>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary">Send</button>
-                            </form>
-                        </div>
-
-                        <div class="share">
-                            <p> Interesting? <a href="#">Share It!</a></p>
-                        </div>
-
-                        <div class="area-map">
-                            <div class="full-label">
-                                <h6>Service Area Map</h6>
+                        <form action="{{ route('front.sendEnquiryMail') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="exampleInputEmail1" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="exampleInputEmail1"
+                                    aria-describedby="emailHelp" name="name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputPassword1" class="form-label">Phone </label>
+                                <input type="text" class="form-control" name="phone" id="exampleInputPassword1">
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputPassword1" class="form-label">Email </label>
+                                <input type="email" class="form-control" name="email" id="exampleInputPassword1">
                             </div>
 
-                            <img src="{{ asset('assets/images/map.png') }}" alt="" class="img-fluid">
+                            <div class="mb-3">
+                                <label for="floatingTextarea">Message</label>
+                                <textarea class="form-control" name="description" placeholder="" rows="4"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <input type="hidden" class="form-control" id="exampleInputPassword1" name="url"
+                                    value="{{ Request::url() }}">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </form>
+
+                    </div>
+
+                    <div class="share">
+                        <p> Interesting? <a href="#">Share It!</a></p>
+                    </div>
+
+                    <div class="area-map">
+                        <div class="full-label">
+                            <h6>Service Area Map</h6>
                         </div>
 
-                        {{-- <div class="working-hours">
+                        <img src="{{ asset('assets/images/map.png') }}" alt="" class="img-fluid">
+                    </div>
+
+                    {{-- <div class="working-hours">
                             <div class="full-label">
                                 <h6>Service Area Map</h6>
                             </div>
@@ -512,23 +540,84 @@
                             <p>Sun <span>Close</span></p>
                         </div> --}}
 
-                        <div class="post-item">
-                            <img src="{{ asset('assets/images/m-1.png') }}" alt="" class="img-fluid">
-                            <h3>{{ $protfolioCount ?? '0' }}</h3>
-                            <p>Project Posted</p>
-                        </div>
+                    <div class="post-item">
+                        <img src="{{ asset('assets/images/m-1.png') }}" alt="" class="img-fluid">
+                        <h3>{{ $protfolioCount ?? '0' }}</h3>
+                        <p>Project Posted</p>
+                    </div>
 
-                        <div class="certificates-item">
-                            <div class="full-label">
-                                <h6>Certificates </h6>
-                            </div>
-                            @foreach ($protfolio->certifications as $certificat)
-                                <img src="{{ asset('storage/' . $certificat->file_path) }}" alt=""
-                                    class="img-fluid">
-                            @endforeach
+                    <div class="certificates-item">
+                        <div class="full-label">
+                            <h6>Certificates </h6>
                         </div>
+                        @foreach ($protfolio->certifications as $certificat)
+                            <img src="{{ asset('storage/' . $certificat->file_path) }}" alt=""
+                                class="img-fluid">
+                        @endforeach
                     </div>
                 </div>
             </div>
+        </div>
     </section>
+@endsection
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            $(document).on('click', '.bookmark-icon', function(event) {
+
+                const projectId = $(this).data('id');
+                const iconElement = $(this);
+
+                $.ajax({
+                    url: "{{ route('contractor.bookmark.store') }}", // Route to store bookmark
+                    type: 'POST',
+                    data: {
+                        id: projectId,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.status === 'added') {
+                            iconElement.removeClass('fa-regular').addClass('fa-solid');
+                            toastr.success(response.message);
+                        } else if (response.status === 'removed') {
+                            toastr.success(response.message);
+                            iconElement.removeClass('fa-solid').addClass('fa-regular');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $(document).on('click', '.bookmark-icon-1', function(event) {
+
+                const subcontractorId = $(this).data('id');
+                const iconElement = $(this);
+
+                $.ajax({
+                    url: "{{ route('subcontractor.bookmark.store') }}", // Route to store bookmark
+                    type: 'POST',
+                    data: {
+                        id: subcontractorId,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.status === 'added') {
+                            iconElement.removeClass('fa-regular').addClass('fa-solid');
+                            toastr.success(response.message);
+                        } else if (response.status === 'removed') {
+                            toastr.success(response.message);
+                            iconElement.removeClass('fa-solid').addClass('fa-regular');
+                        } else {
+                            window.location.href = "{{ route('login') }}";
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        window.location.href = "{{ route('login') }}";
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

@@ -49,7 +49,7 @@ class SendEnquireMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'email.SendEnquire',  // Make sure you create this view
+            view: 'emails.SendEnquire',  // Make sure you create this view
             with: [
                 'name' => $this->name,
                 'email' => $this->email,

@@ -50,7 +50,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="bookmark"><span><i class="fa-regular fa-bookmark"></i> Bookmark</span> </div>
+                            <div class="bookmark"><span><i class="{{ $project->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon"
+                                data-id="{{ $project->id }}"
+                                style="cursor: pointer;"></i> Bookmark</span> </div>
 
                         </div>
                     </div>
@@ -113,47 +115,70 @@
                                 <h6>Current Opportunities:</h6>
                             </div>
 
-                            <div class="full-list">
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="content">
-                                                <h6>A2 Electrical Services Pty Ltd</h6>
-                                                <ul>
-                                                    <li><i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                                                    <li><i class="fa-regular fa-clock"></i> 2 minutes ago</li>
-                                                </ul>
+                            @if ($contractorProjects->isNotEmpty())
+                                @foreach ($contractorProjects as $contractorProject)
+                                    <div class="full-list">
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="content">
+                                                        <h6>{{ $contractorProject->project_name }}</h6>
+                                                        <ul>
+                                                            <li><i class="fa-solid fa-location-dot"></i>
+                                                                {{ $contractorProject->location }}</li>
+                                                            <li><i class="fa-regular fa-clock"></i>
+                                                                {{ $contractorProject->created_at->diffForHumans() }}</li>
+                                                        </ul>
 
-                                                <p>Capitalize on low hanging fruit to identify a ballpark value added
-                                                    activity to beta test. Override the digital divide with additional
-                                                    clickthroughs from .....</p>
+                                                        <p>{{ Str::limit($contractorProject->description, 100) }}</p>
 
-                                                <div class="gender">
-                                                    <span>Electrician</span>
+                                                        <div class="gender">
+                                                            @if (is_array($contractorProject->trade_category) && count($contractorProject->expertise_names))
+                                                                @foreach ($contractorProject->expertise_names as $expertise)
+                                                                    <span
+                                                                        style="margin-bottom: 5px;">{{ $expertise }}</span>
+                                                                @endforeach
+                                                            @else
+                                                                <span>{{ $contractorProject->trade_category }}</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
 
-                                        <div class="col-md-4">
-                                            <div class="budget">
-                                                <div class="copy"><i class="fa-regular fa-bookmark"></i></div>
-                                                <h5>$100 - $150</h5>
-                                                <p>Budget</p>
+                                                <div class="col-md-4">
+                                                    <div class="budget">
+                                                        <div class="copy">
+                                                            <i class="{{ $contractorProject->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon"
+                                                                data-id="{{ $contractorProject->id }}"
+                                                                style="cursor: pointer;"></i>
+                                                        </div>
+                                                        <h5>{{ $contractorProject->budget }}</h5>
+                                                        <p>Budget</p>
 
-                                                <div class="link-light">
-                                                    <a href="#">View Profile</a>
-                                                </div>
+                                                        <div class="link-light">
+                                                            <a
+                                                                href="{{ route('front.projectDetils', $contractorProject->id) }}">View
+                                                                Profile</a>
+                                                        </div>
 
-                                                <div class="link">
-                                                    <a href="#">Message</a>
+                                                        <div class="link">
+                                                            <a href="#">Message</a>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                @endforeach
+                            @else
+                                <div class="full-list">
+                                    <div class="col-12">
+                                        <p>No current opportunities available.</p>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
 
-                            <div class="full-list">
+                            {{-- <div class="full-list">
                                 <div class="col-12">
                                     <div class="row">
                                         <div class="col-md-8">
@@ -191,7 +216,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="full-label">
                                 <h6>Past Project Completed : </h6>
@@ -413,11 +438,13 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Phone </label>
-                                    <input type="text" class="form-control" name="phone" id="exampleInputPassword1">
+                                    <input type="text" class="form-control" name="phone"
+                                        id="exampleInputPassword1">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Email </label>
-                                    <input type="email" class="form-control" name="email" id="exampleInputPassword1">
+                                    <input type="email" class="form-control" name="email"
+                                        id="exampleInputPassword1">
                                 </div>
 
                                 <div class="mb-3">
@@ -468,4 +495,35 @@
                 </div>
             </div>
     </section>
+@endsection
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            $(document).on('click', '.bookmark-icon', function(event) {
+
+                const projectId = $(this).data('id');
+                const iconElement = $(this);
+
+                $.ajax({
+                    url: "{{ route('contractor.bookmark.store') }}", // Route to store bookmark
+                    type: 'POST',
+                    data: {
+                        id: projectId,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.status === 'added') {
+                            iconElement.removeClass('fa-regular').addClass('fa-solid');
+                            toastr.success(response.message);
+                        } else if (response.status === 'removed') {
+                            toastr.success(response.message);
+                            iconElement.removeClass('fa-solid').addClass('fa-regular');
+                        }else {
+                            window.location.href = "{{ route('login') }}";
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

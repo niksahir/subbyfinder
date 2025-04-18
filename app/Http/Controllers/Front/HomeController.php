@@ -191,6 +191,7 @@ class HomeController extends Controller
         $protfolio = SubcontractorProtfolio::get();
 
         $projectCount = ContractorProject::where('contractor_id', $project->contractor_id)->with('contractor')->count();
+        $contractorProjects = ContractorProject::with('contractor')->get();
 
         $unloackedProject = UnlockedProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
@@ -205,7 +206,7 @@ class HomeController extends Controller
 
         if ($userSubcription == null) {
             $unlockProject = false;
-            return view('front.projectdetilslock', compact('project', 'unlockProject','projectTypes','protfolio','projectCount'));
+            return view('front.projectdetilslock', compact('project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
         }
         $unloackedProjectCount = UnlockedProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
@@ -244,9 +245,9 @@ class HomeController extends Controller
         }
 
         if ($unloackedProject) {
-            return view('front.projectdetils', compact('project','projectTypes','protfolio','projectCount'));
+            return view('front.projectdetils', compact('project', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
         } else {
-            return view('front.projectdetilslock', compact('project', 'unlockProject','projectTypes','protfolio','projectCount'));
+            return view('front.projectdetilslock', compact('project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
         }
     }
 
@@ -329,8 +330,8 @@ class HomeController extends Controller
 
     public function subcontractorprojectdetilslock($id)
     {
-        $project =SubContractor::findOrfail($id);
-        return view('front.subcontractorprojectdetilslock',compact('project'));
+        $project = SubContractor::findOrfail($id);
+        return view('front.subcontractorprojectdetilslock', compact('project'));
     }
 
     public function subcontractorprojectdetils($id)
@@ -341,8 +342,9 @@ class HomeController extends Controller
 
         $project = SubContractor::findOrFail($id);
         $projectTypes = $project->project_type_models;
-        $protfolio = Subcontractor::where('id',$id)->with('subContractorProtfolio','certifications')->first();
-        $protfolioCount = SubContractorProtfolio::where('user_id',$id)->count();
+        $protfolio = Subcontractor::where('id', $id)->with('subContractorProtfolio', 'certifications')->first();
+        $protfolioCount = SubContractorProtfolio::where('user_id', $id)->count();
+        $contractorProjects = ContractorProject::with('contractor')->get();
 
         $unloackedProject = UnlockSubcontractorProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
@@ -357,7 +359,7 @@ class HomeController extends Controller
 
         if ($userSubcription == null) {
             $unlockProject = false;
-            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject','projectTypes','protfolio','protfolioCount'));
+            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject', 'projectTypes', 'protfolio', 'protfolioCount', 'contractorProjects'));
         }
         $unloackedProjectCount = UnlockSubcontractorProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
@@ -393,10 +395,10 @@ class HomeController extends Controller
                 $unlockProject = true;
             }
         }
-        if($unloackedProject){
-            return view('front.subcontractorprojectdetils', compact('project','protfolio','protfolioCount','projectTypes')); // Desin not ready
-        }else{
-            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject','protfolio','protfolioCount','projectTypes'));
+        if ($unloackedProject) {
+            return view('front.subcontractorprojectdetils', compact('project', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects')); // Desin not ready
+        } else {
+            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects'));
         }
     }
 
@@ -496,13 +498,13 @@ class HomeController extends Controller
 
         // Paginate the results instead of getting a collection
         $projects = ContractorProject::where('location', 'like', '%' . $location . '%')
-                    ->where('project_name', 'like', '%' . $project . '%')
-                    ->paginate(10); // You can change the number of items per page
+            ->where('project_name', 'like', '%' . $project . '%')
+            ->paginate(10); // You can change the number of items per page
 
         // If no results, send a message
         if ($projects->isEmpty()) {
             $message = "No jobs found for '$project' in '$location'.";
-            return view('front.jobSearch', compact('message'));
+            return view('front.jobSearch', compact('message', 'projects'));
         }
 
         // Return the results page with paginated jobs
@@ -523,14 +525,12 @@ class HomeController extends Controller
         $email = $request->input('email');
         $phone = $request->input('phone');
         $message = $request->input('description');  // The message from the textarea
-        $url = url()->current();  // Or any other URL you want to pass
+        $url = $request->input('url');  // Or any other URL you want to pass
         try {
             Mail::to('maan81150@gmail.com')->send(new SendEnquireMail($name, $email, $phone, $message, $url));
-
             return redirect()->back()->with('success', 'Inquiry sent successfully!');
-        } catch (\Throwable $th) {
-           
+        } catch (\Exception $ex) {
+            return redirect()->back()->with('error', 'Something went wrong!');
         }
-
     }
 }

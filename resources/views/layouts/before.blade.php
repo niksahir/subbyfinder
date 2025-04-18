@@ -31,6 +31,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <link href="{{ asset('assets/css/multiSelect.css') }}" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet">
     <style>
         .pagination {
             padding-top: 0px !important;
@@ -87,6 +88,24 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Choices.js JS -->
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        jQuery.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': '{{ Session::token() }}'
+            }
+        });
+        @if (session()->has('success'))
+            toastr.success('{{ session()->get('success') }}');
+        @endif
+        @if (session()->has('error'))
+            toastr.error('{{ session()->get('error') }}');
+        @endif
+        $(window).on('load', function() {
+            // Hide loading image when the page has finished loading
+            $('#loading-image').fadeOut('slow');
+        });
     </script>
     @yield('scripts')
 </body>

@@ -161,7 +161,9 @@
                     success: function(response) {
                         if (response.status === 'added') {
                             iconElement.removeClass('fa-regular').addClass('fa-solid');
+                            toastr.success(response.message);
                         } else if (response.status === 'removed') {
+                            toastr.success(response.message);
                             iconElement.removeClass('fa-solid').addClass('fa-regular');
                         }else {
                             window.location.href = "{{ route('login') }}";
