@@ -3008,12 +3008,12 @@ header .sign-in li:nth-child(2) a {
 
 
 .description-section .left-content .info .lock-button a {
-  padding: 10px 20px;
-  color: var(--c-primary);
-  background-color: rgba(247, 122, 54, 0.1019607843);
-  display: inline-block;
-  cursor: pointer;
-  border-radius: 4px;
+  padding: 10px 20px !important;
+  color: var(--c-primary) !important;
+  background-color: rgba(247, 122, 54, 0.1019607843) !important;
+  display: inline-block !important;
+  cursor: pointer !important;
+  border-radius: 4px !important;
 }
 @media screen and (min-width: 768px) {
   .description-section .left-content .info .item {
