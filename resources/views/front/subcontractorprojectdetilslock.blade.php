@@ -85,11 +85,11 @@
                         <div class="info">
                             <div class="lock-button">
                                 @if ($unlockProject == false)
-                                    <a href="{{ '/unloack-project/' . $project->id }}" class="text-decoration-none"
+                                    <a href="{{ '/unloack-subcontractor-project/' . $project->id }}" class="text-decoration-none"
                                         data-bs-toggle="modal" data-bs-target="#exampleModal">Unlock
                                         Contact</a>
                                 @else
-                                    <a href="{{ '/unloack-project/' . $project->id }}" class="text-decoration-none">Unlock
+                                    <a href="{{ '/unloack-subcontractor-project/' . $project->id }}" class="text-decoration-none">Unlock
                                         Contact</a>
                                 @endif
                             </div>

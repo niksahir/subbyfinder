@@ -104,7 +104,7 @@
 
         <div class="meta-info">
             <div><strong>Order ID:</strong> #{{ $UserSubscription->id }}</div>
-            <div><strong>Transaction ID:</strong> -</div>
+            <div><strong>Transaction ID:</strong>{{$UserSubscription->stripe_session_id}}</div>
         </div>
 
         <p>You’re now a premium member! Enjoy all the benefits and exclusive access.</p>

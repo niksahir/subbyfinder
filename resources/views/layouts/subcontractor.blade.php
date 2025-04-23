@@ -28,7 +28,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <link href="{{ asset('assets/css/multiSelect.css') }}" rel="stylesheet" type="text/css">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .pagination {
             padding-top: 0px !important;
@@ -66,6 +66,31 @@
 
         .pagination .disabled {
             border-radius: 4px !important;
+        }
+
+        .star-rating {
+            direction: rtl;
+            display: inline-flex;
+        }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 1.5rem;
+            color: lightgray;
+            cursor: pointer;
+        }
+
+        .star-rating input[type="radio"]:checked~label,
+        .star-rating label:hover,
+        .star-rating label:hover~label {
+            color: gold;
+        }
+
+        textarea {
+            resize: none;
         }
     </style>
 </head>

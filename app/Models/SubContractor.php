@@ -95,4 +95,14 @@ class SubContractor extends Authenticatable
     {
         return $this->hasMany(SubcontractorProtfolio::class, 'user_id');
     }
+
+    public function reviews()
+    {
+        return $this->morphMany(ReviewSubContractor::class, 'project');
+    }
+
+    public function subbyReviews()
+    {
+        return $this->morphMany(ReviewSubContractor::class, 'user');
+    }
 }

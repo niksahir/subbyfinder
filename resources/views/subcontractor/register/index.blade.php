@@ -62,7 +62,8 @@
             <div class="title">
                 <h5>Create Account</h5>
             </div>
-            <form method="POST" id="subcontractor_register_form" action="{{ route('subcontractor.register.store') }}" enctype="multipart/form-data">
+            <form method="POST" id="subcontractor_register_form" action="{{ route('subcontractor.register.store') }}"
+                enctype="multipart/form-data">
                 @csrf
                 <div class="wrapper">
                     <div class="row">
@@ -73,7 +74,7 @@
                         <div class="col-md-3">
                             <div class="profile @error('profile_photo') is-invalid @enderror">
                                 <input type="file" accept="image/*" name="profile_photo" class="form-control d-none"
-                                    id="profileInput" required>
+                                    id="profileInput">
                                 <img src="{{ asset('assets/images/team-3.png') }}" alt="" class="img-fluid"
                                     id="profileImage" onclick="document.getElementById('profileInput').click()">
                             </div>
@@ -558,19 +559,22 @@
                 const profilePhoto = $('#profileInput');
                 const profileError = profilePhoto.next('.invalid-feedback');
 
-                if (!profilePhoto[0].files.length) {
-                    formValid = false;
-                    if (profileError.length === 0) {
-                        profilePhoto.after(
-                            "<span class='invalid-feedback' role='alert'><strong>Profile photo is required</strong></span>"
-                        );
-                    } else {
-                        profileError.html("<strong>Profile photo is required</strong>");
-                    }
-                    profilePhoto.addClass('is-invalid');
-                } else {
-                    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-                    const file = profilePhoto[0].files[0];
+                // if (!profilePhoto[0].files.length) {
+                //     formValid = false;
+                //     if (profileError.length === 0) {
+                //         profilePhoto.after(
+                //             "<span class='invalid-feedback' role='alert'><strong>Profile photo is required</strong></span>"
+                //         );
+                //     } else {
+                //         profileError.html("<strong>Profile photo is required</strong>");
+                //     }
+                //     profilePhoto.addClass('is-invalid');
+                // } else {
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                const fileInput = profilePhoto[0];
+
+                if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
 
                     if (!allowedTypes.includes(file.type)) {
                         formValid = false;
@@ -579,13 +583,10 @@
                                 "<span class='invalid-feedback' role='alert'><strong>Only image files (JPG, PNG) are allowed</strong></span>"
                             );
                         } else {
-                            profileError.html(
-                                "<strong>Only image files (JPG, PNG) are allowed</strong>");
+                            profileError.html("<strong>Only image files (JPG, PNG) are allowed</strong>");
                         }
                         profilePhoto.addClass('is-invalid');
-                    }
-                    // Check file size (optional - 2MB max)
-                    else if (file.size > 2 * 1024 * 1024) {
+                    } else if (file.size > 2 * 1024 * 1024) {
                         formValid = false;
                         if (profileError.length === 0) {
                             profilePhoto.after(
@@ -600,6 +601,7 @@
                         profilePhoto.removeClass('is-invalid');
                     }
                 }
+                // }
 
 
 
@@ -655,43 +657,43 @@
                 const certificateError = certificateInput.next('.invalid-feedback');
                 const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
 
-                if (certificateInput[0].files.length === 0) {
+                // if (certificateInput[0].files.length === 0) {
+                //     formValid = false;
+                //     if (certificateError.length === 0) {
+                //         certificateInput.after(
+                //             "<span class='invalid-feedback' role='alert'><strong>At least one certificate file is required</strong></span>"
+                //         );
+                //     } else {
+                //         certificateError.html("<strong>At least one certificate file is required</strong>");
+                //     }
+                //     certificateInput.addClass('is-invalid');
+                // } else {
+                let invalidFile = false;
+                for (let i = 0; i < certificateInput[0].files.length; i++) {
+                    const certFile = certificateInput[0].files[i];
+                    if (!allowedFileTypes.includes(certFile.type)) {
+                        invalidFile = true;
+                        break;
+                    }
+                }
+
+                if (invalidFile) {
                     formValid = false;
                     if (certificateError.length === 0) {
                         certificateInput.after(
-                            "<span class='invalid-feedback' role='alert'><strong>At least one certificate file is required</strong></span>"
+                            "<span class='invalid-feedback' role='alert'><strong>Only JPG, PNG, and PDF files are allowed for certificates</strong></span>"
                         );
                     } else {
-                        certificateError.html("<strong>At least one certificate file is required</strong>");
+                        certificateError.html(
+                            "<strong>Only JPG, PNG, and PDF files are allowed for certificates</strong>"
+                        );
                     }
                     certificateInput.addClass('is-invalid');
                 } else {
-                    let invalidFile = false;
-                    for (let i = 0; i < certificateInput[0].files.length; i++) {
-                        const certFile = certificateInput[0].files[i];
-                        if (!allowedFileTypes.includes(certFile.type)) {
-                            invalidFile = true;
-                            break;
-                        }
-                    }
-
-                    if (invalidFile) {
-                        formValid = false;
-                        if (certificateError.length === 0) {
-                            certificateInput.after(
-                                "<span class='invalid-feedback' role='alert'><strong>Only JPG, PNG, and PDF files are allowed for certificates</strong></span>"
-                            );
-                        } else {
-                            certificateError.html(
-                                "<strong>Only JPG, PNG, and PDF files are allowed for certificates</strong>"
-                            );
-                        }
-                        certificateInput.addClass('is-invalid');
-                    } else {
-                        certificateError.remove();
-                        certificateInput.removeClass('is-invalid');
-                    }
+                    certificateError.remove();
+                    certificateInput.removeClass('is-invalid');
                 }
+                // }
 
                 // Validate Expertise In Multi-Select
                 // const expertiseIn = $("input[name='expertise_in[]']");
@@ -768,7 +770,7 @@
 
                             if (formValid) {
                                 $('#subcontractor_register_form')[0]
-                            .submit(); // Use native JS for submission to avoid reload
+                                    .submit(); // Use native JS for submission to avoid reload
                             }
                         }
                     },

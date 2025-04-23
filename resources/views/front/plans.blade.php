@@ -54,7 +54,7 @@
                         <h5>${plan.name}</h5>
                         <p>${plan.description || ''}</p>
                         <div class="price">
-                            <h3>$${plan.price} <span>/ ${plan.billing_type}</span></h3>
+                            <h3>AUD${plan.price} <span>/ ${plan.billing_type}</span></h3>
                         </div>
                         <h6>Features of ${plan.name}</h6>
                         <ul>

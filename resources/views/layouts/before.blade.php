@@ -70,6 +70,31 @@
         .pagination .disabled {
             border-radius: 4px !important;
         }
+
+        .star-rating {
+            direction: rtl;
+            display: inline-flex;
+        }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 1.5rem;
+            color: lightgray;
+            cursor: pointer;
+        }
+
+        .star-rating input[type="radio"]:checked~label,
+        .star-rating label:hover,
+        .star-rating label:hover~label {
+            color: gold;
+        }
+
+        textarea {
+            resize: none;
+        }
     </style>
 </head>
 

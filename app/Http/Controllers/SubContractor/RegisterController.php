@@ -36,7 +36,7 @@ class RegisterController extends Controller {
    public function store(Request $request) {
 
     $validatedData = $request->validate([
-        'profile_photo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        'profile_photo' => 'image|mimes:jpeg,png,jpg|max:2048',
         'business_name' => 'required|string|max:255',
         'contact_name' => 'required|string|max:255',
         'phone' => 'required|string|max:20',

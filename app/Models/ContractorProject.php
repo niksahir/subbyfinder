@@ -71,4 +71,14 @@ class ContractorProject extends Model
         }
         return $this->bookmarks()->where(['user_id' => $userId, 'type' => $userType])->exists();
     }
+
+    public function reviews()
+    {
+        return $this->morphMany(ReviewSubContractor::class, 'project');
+    }
+
+    public function contractorReviews()
+    {
+        return $this->morphMany(ReviewContractor::class, 'project');
+    }
 }

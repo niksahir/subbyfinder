@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PurchasePlan;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
 use App\Models\Plan;
 use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Mail;
 
 class StripeController extends Controller
 {
@@ -33,7 +34,7 @@ class StripeController extends Controller
             'payment_method_types' => ['card'],
             'line_items' => [[
                 'price_data' => [
-                    'currency' => 'usd',
+                    'currency' => 'aud',
                     'product_data' => [
                         'name' => $plan->name,
                     ],
@@ -74,6 +75,10 @@ class StripeController extends Controller
 
         $session = \Stripe\Checkout\Session::retrieve($sessionId);
 
+        if ($session->payment_status !== 'paid') {
+            return redirect()->route('front.pricing')->with('error', 'Your Payment is Failed/Pending.');
+        }
+
         // Optional: prevent double subscription for same session
         $existing = UserSubscription::where('user_id', $user->id)
             ->where('user_type', $userType)
@@ -111,6 +116,9 @@ class StripeController extends Controller
         // } else {
         //     return redirect()->route('subcontractor.dashboard.index')->with('success', 'Subscription successful!');
         // }
+
+        Mail::to($user->email)->send(new PurchasePlan($user->contact_name,$plan->name,$plan->billing_type,$plan->price,$UserSubscription->start_date,$UserSubscription->end_date,$userType));
+
         return view('stripe.success',compact('UserSubscription','userType'));
     }
 
