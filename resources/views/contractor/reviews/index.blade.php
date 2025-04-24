@@ -38,8 +38,8 @@
 
                     <div class="inner-wrapper">
                         <div class="image">
-                            <img src="{{ asset('storage/' . $unlockedProject->project->project_logo) ?? ""}}" alt="project logo"
-                                class="img-fluid">
+                            <img src="{{ $unlockedProject->project ? asset('storage/' . $unlockedProject->project->project_logo) : '' }}" alt=""
+                            class="img-fluid">
                         </div>
 
                         <div class="content">
@@ -130,8 +130,8 @@
 
                     <div class="inner-wrapper">
                         <div class="image">
-                            <img src="{{ asset('storage/' . $unlockedProject->project->profile_photo) }}" alt=""
-                                class="img-fluid">
+                            <img src="{{ $unlockedProject->project ? asset('storage/' . $unlockedProject->project->profile_photo) : '' }}" alt=""
+                            class="img-fluid">
                         </div>
 
                         <div class="content">

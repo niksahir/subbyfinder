@@ -29,6 +29,7 @@ class ReviewsController extends Controller
 
         $unlockedProjects = UnlockedProject::where('user_id', $userId)
             ->with(['project', 'project.contractor'])
+            ->whereHas('project.contractor')
             ->where('user_type', $userType)
             ->get()
             ->map(function ($unlockedProject) {
@@ -38,6 +39,7 @@ class ReviewsController extends Controller
             });
         $unlockedSubContractorProjects = UnlockSubcontractorProject::where('user_id', $userId)
             ->with('project')
+            ->whereHas('project')
             ->where('user_type', $userType)
             ->get()
             ->map(function ($unlockedSubContractorProject) {
@@ -69,7 +71,7 @@ class ReviewsController extends Controller
             $currentPage,
             ['path' => request()->url(), 'query' => request()->query()]
         );
-        
+
         return view("contractor.reviews.index", compact('paginatedProjects','projectsToDisplay', 'unlockedProjects', 'unlockedSubContractorProjects', 'reviewProjects'));
     }
 
