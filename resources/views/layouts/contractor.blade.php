@@ -456,6 +456,7 @@
                             iconElement.removeClass('fa-regular').addClass('fa-solid');
                             toastr.success(response.message);
                         } else if (response.status === 'removed') {
+                            location.reload();
                             toastr.success(response.message);
                             iconElement.removeClass('fa-solid').addClass('fa-regular');
                         }

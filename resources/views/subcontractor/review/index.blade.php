@@ -34,7 +34,7 @@
 
                     <div class="inner-wrapper">
                         <div class="image">
-                            <img src="{{ asset('storage/' . $unlockedProject->project->project_logo) }}" alt=""
+                            <img src="{{ asset('storage/' . $unlockedProject->project->project_logo) ?? '' }}" alt=""
                                 class="img-fluid">
                         </div>
 
@@ -126,7 +126,7 @@
 
                     <div class="inner-wrapper">
                         <div class="image">
-                            <img src="{{ asset('storage/' . $unlockedProject->project->profile_photo) }}" alt=""
+                            <img src="{{ asset('storage/' . $unlockedProject->project->profile_photo) ?? '' }}" alt=""
                                 class="img-fluid">
                         </div>
 

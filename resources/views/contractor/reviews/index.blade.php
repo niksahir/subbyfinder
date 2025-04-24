@@ -38,7 +38,7 @@
 
                     <div class="inner-wrapper">
                         <div class="image">
-                            <img src="{{ asset('storage/' . $unlockedProject->project->project_logo) }}" alt=""
+                            <img src="{{ asset('storage/' . $unlockedProject->project->project_logo) ?? ""}}" alt="project logo"
                                 class="img-fluid">
                         </div>
 
