@@ -947,7 +947,7 @@
                                 `<option value="${loc.name}" ${selected}>${loc.name}</option>`);
                         });
 
-                        
+
 
                         // // Reinitialize select2
                         // $('#editlocation').select2({
@@ -967,6 +967,9 @@
                             `);
                             });
                         }
+
+                        $('#editdescription').val(project.description);
+                        $('#editprice').val(project.price);
 
                         // Set form action dynamically
                         var editUrl = "{{ route('subcontractor.protfolio.update', ':id') }}";
