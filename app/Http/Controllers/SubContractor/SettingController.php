@@ -33,14 +33,14 @@ class SettingController extends Controller
             ->latest()
             ->first();
 
+        $protfolios = SubcontractorProtfolio::where('user_id', $userId)
+            ->get();
+
         if ($userSubcription == null) {
 
             $protfolioAdd = false;
-            return view("subcontractor.setting.index", compact('subcontractor', 'expertise_in', 'locations','protfolioAdd'));
+            return view("subcontractor.setting.index", compact('protfolios','subcontractor', 'expertise_in', 'locations', 'protfolioAdd'));
         }
-
-        $protfolios = SubcontractorProtfolio::where('user_id', $userId)
-            ->get();
 
         $unloackedProjectCount = SubcontractorProtfolio::where('user_id', $userId)
             ->count();
@@ -76,7 +76,7 @@ class SettingController extends Controller
             }
         }
 
-        return view("subcontractor.setting.index", compact('protfolios','subcontractor', 'expertise_in', 'locations','protfolioAdd'));
+        return view("subcontractor.setting.index", compact('protfolios', 'subcontractor', 'expertise_in', 'locations', 'protfolioAdd'));
     }
 
     /**

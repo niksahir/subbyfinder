@@ -133,6 +133,10 @@
                                 {{ $project->contractor->expertise_in ?? '-' }}
                             </ul>
                         </div>
+                        <div class="values">
+                            <h6>Price</h6>
+                            <p>{{$project->budget}}</p>
+                        </div>
 
                         <div class="detail-info">
                             <div class="full-label">
@@ -585,6 +589,7 @@
                     <h2>Your Unlock Contact Limit Is Over,For More Unlock Pay AUD9</h2>
                 </div>
                 <div class="modal-footer">
+                    <a href="{{ '/unloack-project/' . $project->id }}" class="btn">Buy</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

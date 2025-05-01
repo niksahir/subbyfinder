@@ -305,10 +305,12 @@ class HomeController extends Controller
         $currentBillingEnd = $currentBillingStart->copy()->addMonth();
 
         $unlockedContractorProjectThisMonth = UnlockedProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
             ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
             ->count();
 
         $unlockedSubcontractorProjectThisMonth = UnlockSubcontractorProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
             ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
             ->count();
 
@@ -427,47 +429,60 @@ class HomeController extends Controller
             ->where('project_id', $id)
             ->first();
 
+        $unlockProject = false;
+
         $userSubcription = UserSubscription::where('user_id', $userId->id)
             ->where('is_active', 1)
             ->where('user_type', $userType)
             ->latest()
             ->first();
 
-        $unloackedProjectCount = UnlockedProject::where('user_id', $userId->id)
-            ->where('user_type', $userType)
-            ->count();
+        if ($userSubcription != null) {
+            $unloackedProjectCount = UnlockedProject::where('user_id', $userId->id)
+                ->where('user_type', $userType)
+                ->count();
 
-        $unlockProject = false;
-        $now = now();
-        $startDate = $userSubcription->start_date;
-        $endDate = $userSubcription->end_date;
+            $now = now();
+            $startDate = $userSubcription->start_date;
+            $endDate = $userSubcription->end_date;
 
-        $monthsSinceStart = $startDate->diffInMonths($now);
+            $monthsSinceStart = $startDate->diffInMonths($now);
 
-        $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
-        $currentBillingEnd = $currentBillingStart->copy()->addMonth();
+            $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
+            $currentBillingEnd = $currentBillingStart->copy()->addMonth();
 
-        $unlockedThisMonth = UnlockedProject::where('user_id', $userId->id)
-            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
-            ->count();
+            $unlockedContractorProjectThisMonth = UnlockedProject::where('user_id', $userId->id)
+                ->where('user_type', $userType)
+                ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+                ->count();
 
-        $planId = $userSubcription->plan_id;
-        $unlockLimit = null;
+            $unlockedSubcontractorProjectThisMonth = UnlockSubcontractorProject::where('user_id', $userId->id)
+                ->where('user_type', $userType)
+                ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+                ->count();
 
-        if (in_array($planId, [1, 2])) {
-            $unlockLimit = 2;
-        } elseif (in_array($planId, [3, 4])) {
-            $unlockLimit = 5;
-        } elseif (in_array($planId, [5, 6])) {
-            $unlockLimit = null; // Unlimited
-        }
+            $unlockedThisMonth = $unlockedContractorProjectThisMonth + $unlockedSubcontractorProjectThisMonth;
 
-        // Final decision
-        if ($endDate >= $now) {
-            if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
-                $unlockProject = true;
+            $planId = $userSubcription->plan_id;
+            $unlockLimit = null;
+
+            if (in_array($planId, [1, 2])) {
+                $unlockLimit = 2;
+            } elseif (in_array($planId, [3, 4])) {
+                $unlockLimit = 5;
+            } elseif (in_array($planId, [5, 6])) {
+                $unlockLimit = null; // Unlimited
+            }
+
+            // Final decision
+            if ($endDate >= $now) {
+                if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
+                    $unlockProject = true;
+                }
             }
         }
+
+
         if ($unlockProject == false) {
             Stripe::setApiKey(config('services.stripe.secret'));
 
@@ -548,45 +563,55 @@ class HomeController extends Controller
         $userId = $this->userLogin;
         $userType = $this->getUserType();
         session(['project_id' => $id, 'user_type' => $userType]);
+
+        $unlockProject = false;
         $userSubcription = UserSubscription::where('user_id', $userId->id)
             ->where('is_active', 1)
             ->where('user_type', $userType)
             ->latest()
             ->first();
 
-        $unloackedProjectCount = UnlockSubcontractorProject::where('user_id', $userId->id)
-            ->where('user_type', $userType)
-            ->count();
+        if ($userSubcription != null) {
+            $unloackedProjectCount = UnlockSubcontractorProject::where('user_id', $userId->id)
+                ->where('user_type', $userType)
+                ->count();
 
+            $now = now();
+            $startDate = $userSubcription->start_date;
+            $endDate = $userSubcription->end_date;
 
-        $unlockProject = false;
-        $now = now();
-        $startDate = $userSubcription->start_date;
-        $endDate = $userSubcription->end_date;
+            $monthsSinceStart = $startDate->diffInMonths($now);
 
-        $monthsSinceStart = $startDate->diffInMonths($now);
+            $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
+            $currentBillingEnd = $currentBillingStart->copy()->addMonth();
 
-        $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
-        $currentBillingEnd = $currentBillingStart->copy()->addMonth();
+            $unlockedContractorProjectThisMonth = UnlockedProject::where('user_id', $userId->id)
+                ->where('user_type', $userType)
+                ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+                ->count();
 
-        $unlockedThisMonth = UnlockSubcontractorProject::where('user_id', $userId->id)
-            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
-            ->count();
+            $unlockedSubcontractorProjectThisMonth = UnlockSubcontractorProject::where('user_id', $userId->id)
+                ->where('user_type', $userType)
+                ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+                ->count();
 
-        $planId = $userSubcription->plan_id;
-        $unlockLimit = null;
+            $unlockedThisMonth = $unlockedContractorProjectThisMonth + $unlockedSubcontractorProjectThisMonth;
 
-        if (in_array($planId, [1, 2])) {
-            $unlockLimit = 2;
-        } elseif (in_array($planId, [3, 4])) {
-            $unlockLimit = 5;
-        } elseif (in_array($planId, [5, 6])) {
-            $unlockLimit = null; // Unlimited
-        }
-        // Final decision
-        if ($endDate >= $now) {
-            if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
-                $unlockProject = true;
+            $planId = $userSubcription->plan_id;
+            $unlockLimit = null;
+
+            if (in_array($planId, [1, 2])) {
+                $unlockLimit = 2;
+            } elseif (in_array($planId, [3, 4])) {
+                $unlockLimit = 5;
+            } elseif (in_array($planId, [5, 6])) {
+                $unlockLimit = null; // Unlimited
+            }
+            // Final decision
+            if ($endDate >= $now) {
+                if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
+                    $unlockProject = true;
+                }
             }
         }
 
@@ -765,10 +790,12 @@ class HomeController extends Controller
         $currentBillingEnd = $currentBillingStart->copy()->addMonth();
 
         $unlockedContractorProjectThisMonth = UnlockedProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
             ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
             ->count();
 
         $unlockedSubcontractorProjectThisMonth = UnlockSubcontractorProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
             ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
             ->count();
 
