@@ -289,7 +289,7 @@ class HomeController extends Controller
 
         if ($userSubcription == null) {
             $unlockProject = false;
-            return view('front.projectdetilslock', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
+            return view('front.projectdetilslock', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
         }
 
         $unloackedProjectCount = UnlockedProject::where('user_id', $userId->id)
@@ -340,9 +340,9 @@ class HomeController extends Controller
         }
 
         if ($unloackedProject) {
-            return view('front.projectdetils', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
+            return view('front.projectdetils', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
         } else {
-            return view('front.projectdetilslock', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
+            return view('front.projectdetilslock', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
         }
     }
 
@@ -789,7 +789,7 @@ class HomeController extends Controller
 
         if ($userId == null) {
             $unlockProject = false;
-            return view('front.subcontractorprojectdetilslock', compact('userId', 'subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'protfolioCount', 'contractorProjects'));
+            return view('front.subcontractorprojectdetilslock', compact('userId','userId', 'subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'protfolioCount', 'contractorProjects'));
         }
 
         $unloackedProject = UnlockSubcontractorProject::where('user_id', $userId->id)
@@ -805,7 +805,7 @@ class HomeController extends Controller
 
         if ($userSubcription == null) {
             $unlockProject = false;
-            return view('front.subcontractorprojectdetilslock', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'protfolioCount', 'contractorProjects'));
+            return view('front.subcontractorprojectdetilslock', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'protfolioCount', 'contractorProjects'));
         }
 
         $unloackedProjectCount = UnlockSubcontractorProject::where('user_id', $userId->id)
@@ -855,9 +855,9 @@ class HomeController extends Controller
             }
         }
         if ($unloackedProject) {
-            return view('front.subcontractorprojectdetils', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects')); // Desin not ready
+            return view('front.subcontractorprojectdetils', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects')); // Desin not ready
         } else {
-            return view('front.subcontractorprojectdetilslock', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects'));
+            return view('front.subcontractorprojectdetilslock', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects'));
         }
     }
 
