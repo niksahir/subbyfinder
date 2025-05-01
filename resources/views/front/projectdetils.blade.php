@@ -12,38 +12,70 @@
                         <div class="col-12">
                             <div class="bplogo-wrwppr">
                                 <div class="b-logo">
-                                    <img src="{{ asset('assets/images/project-logo.png') }}') }}" alt="">
+                                    <img src="{{ asset('storage/' . $project->project_logo) }}" alt="Project Logo"
+                                        class="img-fluid">
                                 </div>
 
                                 <div class="text">
                                     <div class="content">
-                                        <h6>Dylan's Mowing </h6>
+                                        <h6h6>{{ $project->project_name }} </h6>
 
-                                        <ul>
-                                            <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                                            <li>Electrician</li>
-                                        </ul>
+                                            <ul>
+                                                <li> <i class="fa-solid fa-location-dot"></i> {{ $project->location }}</li>
+                                                <li><span>
+                                                        @if (is_array($project->trade_category))
+                                                            {{ implode(', ', $project->expertise_names) }}
+                                                        @else
+                                                            {{ $project->trade_category }}
+                                                        @endif
+                                                    </span></li>
+                                            </ul>
 
-                                        <div class="ratimg">
-                                            <div class="ratimg-inner">
-                                                <div class="number">
-                                                    5.0
+
+
+                                            @if (isset($averageRating) && $averageRating !== null)
+                                                <div class="ratimg">
+                                                    <div class="ratimg-inner">
+                                                        <div class="number">
+                                                            {{ number_format($averageRating, 1) }}
+                                                        </div>
+
+                                                        <div class="star">
+                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                @if ($averageRating >= $i)
+                                                                    <i class="fa-solid fa-star" style="color: #fbbf24;"></i>
+                                                                    <!-- full star -->
+                                                                @elseif ($averageRating >= $i - 0.5)
+                                                                    <i class="fa-solid fa-star-half-stroke"
+                                                                        style="color: #fbbf24;"></i> <!-- half star -->
+                                                                @else
+                                                                    <i class="fa-regular fa-star"
+                                                                        style="color: #fbbf24;"></i> <!-- empty star -->
+                                                                @endif
+                                                            @endfor
+                                                        </div>
+                                                    </div>
+                                                    <div class="verified"><i class="fa-solid fa-check"></i> Verified</div>
                                                 </div>
-
-                                                <div class="star"><i class="fa-solid fa-star"></i>
-                                                    <i class="fa-solid fa-star"></i>
-                                                    <i class="fa-solid fa-star"></i>
-                                                    <i class="fa-solid fa-star"></i>
-                                                    <i class="fa-solid fa-star"></i>
+                                            @else
+                                                <div class="ratimg">
+                                                    <div class="number">
+                                                        0.0
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="verified"> <i class="fa-solid fa-check"></i> Verified</div>
-                                        </div>
+                                            @endif
 
                                     </div>
                                 </div>
                             </div>
-                            <div class="bookmark"><span><i class="fa-regular fa-bookmark"></i> Bookmark</span> </div>
+                            <div class="bookmark bookmark-icon" style="cursor: pointer;" data-id="{{ $project->id }}">
+                                <span>
+                                    <i class="{{ $project->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark"
+                                        data-id="{{ $project->id }}"></i>
+                                    Bookmark
+                                </span>
+                            </div>
+
 
                         </div>
                     </div>
@@ -251,7 +283,7 @@
                                 </div>
                             </div> --}}
 
-                            <div class="full-label">
+                            {{-- <div class="full-label">
                                 <h6>Past Project Completed : </h6>
                             </div>
 
@@ -298,7 +330,7 @@
                                 <div class="prject-with-images mb-5 pb-3">
                                     <p>No past project available.</p>
                                 </div>
-                            @endif
+                            @endif --}}
 
 
                             {{-- <div class="prject-with-images mb-5 pb-3">
@@ -338,7 +370,110 @@
                                 <h6>Reviews </h6>
                             </div>
 
-                            <div class="review-item">
+                            @if ($subcontractorReviews != null && $subcontractorReviews->isNotEmpty() || $contractorReviews != null && $contractorReviews->isNotEmpty())
+                                @foreach ($subcontractorReviews as $review)
+                                    <div class="review-item">
+                                        <div class="star">
+                                            @php
+                                                $subRatings = collect();
+
+                                                foreach ($subcontractorReviews as $review) {
+                                                    $subRatings = $subRatings->merge([
+                                                        $review->workmanship,
+                                                        $review->integrity,
+                                                        $review->presentation,
+                                                        $review->communication,
+                                                    ]);
+                                                }
+
+                                                $filtered = $subRatings->filter(fn($val) => $val !== null);
+                                                $subAvgRating = $filtered->isNotEmpty() ? $filtered->avg() : null;
+                                            @endphp
+
+                                            <div class="stars">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    @if ($subAvgRating >= $i)
+                                                        <i class="fa-solid fa-star" style="color: #fbbf24;"></i>
+                                                    @elseif ($subAvgRating >= $i - 0.5)
+                                                        <i class="fa-solid fa-star-half-stroke" style="color: #fbbf24;"></i>
+                                                    @else
+                                                        <i class="fa-regular fa-star" style="color: #fbbf24;"></i>
+                                                    @endif
+                                                @endfor
+                                            </div>
+                                        </div>
+
+                                        {{-- <p>{{ $review->review_text ?? 'No comment provided.' }}</p> --}}
+
+                                        @if ($review->user != null)
+                                            <div class="client">
+                                                <div class="photo">
+                                                    <img src="{{ asset('storage/' . $review->user->profile_photo) }}" alt="Project Logo"
+                                                        class="img-fluid">
+                                                </div>
+                                                <div class="name">
+                                                    <h6>{{ $review->user->contact_name ?? 'Anonymous' }}</h6>
+                                                    {{-- <p>{{ $review->user->designation ?? 'Client' }}</p> --}}
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                 @endforeach
+                                 @foreach ($contractorReviews as $review)
+                                    <div class="review-item">
+                                        <div class="star">
+                                            @php
+                                                $subRatings = collect();
+
+                                                foreach ($contractorReviews as $review) {
+                                                    $subRatings = $subRatings->merge([
+                                                        $review->doj,
+                                                        $review->payment_terms,
+                                                        $review->support_staff,
+                                                        $review->safety,
+                                                    ]);
+                                                }
+
+                                                $filtered = $subRatings->filter(fn($val) => $val !== null);
+                                                $subAvgRating = $filtered->isNotEmpty() ? $filtered->avg() : null;
+                                            @endphp
+
+                                            <div class="stars">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    @if ($subAvgRating >= $i)
+                                                        <i class="fa-solid fa-star" style="color: #fbbf24;"></i>
+                                                    @elseif ($subAvgRating >= $i - 0.5)
+                                                        <i class="fa-solid fa-star-half-stroke" style="color: #fbbf24;"></i>
+                                                    @else
+                                                        <i class="fa-regular fa-star" style="color: #fbbf24;"></i>
+                                                    @endif
+                                                @endfor
+                                            </div>
+                                        </div>
+
+                                        {{-- <p>{{ $review->review_text ?? 'No comment provided.' }}</p> --}}
+
+                                        @if ($review->user != null)
+                                            <div class="client">
+                                                <div class="photo">
+                                                    <img src="{{ asset('storage/' . $review->user->profile_photo) }}" alt="Project Logo"
+                                                        class="img-fluid">
+                                                </div>
+                                                <div class="name">
+                                                    <h6>{{ $review->user->contact_name ?? 'Anonymous' }}</h6>
+                                                    {{-- <p>{{ $review->user->designation ?? 'Client' }}</p> --}}
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                 @endforeach
+                            @else
+                                <div class="review-item">
+                                    <p>No reviews available.</p>
+                                </div>
+                            @endif
+
+                            {{-- <div class="review-item">
                                 <div class="star">
                                     <i class="fa-solid fa-star"></i>
                                     <i class="fa-solid fa-star"></i>
@@ -415,33 +550,7 @@
                                         <p>Interactive Designer</p>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="review-item">
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                                <p>"We’ve been using this customer
-                                    support platform for six months, and
-                                    our response times have improved
-                                    by 40%. The analytics dashboard
-                                    provides happier, and so are we!"</p>
-
-                                <div class="client">
-                                    <div class="photo">
-                                        <img src="{{ asset('assets/images/client-1.png') }}" alt=""
-                                            class="img-fluid">
-                                    </div>
-
-                                    <div class="name">
-                                        <h6>Benny Bartlett</h6>
-                                        <p>Interactive Designer</p>
-                                    </div>
-                                </div>
-                            </div>
+                            </div> --}}
 
                         </div>
 
@@ -462,22 +571,34 @@
                                 <div class="mb-3">
                                     <label for="exampleInputEmail1" class="form-label">Name</label>
                                     <input type="text" class="form-control" id="exampleInputEmail1"
-                                        aria-describedby="emailHelp" name="name">
+                                        aria-describedby="emailHelp" name="name" value="{{ old('name') }}">
+                                    @error('name')
+                                        <div class="error text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Phone </label>
                                     <input type="text" class="form-control" name="phone"
-                                        id="exampleInputPassword1">
+                                        value="{{ old('phone') }}" id="exampleInputPassword1">
+                                    @error('phone')
+                                        <div class="error text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Email </label>
                                     <input type="email" class="form-control" name="email"
-                                        id="exampleInputPassword1">
+                                        value="{{ old('email') }}" id="exampleInputPassword1">
+                                    @error('email')
+                                        <div class="error text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="floatingTextarea">Message</label>
-                                    <textarea class="form-control" name="description" placeholder="" rows="4"></textarea>
+                                    <textarea class="form-control" name="description" placeholder="" rows="4">{{{ old('description') }}}</textarea>
+                                    @error('description')
+                                        <div class="error text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="mb-3">
                                     <input type="hidden" class="form-control" id="exampleInputPassword1" name="url"
@@ -489,16 +610,61 @@
                         </div>
 
                         <div class="share">
-                            <p> Interesting? <a href="#">Share It!</a></p>
+                            <p> Interesting? <a href="javascript:void(0)" data-bs-toggle="modal"
+                                    data-bs-target="#shareModal">Share It!</a></p>
                         </div>
 
-                        <div class="area-map">
+                        {{-- share popup --}}
+                        <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-4 shadow">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="shareModalLabel">Share This Page</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    @php
+                                        $url = urlencode(url()->current());
+                                        $text = 'Check this out!';
+                                        $encodedText = urlencode($text);
+                                    @endphp
+                                    <div class="modal-body text-center">
+                                        <div class="d-flex justify-content-center gap-3">
+                                            <div class="share-container">
+                                                {{-- <div class="share-title">Share this page:</div> --}}
+                                                <div class="share-buttons">
+                                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ $url }}"
+                                                        class="facebook" target="_blank" title="Facebook">
+                                                        <i class="fab fa-facebook-f"></i>
+                                                    </a>
+                                                    <a href="https://twitter.com/intent/tweet?url={{ $url }}&text={{ $encodedText }}"
+                                                        class="twitter" target="_blank" title="Twitter">
+                                                        <i class="fab fa-twitter"></i>
+                                                    </a>
+                                                    <a href="https://wa.me/?text={{ $url }}" class="whatsapp"
+                                                        target="_blank" title="WhatsApp">
+                                                        <i class="fab fa-whatsapp"></i>
+                                                    </a>
+                                                    <a href="mailto:?subject={{ $encodedText }}&body={{ $url }}"
+                                                        class="email" target="_blank" title="Email">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- <div class="area-map">
                             <div class="full-label">
                                 <h6>Service Area Map</h6>
                             </div>
 
                             <img src="{{ asset('assets/images/map.png') }}" alt="" class="img-fluid">
-                        </div>
+                        </div> --}}
 
                         {{-- <div class="working-hours">
                             <div class="full-label">
@@ -530,12 +696,16 @@
     <script>
         $(document).ready(function() {
             $(document).on('click', '.bookmark-icon', function(event) {
+                event.preventDefault();
 
-                const projectId = $(this).data('id');
-                const iconElement = $(this);
+                // Get the icon element, whether clicking on the <div> or the <i>
+                const iconElement = $(this).find('i');
+                const projectId = iconElement.data('id');
+
+                // const projectId = iconElement.data('id');
 
                 $.ajax({
-                    url: "{{ route('contractor.bookmark.store') }}", // Route to store bookmark
+                    url: "{{ route('contractor.bookmark.store') }}",
                     type: 'POST',
                     data: {
                         id: projectId,
@@ -546,11 +716,14 @@
                             iconElement.removeClass('fa-regular').addClass('fa-solid');
                             toastr.success(response.message);
                         } else if (response.status === 'removed') {
-                            toastr.success(response.message);
                             iconElement.removeClass('fa-solid').addClass('fa-regular');
-                        }else {
+                            toastr.success(response.message);
+                        } else {
                             window.location.href = "{{ route('login') }}";
                         }
+                    },
+                    error: function(xhr) {
+                        toastr.error('Something went wrong. Please try again.');
                     }
                 });
             });

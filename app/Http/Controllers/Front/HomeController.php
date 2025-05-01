@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Mail\SendEnquireMail;
+use App\Models\AdditionalPay;
+use App\Models\ReviewContractor;
+use App\Models\ReviewSubContractor;
 use App\Models\UnlockedProject;
 use App\Models\UnlockSubcontractorProject;
 use Illuminate\Http\Request;
@@ -18,6 +21,8 @@ use App\Models\SubcontractorProtfolio;
 use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Stripe\Checkout\Session;
+use Stripe\Stripe;
 
 class HomeController extends Controller
 {
@@ -61,7 +66,31 @@ class HomeController extends Controller
 
     public function index(Request $request)
     {
-        return view('front.home', ['userLogin' => $this->userLogin]);
+        $userType = null;
+        $userType = $this->getUserType();
+
+        $projects = ContractorProject::latest()->take(2)->get();
+        $subcontractors = SubContractor::count();
+        $contractors = Contractor::count();
+        $projectsCount = ContractorProject::count();
+        $monthlyPlans = Plan::where('billing_type', 'monthly')->get();
+        $yearlyPlans = Plan::where('billing_type', 'yearly')->get();
+        $locations = Location::all();
+
+        return view(
+            'front.home',
+            ['userLogin' => $this->userLogin],
+            compact(
+                'projects',
+                'subcontractors',
+                'contractors',
+                'projectsCount',
+                'monthlyPlans',
+                'yearlyPlans',
+                'locations',
+                'userType'
+            )
+        );
     }
 
     public function showPlans()
@@ -99,6 +128,7 @@ class HomeController extends Controller
         $userEmailAlerts = 0;
         $sortBy = $request->sort_by ? $request->sort_by : 'latest';
         $userLogin = null;
+
         if (Auth::guard('contractor')->check()) {
             $userEmailAlerts = Auth::guard('contractor')->user()->email_alerts;
             $userLogin = Auth::guard('contractor')->user();
@@ -120,6 +150,10 @@ class HomeController extends Controller
         // Filter by Project type
         if ($request->has('project_type') && !empty($request->project_type)) {
             $query->whereJsonContains('project_type', $request->project_type);
+        }
+
+        if ($request->has('project') && !empty($request->project)) {
+            $query->where('project_name', 'LIKE', '%' . $request->project . '%');
         }
 
         // Filter by sorting
@@ -174,10 +208,12 @@ class HomeController extends Controller
 
         $expertise_in = Expertise::all();
         $project_types = ProjectType::all();
-        $projects = ContractorProject::latest()->paginate(10);
+        // $projects = ContractorProject::latest()->paginate(10);
         $locations = Location::all();
         return view('front.projectSearch', compact('expertise_in', 'projects', 'project_types', 'userEmailAlerts', 'sortBy', 'locations', 'userLogin'));
     }
+
+
 
     public function projectDetils($id)
     {
@@ -193,6 +229,49 @@ class HomeController extends Controller
         $projectCount = ContractorProject::where('contractor_id', $project->contractor_id)->with('contractor')->count();
         $contractorProjects = ContractorProject::with('contractor')->get();
 
+        // Fetch raw reviews
+        $contractorReviews = ReviewContractor::where('project_id', $id)
+            ->where('project_type', 'contractor_project')
+            ->with(relations: 'user')
+            ->get();
+        $subcontractorReviews = ReviewSubContractor::where('project_id', $id)
+            ->where('project_type', 'contractor_project')
+            ->with(relations: 'user')
+            ->get();
+
+        // dd($subcontractorReviews);
+
+        // Merge models
+        $mergedReviews = $contractorReviews->merge($subcontractorReviews);
+
+        // Extract ratings only for averaging
+        $ratings = collect();
+
+        foreach ($contractorReviews as $review) {
+            $ratings = $ratings->merge([
+                $review->doj,
+                $review->payment_terms,
+                $review->support_staff,
+                $review->safety,
+            ]);
+        }
+
+        foreach ($subcontractorReviews as $review) {
+            $ratings = $ratings->merge([
+                $review->workmanship,
+                $review->integrity,
+                $review->presentation,
+                $review->communication,
+            ]);
+        }
+
+        $filteredRatings = $ratings->filter(fn($v) => $v !== null);
+        $averageRating = $filteredRatings->isNotEmpty()
+            ? round($filteredRatings->avg(), 1)
+            : null;
+
+
+        // dd($mergedReviews);
         $unloackedProject = UnlockedProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
             ->where('project_id', $id)
@@ -206,8 +285,154 @@ class HomeController extends Controller
 
         if ($userSubcription == null) {
             $unlockProject = false;
-            return view('front.projectdetilslock', compact('project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
+            return view('front.projectdetilslock', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
         }
+        $unloackedProjectCount = UnlockedProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
+            ->count();
+        $unlockedSubcontractorProjectCount = UnlockSubcontractorProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
+            ->count();
+
+        $unlockProject = false;
+        $now = now();
+        $startDate = $userSubcription->start_date;
+        $endDate = $userSubcription->end_date;
+
+        $monthsSinceStart = $startDate->diffInMonths($now);
+
+        $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
+        $currentBillingEnd = $currentBillingStart->copy()->addMonth();
+
+        $unlockedContractorProjectThisMonth = UnlockedProject::where('user_id', $userId->id)
+            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+            ->count();
+
+        $unlockedSubcontractorProjectThisMonth = UnlockSubcontractorProject::where('user_id', $userId->id)
+            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+            ->count();
+
+        $unlockedThisMonth = $unlockedContractorProjectThisMonth + $unlockedSubcontractorProjectThisMonth;
+
+        $planId = $userSubcription->plan_id;
+        $unlockLimit = null;
+
+        if (in_array($planId, [1, 2])) {
+            $unlockLimit = 2;
+        } elseif (in_array($planId, [3, 4])) {
+            $unlockLimit = 5;
+        } elseif (in_array($planId, [5, 6])) {
+            $unlockLimit = null; // Unlimited
+        }
+
+        // Final decision
+        if ($endDate >= $now) {
+            if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
+                $unlockProject = true;
+            }
+        }
+
+        if ($unloackedProject) {
+            return view('front.projectdetils', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
+        } else {
+            return view('front.projectdetilslock', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
+        }
+    }
+
+    public function subcontractorsearch(Request $request)
+    {
+
+        $query = SubContractor::query();
+        $userEmailAlerts = 0;
+        $sortBy = $request->sort_by ? $request->sort_by : 'latest';
+        $userLogin = null;
+        $query->orderBy('created_at', $request->sort_by == 'latest' ? 'desc' : 'asc');
+
+        if (Auth::guard('contractor')->check()) {
+            $userEmailAlerts = Auth::guard('contractor')->user()->subcontractor_email_alerts;
+            $userLogin = Auth::guard('contractor')->user();
+        } elseif (Auth::guard('subcontractor')->check()) {
+            $userEmailAlerts = Auth::guard('subcontractor')->user()->subcontractor_email_alerts;
+            $userLogin = Auth::guard('subcontractor')->user();
+        }
+        // Filter by Category
+        if ($request->has('trade_category') && !empty($request->trade_category)) {
+            $query->whereJsonContains('trade_category', $request->trade_category);
+        }
+
+        if ($request->has('location') && !empty($request->location)) {
+            $query->where('location', 'LIKE', '%' . $request->location . '%');
+        }
+
+        if ($request->has('availability') && !empty($request->availability)) {
+            $query->where('availability', 'LIKE', '%' . $request->availability . '%');
+        }
+
+        if ($request->has('project') && !empty($request->project)) {
+            $query->where('contact_name', 'LIKE', '%' . $request->project . '%');
+        }
+        // Get Paginated Results
+        $subcontractors = $query->latest()->paginate(10);
+
+        // AJAX Request Handling
+        if ($request->ajax()) {
+            $html = view('front.subcontractor_partial', compact('subcontractors', 'userEmailAlerts', 'sortBy'))->render();
+            return response()->json(['html' => $html, 'param' => $request->all()]);
+        }
+
+        $expertise_in = Expertise::all();
+        // $subcontractors = SubContractor::latest()->paginate(10);
+        $locations = Location::all();
+        return view('front.principalContractor', compact('expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
+    }
+
+    public function jobSearch(Request $request)
+    {
+
+        $userType = $this->getUserType();
+
+        $location = $request->input('location');
+        $project = $request->input('project') ?? null;
+
+        if ($userType == 'contractor') {
+            return redirect()->route(
+                'front.subcontractorsearch',
+                [
+                    'location' => $location,
+                    'project' => $project,
+                ]
+            );
+        } else if ($userType == 'subcontractor') {
+            return redirect()->route('front.projectSearch', [
+                'location' => $location,
+                'project' => $project,
+            ]);
+        }
+    }
+
+    public function projectdetilslock($id)
+    {
+        $project = ContractorProject::with('contractor')->findOrFail($id);
+        return view('front.projectdetilslock', compact('project'));
+    }
+
+    public function unloackproject($id)
+    {
+        $userId = $this->userLogin;
+        $userType = $this->getUserType();
+        session(['project_id' => $id, 'user_type' => $userType]);
+
+        $unloackedProject = UnlockedProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
+            ->where('project_id', $id)
+            ->first();
+
+        $userSubcription = UserSubscription::where('user_id', $userId->id)
+            ->where('is_active', 1)
+            ->where('user_type', $userType)
+            ->latest()
+            ->first();
+
         $unloackedProjectCount = UnlockedProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
             ->count();
@@ -243,67 +468,35 @@ class HomeController extends Controller
                 $unlockProject = true;
             }
         }
+        if ($unlockProject == false) {
+            Stripe::setApiKey(config('services.stripe.secret'));
 
-        if ($unloackedProject) {
-            return view('front.projectdetils', compact('project', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
-        } else {
-            return view('front.projectdetilslock', compact('project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
+            // $planKey = $request->plan_id;
+
+            // $plan = Plan::where('id', $planKey)->first();
+            // Create a Stripe Checkout Session
+            $session = Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => 'aud',
+                        'product_data' => [
+                            'name' => 'Extra Contact Unlock',
+                        ],
+                        'unit_amount' => 9 * 100,
+                    ],
+                    'quantity' => 1,
+                ]],
+                'mode' => 'payment',
+                'success_url' => route('front.handleStripePaymentProject') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('stripe.cancel'),
+                // 'metadata' => [
+                //     'plan_key' => , // make sure your Plan model has a unique plan_key
+                // ],
+            ]);
+
+            return redirect($session->url);
         }
-    }
-
-    public function subcontractorsearch(Request $request)
-    {
-
-        $query = SubContractor::query();
-        $userEmailAlerts = 0;
-        $sortBy = $request->sort_by ? $request->sort_by : 'latest';
-        $userLogin = null;
-        $query->orderBy('created_at', $request->sort_by == 'latest' ? 'desc' : 'asc');
-
-        if (Auth::guard('contractor')->check()) {
-            $userEmailAlerts = Auth::guard('contractor')->user()->subcontractor_email_alerts;
-            $userLogin = Auth::guard('contractor')->user();
-        } elseif (Auth::guard('subcontractor')->check()) {
-            $userEmailAlerts = Auth::guard('subcontractor')->user()->subcontractor_email_alerts;
-            $userLogin = Auth::guard('subcontractor')->user();
-        }
-        // Filter by Category
-        if ($request->has('trade_category') && !empty($request->trade_category)) {
-            $query->whereJsonContains('trade_category', $request->trade_category);
-        }
-
-        if ($request->has('location') && !empty($request->location)) {
-            $query->where('location', 'LIKE', '%' . $request->location . '%');
-        }
-
-        if ($request->has('availability') && !empty($request->availability)) {
-            $query->where('availability', 'LIKE', '%' . $request->availability . '%');
-        }
-        // Get Paginated Results
-        $subcontractors = $query->latest()->paginate(10);
-
-        // AJAX Request Handling
-        if ($request->ajax()) {
-            $html = view('front.subcontractor_partial', compact('subcontractors', 'userEmailAlerts', 'sortBy'))->render();
-            return response()->json(['html' => $html, 'param' => $request->all()]);
-        }
-
-        $expertise_in = Expertise::all();
-        $subcontractors = SubContractor::latest()->paginate(10);
-        $locations = Location::all();
-        return view('front.principalContractor', compact('expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
-    }
-
-    public function projectdetilslock($id)
-    {
-        $project = ContractorProject::with('contractor')->findOrFail($id);
-        return view('front.projectdetilslock', compact('project'));
-    }
-
-    public function unloackproject($id)
-    {
-        $userId = $this->userLogin;
-        $userType = $this->getUserType();
 
         $uloackedProject = new UnlockedProject();
         $uloackedProject->user_id = $userId->id;
@@ -314,56 +507,57 @@ class HomeController extends Controller
         return redirect()->route('front.projectDetils', $id);
     }
 
+    public function handleStripePaymentProject(Request $request)
+    {
+        $sessionId = $request->get('session_id');
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        $session = Session::retrieve($sessionId);
+
+        if ($session->payment_status === 'paid') {
+            // Payment is successful, unlock the project
+            $userId = $this->userLogin;
+            $userType = $this->getUserType();
+            $projectId = session('project_id');
+
+            $additionalPay = new AdditionalPay();
+            $additionalPay->user_id = $userId->id;
+            $additionalPay->user_type = $userType;
+            $additionalPay->payable_type = 'unlock_contact';
+            $additionalPay->is_over = 1;
+            $additionalPay->price = 9;
+            $additionalPay->stripe_session_id = $sessionId;
+            $additionalPay->save();
+
+            // Save the unlock information
+            $uloackedProject = new UnlockedProject();
+            $uloackedProject->user_id = $userId->id;
+            $uloackedProject->project_id = $projectId;
+            $uloackedProject->user_type = $userType;
+            $uloackedProject->save();
+
+            return redirect()->route('front.subcontractorprojectdetils', $projectId);
+            // ->with('success', 'Project unlocked successfully!');
+        } else {
+            return redirect('/')->with('error', 'Payment failed. Please try again.');
+        }
+    }
+
     public function unloackSubcontractorProject($id)
     {
         $userId = $this->userLogin;
         $userType = $this->getUserType();
-
-        $uloackedProject = new UnlockSubcontractorProject();
-        $uloackedProject->user_id = $userId->id;
-        $uloackedProject->project_id = $id;
-        $uloackedProject->user_type = $userType;
-        $uloackedProject->save();
-
-        return redirect()->route('front.subcontractorprojectdetils', $id);
-    }
-
-    public function subcontractorprojectdetilslock($id)
-    {
-        $project = SubContractor::findOrfail($id);
-        return view('front.subcontractorprojectdetilslock', compact('project'));
-    }
-
-    public function subcontractorprojectdetils($id)
-    {
-
-        $userId = $this->userLogin;
-        $userType = $this->getUserType();
-
-        $project = SubContractor::findOrFail($id);
-        $projectTypes = $project->project_type_models;
-        $protfolio = Subcontractor::where('id', $id)->with('subContractorProtfolio', 'certifications')->first();
-        $protfolioCount = SubContractorProtfolio::where('user_id', $id)->count();
-        $contractorProjects = ContractorProject::with('contractor')->get();
-
-        $unloackedProject = UnlockSubcontractorProject::where('user_id', $userId->id)
-            ->where('user_type', $userType)
-            ->where('project_id', $id)
-            ->first();
-
+        session(['project_id' => $id, 'user_type' => $userType]);
         $userSubcription = UserSubscription::where('user_id', $userId->id)
             ->where('is_active', 1)
             ->where('user_type', $userType)
             ->latest()
             ->first();
 
-        if ($userSubcription == null) {
-            $unlockProject = false;
-            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject', 'projectTypes', 'protfolio', 'protfolioCount', 'contractorProjects'));
-        }
         $unloackedProjectCount = UnlockSubcontractorProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
             ->count();
+
 
         $unlockProject = false;
         $now = now();
@@ -395,10 +589,211 @@ class HomeController extends Controller
                 $unlockProject = true;
             }
         }
-        if ($unloackedProject) {
-            return view('front.subcontractorprojectdetils', compact('project', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects')); // Desin not ready
+
+        if ($unlockProject == false) {
+            Stripe::setApiKey(config('services.stripe.secret'));
+
+            // $planKey = $request->plan_id;
+
+            // $plan = Plan::where('id', $planKey)->first();
+            // Create a Stripe Checkout Session
+            $session = Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => 'aud',
+                        'product_data' => [
+                            'name' => 'Extra Contact Unlock',
+                        ],
+                        'unit_amount' => 9 * 100,
+                    ],
+                    'quantity' => 1,
+                ]],
+                'mode' => 'payment',
+                'success_url' => route('front.handleStripePayment') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('stripe.cancel'),
+                // 'metadata' => [
+                //     'plan_key' => , // make sure your Plan model has a unique plan_key
+                // ],
+            ]);
+
+            return redirect($session->url);
+        }
+
+
+        $uloackedProject = new UnlockSubcontractorProject();
+        $uloackedProject->user_id = $userId->id;
+        $uloackedProject->project_id = $id;
+        $uloackedProject->user_type = $userType;
+        $uloackedProject->save();
+
+        return redirect()->route('front.subcontractorprojectdetils', $id);
+    }
+
+    public function handleStripePayment(Request $request)
+    {
+        $sessionId = $request->get('session_id');
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        $session = Session::retrieve($sessionId);
+
+        if ($session->payment_status === 'paid') {
+            // Payment is successful, unlock the project
+            $userId = $this->userLogin;
+            $userType = $this->getUserType();
+            $projectId = session('project_id');
+
+            $additionalPay = new AdditionalPay();
+            $additionalPay->user_id = $userId->id;
+            $additionalPay->user_type = $userType;
+            $additionalPay->payable_type = 'unlock_contact';
+            $additionalPay->is_over = 1;
+            $additionalPay->price = 9;
+            $additionalPay->stripe_session_id = $sessionId;
+            $additionalPay->save();
+
+            // Save the unlock information
+            $unlockedProject = new UnlockSubcontractorProject();
+            $unlockedProject->user_id = $userId->id;
+            $unlockedProject->project_id = $projectId;
+            $unlockedProject->user_type = $userType;
+            $unlockedProject->save();
+
+            return redirect()->route('front.subcontractorprojectdetils', $projectId);
+            // ->with('success', 'Project unlocked successfully!');
         } else {
-            return view('front.subcontractorprojectdetilslock', compact('project', 'unlockProject', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects'));
+            return redirect('/')->with('error', 'Payment failed. Please try again.');
+        }
+    }
+
+
+    public function subcontractorprojectdetilslock($id)
+    {
+        $project = SubContractor::findOrfail($id);
+        return view('front.subcontractorprojectdetilslock', compact('project'));
+    }
+
+    public function subcontractorprojectdetils($id)
+    {
+
+        $userId = $this->userLogin;
+        $userType = $this->getUserType();
+        $averageRating = null;
+
+        $project = SubContractor::findOrFail($id);
+        $projectTypes = $project->project_type_models;
+        $protfolio = Subcontractor::where('id', $id)->with('subContractorProtfolio', 'certifications')->first();
+        $protfolioCount = SubContractorProtfolio::where('user_id', $id)->count();
+        $contractorProjects = ContractorProject::with('contractor')->get();
+
+        // Fetch raw reviews
+        $contractorReviews = ReviewContractor::where('project_id', $id)
+            ->where('project_type', 'subcontractor_project')
+            ->with(relations: 'user')
+            ->get();
+
+        $subcontractorReviews = ReviewSubContractor::where('project_id', $id)
+            ->where('project_type', 'subcontractor_project')
+            ->with(relations: 'user')
+            ->get();
+
+        // Merge models
+        $mergedReviews = $contractorReviews->merge($subcontractorReviews);
+
+        // Extract ratings only for averaging
+        $ratings = collect();
+
+        foreach ($contractorReviews as $review) {
+            $ratings = $ratings->merge([
+                $review->doj,
+                $review->payment_terms,
+                $review->support_staff,
+                $review->safety,
+            ]);
+        }
+
+        foreach ($subcontractorReviews as $review) {
+            $ratings = $ratings->merge([
+                $review->workmanship,
+                $review->integrity,
+                $review->presentation,
+                $review->communication,
+            ]);
+        }
+
+        $filteredRatings = $ratings->filter(fn($v) => $v !== null);
+        $averageRating = $filteredRatings->isNotEmpty()
+            ? round($filteredRatings->avg(), 1)
+            : null;
+
+        $reviews = ReviewSubContractor::where('project_id', $id)
+            ->where('project_type', 'subcontractor_project')
+            ->get();
+
+        $unloackedProject = UnlockSubcontractorProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
+            ->where('project_id', $id)
+            ->first();
+
+        $userSubcription = UserSubscription::where('user_id', $userId->id)
+            ->where('is_active', 1)
+            ->where('user_type', $userType)
+            ->latest()
+            ->first();
+
+        if ($userSubcription == null) {
+            $unlockProject = false;
+            return view('front.subcontractorprojectdetilslock', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'protfolioCount', 'contractorProjects'));
+        }
+
+        $unloackedProjectCount = UnlockSubcontractorProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
+            ->count();
+
+        $unloackedContractorProjectCount = UnlockedProject::where('user_id', $userId->id)
+            ->where('user_type', $userType)
+            ->count();
+
+        $unlockProject = false;
+        $now = now();
+        $startDate = $userSubcription->start_date;
+        $endDate = $userSubcription->end_date;
+
+        $monthsSinceStart = $startDate->diffInMonths($now);
+
+        $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
+        $currentBillingEnd = $currentBillingStart->copy()->addMonth();
+
+        $unlockedContractorProjectThisMonth = UnlockedProject::where('user_id', $userId->id)
+            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+            ->count();
+
+        $unlockedSubcontractorProjectThisMonth = UnlockSubcontractorProject::where('user_id', $userId->id)
+            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+            ->count();
+
+        $unlockedThisMonth = $unlockedContractorProjectThisMonth + $unlockedSubcontractorProjectThisMonth;
+
+        $planId = $userSubcription->plan_id;
+        $unlockLimit = null;
+
+        if (in_array($planId, [1, 2])) {
+            $unlockLimit = 2;
+        } elseif (in_array($planId, [3, 4])) {
+            $unlockLimit = 5;
+        } elseif (in_array($planId, [5, 6])) {
+            $unlockLimit = null; // Unlimited
+        }
+        // Final decision
+        if ($endDate >= $now) {
+            if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
+                $unlockProject = true;
+            }
+        }
+        if ($unloackedProject) {
+            return view('front.subcontractorprojectdetils', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects')); // Desin not ready
+        } else {
+            return view('front.subcontractorprojectdetilslock', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects'));
         }
     }
 
@@ -491,35 +886,17 @@ class HomeController extends Controller
         return response()->json(['message' => 'User not found'], 404);
     }
 
-    public function jobSearch(Request $request)
-    {
-        $location = $request->input('location');
-        $project = $request->input('project');
 
-        // Paginate the results instead of getting a collection
-        $projects = ContractorProject::where('location', 'like', '%' . $location . '%')
-            ->where('project_name', 'like', '%' . $project . '%')
-            ->paginate(10); // You can change the number of items per page
-
-        // If no results, send a message
-        if ($projects->isEmpty()) {
-            $message = "No jobs found for '$project' in '$location'.";
-            return view('front.jobSearch', compact('message', 'projects'));
-        }
-
-        // Return the results page with paginated jobs
-        return view('front.jobSearch', compact('projects'));
-    }
 
 
     public function sendEnquiryMail(Request $request)
     {
-        // $data = $request->validate([
-        //     'name' => 'required|string|max:255',
-        //     'email' => 'required|email|max:255',
-        //     'description' => 'required|string',
-        //     'phone' => 'required|string|max:15',
-        // ]);
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'description' => 'required|string',
+            'phone' => 'required|string|max:10',
+        ]);
 
         $name = $request->input('name');
         $email = $request->input('email');

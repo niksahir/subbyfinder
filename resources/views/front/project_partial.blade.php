@@ -77,11 +77,11 @@
                         <h5>{{ $project->budget }}</h5>
                         <p>Budget</p>
                         <div class="link-light">
-                            <a href="{{ route('front.projectDetils', $project->id) }}">View Profile</a>
+                            <a href="{{ route('front.projectDetils', $project->id) }}">View More</a>
                         </div>
-                        <div class="link">
+                        {{-- <div class="link">
                             <a href="#">Message</a>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

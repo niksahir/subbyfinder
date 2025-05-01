@@ -68,7 +68,7 @@
                             }
                         </ul>
                         <div class="link border">
-                            <a href="#" onclick="handleBuyNow('${plan.id}')">Buy Now</a>
+                            <a href="javascript:void(0)" onclick="handleBuyNow('${plan.id}')">Buy Now</a>
                         </div>
                     </div>
                 </div>`;

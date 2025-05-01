@@ -95,6 +95,51 @@
         textarea {
             resize: none;
         }
+
+        .share-container {
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .share-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .share-buttons a {
+            display: inline-block;
+            margin: 10px;
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            border-radius: 50%;
+            color: white;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .facebook {
+            background: #3b5998;
+        }
+
+        .twitter {
+            background: #1da1f2;
+        }
+
+        .whatsapp {
+            background: #25d366;
+        }
+
+        .email {
+            background: #ea4335;
+        }
+
+        .share-buttons a:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 

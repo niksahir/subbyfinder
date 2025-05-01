@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('unlocked_projects', function (Blueprint $table) {
-            $table->id();
+            $table->id(); // auto-incrementing primary key
             $table->unsignedBigInteger('user_id');
-            $table->string('user_type');
-            $table->unsignedBigInteger('project_id');
-            $table->timestamps();
-            $table->softDeletes();
+            $table->string('user_type'); // user id for polymorphic relation
+            $table->unsignedBigInteger('project_id'); // the associated project
+            $table->timestamps(); // created_at and updated_at
+            $table->softDeletes(); // for soft deletion
 
-            $table->foreign('user_id')->references('id')->on('contractors')->onDelete('cascade');
+            // Foreign key constraint to contractor_projects table
             $table->foreign('project_id')->references('id')->on('contractor_projects')->onDelete('cascade');
         });
     }

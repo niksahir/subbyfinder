@@ -93,7 +93,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <input type="submit" class="btn btn-primary @if($protfolioAdd == false) disabled @endif" value="Save changes" >
+                    <input type="submit" class="btn btn-primary @if ($protfolioAdd == false) disabled @endif"
+                        value="Save changes">
                 </div>
                 </form>
             </div>
@@ -399,8 +400,137 @@
         <a href="#" name="subcontractor_update" id="subcontractor_update"> Save Changes</a>
     </div>
     </form>
+    <h5 class="mt-4">Protfolio</h5>
+    @if ($protfolios->isNotEmpty())
+        @foreach ($protfolios as $p)
+            <div class="prject-with-images mt-2 pb-3">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="img-with-text">
+                            <h6>{{ $p->project_name }}</h6>
+
+                            <ul class="list-unstyled">
+                                <li><i class="fa-solid fa-location-dot"></i> {{ $p->location }}
+                                </li>
+                            </ul>
+
+                            <p>{{ $p->description }}</p>
+                            @php
+                                $images = json_decode($p->images, true);
+                            @endphp
+
+                            <div class="img-wrapper">
+                                <input type="hidden" name="dh" value="{{ $p->images }}">
+                                @if ($images && is_array($images))
+                                    @foreach ($images as $image)
+                                        <img src="{{ asset('storage/' . $image) }}" alt="" class="img-fluid">
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 d-flex justify-content-center align-items-center">
+                        <div class="price">
+                            <h6>{{ $p->price }}</h6>
+                            <p>outcomes</p>
+                        </div>
+                        <div class="buttons ms-2">
+                            <i class="fa-solid fa-edit me-2" id="edit"
+                                onclick="editProject({{ $p->id }})"></i>
+                            <i class="fa-solid fa-trash" onclick="deleteProject({{ $p->id }})"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    @else
+        <div class="prject-with-images mb-5 pb-3">
+            <p>No past project available.</p>
+        </div>
+    @endif
+
+    <div class="modal fade" id="exampleModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Protfolio</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" enctype="multipart/form-data" id="edit_form">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="id" id="edit_id">
+                        <div class="form-group mb-3 @error('project_name') is-invalid @enderror">
+                            <label for="name">Project Name</label>
+                            <input type="text" class="form-control" id="editname" name="project_name">
+                            @error('project_name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-inner">
+                            <label for="editlocation" class="form-label">Location</label>
+                            <div class="@error('location') is-invalid @enderror">
+                                <select class="form-control" name="location" id="editlocation">
+                                    <option value="" selected>Select Location</option>
+                                </select>
+
+                            </div>
+                            @error('location')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('protfolio_image[]') is-invalid @enderror">
+                            <label for="name">Image</label>
+                            <input type="file" class="form-control" id="editprotfolio_image" name="protfolio_image[]"
+                                accept="jpg,jpeg,png" multiple>
+
+                            <div class="form-group mb-3 mt-3">
+                                <label>Existing Images</label>
+                                <div id="existing-images" class="d-flex flex-wrap gap-2"></div>
+                            </div>
+
+                            @error('location')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('description') is-invalid @enderror">
+                            <label for="name">Description</label>
+                            <input type="text" class="form-control" id="editdescription" name="description">
+                            @error('description')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('price') is-invalid @enderror">
+                            <label for="name">Price</label>
+                            <input type="text" class="form-control" id="editprice" name="price">
+                            @error('price')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary @if ($protfolioAdd == false) disabled @endif"
+                        value="Save changes">
+                </div>
+                </form>
+            </div>
+        </div>
     </div>
-    </div>
+
 @endsection
 
 @section('scripts')
@@ -758,5 +888,103 @@
                 }
             });
         });
+
+        function deleteProject(id) {
+            const url = "{{ route('subcontractor.protfolio.destroy', ':id') }}".replace(':id', id);
+            if (confirm('Are you sure you want to delete this project?')) {
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    data: {
+                        id: id,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            location.reload();
+                            toastr.success(response.message);
+                        } else {
+                            alert('Failed to delete project.');
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while deleting the project.');
+                    }
+                });
+            }
+        }
+
+        function editProject(id) {
+            const url = "{{ route('subcontractor.protfolio.edit', ':id') }}".replace(':id', id);
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {
+                    id: id,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        console.log(response.data);
+                        const project = response.data;
+                        const locations = response.locations;
+                        console.log(locations);
+
+                        $('#exampleModalLabelEdit').text('Edit Project');
+                        $('#editname').val(project.project_name);
+                        $('#edit_id').val(project.id);
+
+                        // Destroy existing select2 if active
+                        // if ($.fn.select2 && $('#editlocation').hasClass("select2-hidden-accessible")) {
+                        //     $('#editlocation').select2('destroy');
+                        // }
+
+                        // Clear and add options
+                        $('#editlocation').empty().append('<option value="">Select Location</option>');
+                        locations.forEach(loc => {
+                            const selected = loc.name === project.location ? 'selected' : '';
+                            $('#editlocation').append(
+                                `<option value="${loc.name}" ${selected}>${loc.name}</option>`);
+                        });
+
+                        
+
+                        // // Reinitialize select2
+                        // $('#editlocation').select2({
+                        //     tags: true
+                        // });
+
+                        // Show existing images
+                        $('#existing-images').empty(); // Clear old previews
+                        if (project.images && Array.isArray(project.images)) {
+                            project.images.forEach(imageUrl => {
+                                const fullImageUrl =
+                                    `/storage/${imageUrl}`; // Adjust this path if needed
+                                $('#existing-images').append(`
+                                <div>
+                                    <img src="${fullImageUrl}" alt="Image" style="height: 100px; width: auto; border-radius: 4px; margin-right: 10px;">
+                                </div>
+                            `);
+                            });
+                        }
+
+                        // Set form action dynamically
+                        var editUrl = "{{ route('subcontractor.protfolio.update', ':id') }}";
+                        $('#edit_form').attr('action', editUrl.replace(':id', id));
+
+                        // Ensure PUT method spoofing is added
+                        $('#edit_form').find('input[name="_method"]').remove();
+                        $('#edit_form').append('<input type="hidden" name="_method" value="PUT">');
+
+                        $('#exampleModalEdit').modal('show');
+                    } else {
+                        alert('Failed to fetch project details.');
+                    }
+                },
+                error: function() {
+                    alert('An error occurred while fetching project details.');
+                }
+            });
+        }
     </script>
 @endsection

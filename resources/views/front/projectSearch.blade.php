@@ -12,20 +12,19 @@
                     <div class="left-sidebar">
                         <form id="filter-form" method="GET">
                             <fieldset>
+                                <input type="hidden" name="project" value="{{ request('project') }}">
                                 <!-- Location Filter -->
                                 <div class="inner-form">
                                     <label for="location" class="form-label">Location</label>
-                                    <select class="form-select" name="location" aria-label="Default select example"
-                                        onchange="fetchProjects()">
-                                        <option value="">
-                                            Select location
-                                        </option>
+                                    <select class="form-select" name="location" onchange="fetchProjects()">
+                                        <option value="">Select location</option>
                                         @foreach ($locations as $location)
-                                            <option value="{{ $location->name }}">
+                                            <option value="{{ $location->name }}" {{ request('location') == $location->name ? 'selected' : '' }}>
                                                 {{ $location->name }}
                                             </option>
                                         @endforeach
                                     </select>
+
                                 </div>
 
                                 <!-- Category Filter -->

@@ -92,6 +92,90 @@
         textarea {
             resize: none;
         }
+
+        .prject-with-images {
+            -webkit-box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.1215686275);
+            box-shadow: 0px 2px 12px 0px rgba(0, 0, 0, 0.1215686275);
+            padding: 15px 20px;
+            color: var(--c-text);
+        }
+
+        .prject-with-images .price {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+            flex-direction: column;
+        }
+
+        .prject-with-images h6 {
+            font-weight: 600;
+        }
+
+        .prject-with-images p {
+            margin-top: 0;
+        }
+
+        .prject-with-images .full-label {
+            margin-top: 20px !important;
+        }
+
+        .prject-with-images ul li i {
+            margin-right: 10px;
+        }
+
+        .img-wrapper {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            padding-top: 15px;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+        }
+
+        .img-wrapper img {
+            aspect-ratio: 1;
+            margin-right: 20px;
+            border-radius: 15px;
+            width: 20%;
+            margin-bottom: 12px;
+        }
+
+        @media screen and (min-width: 768px) {
+            .img-wrapper img {
+                width: 16%;
+            }
+        }
+
+        .price {
+            height: 100%;
+            /* background-color: rgb(248, 248, 248); */
+            padding: 30px 20px;
+        }
+
+        .buttons i {
+            text-align: right;
+            margin-bottom: 20px;
+            color: var(--c-primary);
+        }
+
+        /* .review-item {
+            background-color: #f8f8f8;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        } */
     </style>
 </head>
 

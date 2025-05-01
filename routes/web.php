@@ -43,6 +43,8 @@ Route::get('subcontractor-project-details/{id}', [FrontHomeController::class, 's
 Route::get('pricing', [FrontHomeController::class, 'showPlans'])->name('front.pricing');
 Route::get('job-search', [FrontHomeController::class, 'jobSearch'])->name('front.jobsearch');
 Route::post('send-enquiry-mail', [FrontHomeController::class, 'sendEnquiryMail'])->name('front.sendEnquiryMail');
+Route::get('handleStripePayment', [FrontHomeController::class, 'handleStripePayment'])->name('front.handleStripePayment');
+Route::get('handleStripePaymentProject', [FrontHomeController::class, 'handleStripePaymentProject'])->name('front.handleStripePaymentProject');
 
 Route::get('/front', [App\Http\Controllers\HomeController::class, 'index'])->name('front');
 
@@ -60,6 +62,8 @@ Route::prefix('contractor')->name('contractor.')->group(function () {
       Route::resource('projects', ProjectController::class);
       Route::resource('wallet', WalletController::class);
       Route::resource('setting', SettingController::class);
+      Route::get('unlockPostProject', [ProjectController::class, 'unlockPostProject'])->name('unlockPostProject');
+      Route::get('handleStripePaymentProject', [ProjectController::class, 'handleStripePaymentProject'])->name('handleStripePaymentProject');
    });
 });
 Route::middleware(['auth:contractor,subcontractor'])->group(function () {

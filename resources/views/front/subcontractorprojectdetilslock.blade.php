@@ -23,8 +23,41 @@
                                             <li> <i class="fa-solid fa-location-dot"></i> {{ $project->location ?? '-' }}
                                             </li>
                                         </ul>
+                                        @if (isset($averageRating) && $averageRating !== null)
+                                            <div class="ratimg">
+                                                <div class="ratimg-inner">
+                                                    <div class="number">
+                                                        {{ number_format($averageRating, 1) }}
+                                                    </div>
 
-                                        <div class="ratimg">
+                                                    <div class="star">
+                                                        @for ($i = 1; $i <= 5; $i++)
+                                                            @if ($averageRating >= $i)
+                                                                <i class="fa-solid fa-star" style="color: #fbbf24;"></i>
+                                                                <!-- full star -->
+                                                            @elseif ($averageRating >= $i - 0.5)
+                                                                <i class="fa-solid fa-star-half-stroke"
+                                                                    style="color: #fbbf24;"></i> <!-- half star -->
+                                                            @else
+                                                                <i class="fa-regular fa-star" style="color: #fbbf24;"></i>
+                                                                <!-- empty star -->
+                                                            @endif
+                                                        @endfor
+                                                    </div>
+                                                </div>
+                                                <div class="verified"><i class="fa-solid fa-check"></i> Verified</div>
+                                            </div>
+                                        @else
+                                            <div class="ratimg">
+                                                <div class="number">
+                                                    0.0
+                                                </div>
+                                            </div>
+                                        @endif
+
+
+
+                                        {{-- <div class="ratimg">
                                             <div class="ratimg-inner">
                                                 <div class="number">
                                                     5.0
@@ -38,14 +71,17 @@
                                                 </div>
                                             </div>
                                             <div class="verified"> <i class="fa-solid fa-check"></i> Verified</div>
-                                        </div>
+                                        </div> --}}
 
                                     </div>
                                 </div>
                             </div>
-                            <div class="bookmark"><span><i
-                                        class="{{ $project->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon-1"
-                                        data-id="{{ $project->id }}" style="cursor: pointer;"></i> Bookmark</span>
+                            <div class="bookmark bookmark-icon-1" style="cursor: pointer;" data-id="{{ $project->id }}">
+                                <span>
+                                    <i class="{{ $project->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark"
+                                        data-id="{{ $project->id }}"></i>
+                                    Bookmark
+                                </span>
                             </div>
 
                         </div>
@@ -85,11 +121,13 @@
                         <div class="info">
                             <div class="lock-button">
                                 @if ($unlockProject == false)
-                                    <a href="{{ '/unloack-subcontractor-project/' . $project->id }}" class="text-decoration-none"
-                                        data-bs-toggle="modal" data-bs-target="#exampleModal">Unlock
+                                    <a href="{{ '/unloack-subcontractor-project/' . $project->id }}"
+                                        class="text-decoration-none" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal">Unlock
                                         Contact</a>
                                 @else
-                                    <a href="{{ '/unloack-subcontractor-project/' . $project->id }}" class="text-decoration-none">Unlock
+                                    <a href="{{ '/unloack-subcontractor-project/' . $project->id }}"
+                                        class="text-decoration-none">Unlock
                                         Contact</a>
                                 @endif
                             </div>
@@ -177,14 +215,14 @@
                             </ul>
                         </div>
 
-                        <div class="values">
+                        {{-- <div class="values">
                             <h6>Values</h6>
                             <p>Capitalize on low hanging fruit to identify a ballpark value added activity to beta test.
                                 Override the digital
                                 divide with additional clickthroughs from DevOps. Nanotechnology immersion along the
                                 information
                                 highway will close the loop on focusing solely on the bottom line.</p>
-                        </div>
+                        </div> --}}
 
                         <div class="detail-info">
                             <div class="full-label">
@@ -381,110 +419,108 @@
                                 <h6>Reviews </h6>
                             </div>
 
-                            <div class="review-item">
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                                <p>"We’ve been using this customer
-                                    support platform for six months, and
-                                    our response times have improved
-                                    by 40%. The analytics dashboard
-                                    provides happier, and so are we!"</p>
+                            @if ($subcontractorReviews != null && $subcontractorReviews->isNotEmpty() || $contractorReviews != null && $contractorReviews->isNotEmpty())
+                                @foreach ($subcontractorReviews as $review)
+                                    <div class="review-item">
+                                        <div class="star">
+                                            @php
+                                                $subRatings = collect();
 
-                                <div class="client">
-                                    <div class="photo">
-                                        <img src="{{ asset('assets/images/client-1.png') }}" alt=""
-                                            class="img-fluid">
-                                    </div>
+                                                foreach ($subcontractorReviews as $review) {
+                                                    $subRatings = $subRatings->merge([
+                                                        $review->workmanship,
+                                                        $review->integrity,
+                                                        $review->presentation,
+                                                        $review->communication,
+                                                    ]);
+                                                }
 
-                                    <div class="name">
-                                        <h6>Benny Bartlett</h6>
-                                        <p>Interactive Designer</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="review-item">
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                                <p>"We’ve been using this customer
-                                    support platform for six months, and
-                                    our response times have improved
-                                    by 40%. The analytics dashboard
-                                    provides happier, and so are we!"</p>
+                                                $filtered = $subRatings->filter(fn($val) => $val !== null);
+                                                $subAvgRating = $filtered->isNotEmpty() ? $filtered->avg() : null;
+                                            @endphp
 
-                                <div class="client">
-                                    <div class="photo">
-                                        <img src="{{ asset('assets/images/client-1.png') }}" alt=""
-                                            class="img-fluid">
-                                    </div>
+                                            <div class="stars">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    @if ($subAvgRating >= $i)
+                                                        <i class="fa-solid fa-star" style="color: #fbbf24;"></i>
+                                                    @elseif ($subAvgRating >= $i - 0.5)
+                                                        <i class="fa-solid fa-star-half-stroke" style="color: #fbbf24;"></i>
+                                                    @else
+                                                        <i class="fa-regular fa-star" style="color: #fbbf24;"></i>
+                                                    @endif
+                                                @endfor
+                                            </div>
+                                        </div>
 
-                                    <div class="name">
-                                        <h6>Benny Bartlett</h6>
-                                        <p>Interactive Designer</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="review-item">
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                                <p>"We’ve been using this customer
-                                    support platform for six months, and
-                                    our response times have improved
-                                    by 40%. The analytics dashboard
-                                    provides happier, and so are we!"</p>
+                                        {{-- <p>{{ $review->review_text ?? 'No comment provided.' }}</p> --}}
 
-                                <div class="client">
-                                    <div class="photo">
-                                        <img src="{{ asset('assets/images/client-1.png') }}" alt=""
-                                            class="img-fluid">
+                                        @if ($review->user != null)
+                                            <div class="client">
+                                                <div class="photo">
+                                                    <img src="{{ asset('storage/' . $review->user->profile_photo) }}" alt="Project Logo"
+                                                        class="img-fluid">
+                                                </div>
+                                                <div class="name">
+                                                    <h6>{{ $review->user->contact_name ?? 'Anonymous' }}</h6>
+                                                    {{-- <p>{{ $review->user->designation ?? 'Client' }}</p> --}}
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
+                                 @endforeach
+                                 @foreach ($contractorReviews as $review)
+                                    <div class="review-item">
+                                        <div class="star">
+                                            @php
+                                                $subRatings = collect();
 
-                                    <div class="name">
-                                        <h6>Benny Bartlett</h6>
-                                        <p>Interactive Designer</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="review-item">
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                                <p>"We’ve been using this customer
-                                    support platform for six months, and
-                                    our response times have improved
-                                    by 40%. The analytics dashboard
-                                    provides happier, and so are we!"</p>
+                                                foreach ($contractorReviews as $review) {
+                                                    $subRatings = $subRatings->merge([
+                                                        $review->doj,
+                                                        $review->payment_terms,
+                                                        $review->support_staff,
+                                                        $review->safety,
+                                                    ]);
+                                                }
 
-                                <div class="client">
-                                    <div class="photo">
-                                        <img src="{{ asset('assets/images/client-1.png') }}" alt=""
-                                            class="img-fluid">
-                                    </div>
+                                                $filtered = $subRatings->filter(fn($val) => $val !== null);
+                                                $subAvgRating = $filtered->isNotEmpty() ? $filtered->avg() : null;
+                                            @endphp
 
-                                    <div class="name">
-                                        <h6>Benny Bartlett</h6>
-                                        <p>Interactive Designer</p>
+                                            <div class="stars">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    @if ($subAvgRating >= $i)
+                                                        <i class="fa-solid fa-star" style="color: #fbbf24;"></i>
+                                                    @elseif ($subAvgRating >= $i - 0.5)
+                                                        <i class="fa-solid fa-star-half-stroke" style="color: #fbbf24;"></i>
+                                                    @else
+                                                        <i class="fa-regular fa-star" style="color: #fbbf24;"></i>
+                                                    @endif
+                                                @endfor
+                                            </div>
+                                        </div>
+
+                                        {{-- <p>{{ $review->review_text ?? 'No comment provided.' }}</p> --}}
+
+                                        @if ($review->user != null)
+                                            <div class="client">
+                                                <div class="photo">
+                                                    <img src="{{ asset('storage/' . $review->user->profile_photo) }}" alt="Project Logo"
+                                                        class="img-fluid">
+                                                </div>
+                                                <div class="name">
+                                                    <h6>{{ $review->user->contact_name ?? 'Anonymous' }}</h6>
+                                                    {{-- <p>{{ $review->user->designation ?? 'Client' }}</p> --}}
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
+                                 @endforeach
+                            @else
+                                <div class="review-item">
+                                    <p>No reviews available.</p>
                                 </div>
-                            </div>
+                            @endif
 
                         </div>
 
@@ -505,22 +541,34 @@
                                 <div class="mb-3">
                                     <label for="exampleInputEmail1" class="form-label">Name</label>
                                     <input type="text" class="form-control" id="exampleInputEmail1"
-                                        aria-describedby="emailHelp" name="name">
+                                        aria-describedby="emailHelp" name="name" value="{{ old('name') }}">
+                                    @error('name')
+                                        <div class="error text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Phone </label>
                                     <input type="text" class="form-control" name="phone"
-                                        id="exampleInputPassword1">
+                                        value="{{ old('phone') }}" id="exampleInputPassword1">
+                                    @error('phone')
+                                        <div class="error text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Email </label>
                                     <input type="email" class="form-control" name="email"
-                                        id="exampleInputPassword1">
+                                        value="{{ old('email') }}" id="exampleInputPassword1">
+                                    @error('email')
+                                        <div class="error text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="floatingTextarea">Message</label>
-                                    <textarea class="form-control" name="description" placeholder="" rows="4"></textarea>
+                                    <textarea class="form-control" name="description" placeholder="" rows="4">{{{ old('description') }}}</textarea>
+                                    @error('description')
+                                        <div class="error text-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="mb-3">
                                     <input type="hidden" class="form-control" id="exampleInputPassword1" name="url"
@@ -532,16 +580,61 @@
                         </div>
 
                         <div class="share">
-                            <p> Interesting? <a href="#">Share It!</a></p>
+                            <p> Interesting? <a href="javascript:void(0)" data-bs-toggle="modal"
+                                    data-bs-target="#shareModal">Share It!</a></p>
                         </div>
 
-                        <div class="area-map">
+                        {{-- share popup --}}
+                        <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-4 shadow">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="shareModalLabel">Share This Page</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    @php
+                                        $url = urlencode(url()->current());
+                                        $text = 'Check this out!';
+                                        $encodedText = urlencode($text);
+                                    @endphp
+                                    <div class="modal-body text-center">
+                                        <div class="d-flex justify-content-center gap-3">
+                                            <div class="share-container">
+                                                {{-- <div class="share-title">Share this page:</div> --}}
+                                                <div class="share-buttons">
+                                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ $url }}"
+                                                        class="facebook" target="_blank" title="Facebook">
+                                                        <i class="fab fa-facebook-f"></i>
+                                                    </a>
+                                                    <a href="https://twitter.com/intent/tweet?url={{ $url }}&text={{ $encodedText }}"
+                                                        class="twitter" target="_blank" title="Twitter">
+                                                        <i class="fab fa-twitter"></i>
+                                                    </a>
+                                                    <a href="https://wa.me/?text={{ $url }}" class="whatsapp"
+                                                        target="_blank" title="WhatsApp">
+                                                        <i class="fab fa-whatsapp"></i>
+                                                    </a>
+                                                    <a href="mailto:?subject={{ $encodedText }}&body={{ $url }}"
+                                                        class="email" target="_blank" title="Email">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- <div class="area-map">
                             <div class="full-label">
                                 <h6>Service Area Map</h6>
                             </div>
 
                             <img src="{{ asset('assets/images/map.png') }}" alt="" class="img-fluid">
-                        </div>
+                        </div> --}}
 
                         {{-- <div class="working-hours">
                             <div class="full-label">
@@ -557,11 +650,11 @@
                             <p>Sun <span>Close</span></p>
                         </div> --}}
 
-                        <div class="post-item">
+                        {{-- <div class="post-item">
                             <img src="{{ asset('assets/images/m-1.png') }}" alt="" class="img-fluid">
                             <h3>{{ $protfolioCount ?? '0' }}</h3>
                             <p>Project Posted</p>
-                        </div>
+                        </div> --}}
 
                         <div class="certificates-item">
                             <div class="full-label">
@@ -584,9 +677,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h2>Your Unlock Contact Limit Is Over</h2>
+                    <h4>Your Unlock Contact Limit Is Over,For More Unlock Pay AUD9</h4>
                 </div>
                 <div class="modal-footer">
+                    <a href="{{ '/unloack-subcontractor-project/' . $project->id }}" class="btn">Buy</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -624,9 +718,8 @@
     <script>
         $(document).ready(function() {
             $(document).on('click', '.bookmark-icon-1', function(event) {
-
-                const subcontractorId = $(this).data('id');
-                const iconElement = $(this);
+                const iconElement = $(this).find('i');
+                const subcontractorId = iconElement.data('id');
 
                 $.ajax({
                     url: "{{ route('subcontractor.bookmark.store') }}", // Route to store bookmark

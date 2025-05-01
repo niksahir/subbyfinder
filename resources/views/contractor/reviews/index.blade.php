@@ -38,8 +38,8 @@
 
                     <div class="inner-wrapper">
                         <div class="image">
-                            <img src="{{ $unlockedProject->project ? asset('storage/' . $unlockedProject->project->project_logo) : '' }}" alt=""
-                            class="img-fluid">
+                            <img src="{{ $unlockedProject->project ? asset('storage/' . $unlockedProject->project->project_logo) : '' }}"
+                                alt="" class="img-fluid">
                         </div>
 
                         <div class="content">
@@ -130,8 +130,8 @@
 
                     <div class="inner-wrapper">
                         <div class="image">
-                            <img src="{{ $unlockedProject->project ? asset('storage/' . $unlockedProject->project->profile_photo) : '' }}" alt=""
-                            class="img-fluid">
+                            <img src="{{ $unlockedProject->project ? asset('storage/' . $unlockedProject->project->profile_photo) : '' }}"
+                                alt="" class="img-fluid">
                         </div>
 
                         <div class="content">
@@ -336,7 +336,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group mb-4">
+                            <div class="rating form-group mb-4 d-none">
                                 <label>Description of Jobs</label>
                                 <div class="star-rating">
                                     <input type="radio" name="doj" id="workmanship-5" value="5"><label
@@ -352,7 +352,7 @@
                                 </div>
                             </div>
 
-                            <div class=" form-group mb-4">
+                            <div class="rating form-group mb-4 d-none">
                                 <label>Payment Terms</label>
                                 <div class="star-rating">
                                     <input type="radio" name="payment_terms" id="integrity-5" value="5"><label
@@ -368,7 +368,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group mb-4">
+                            <div class="rating form-group mb-4 d-none">
                                 <label>Support Staff</label>
                                 <div class="star-rating">
                                     <input type="radio" name="support_staff" id="presentation-5" value="5"><label
@@ -384,7 +384,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group mb-4">
+                            <div class="rating form-group mb-4 d-none">
                                 <label>Safety</label>
                                 <div class="star-rating">
                                     <input type="radio" name="safety" id="communication-5" value="5"><label
@@ -440,6 +440,9 @@
                 document.getElementById('finalReviewSection').classList.toggle('d-none', value !== 'yes');
                 document.getElementById('completionEstimateSection').classList.toggle('d-none', value !==
                     'no');
+                document.querySelectorAll('.rating').forEach(ratingEl => {
+                    ratingEl.classList.remove('d-none');
+                });
             });
         });
     </script>

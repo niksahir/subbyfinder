@@ -21,8 +21,14 @@
                         <form action="{{ route('front.jobsearch') }}" method="GET">
                             <div class="form-item">
                                 <label for="" class="form-label">Where?</label>
-                                <input type="text" class="form-control" name="location" id="" placeholder="Online Job"
-                                    aria-describedby="emailHelp">
+                                <div class="form-control form-control">
+                                    <select class="form-select" aria-label="Default select example" name="location">
+                                        <option selected value="">Location</option>
+                                        @foreach ($locations as $location)
+                                            <option value="{{ $location->name }}">{{ $location->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="project form-item">
@@ -39,13 +45,13 @@
 
                     <ul>
                         <li>
-                            <h3>3,543</h3><span>Project Posted</span>
+                            <h3>{{ $projectsCount }}</h3><span>Project Posted</span>
                         </li>
                         <li>
-                            <h3>1,232</h3><span>Sub Contractor </span>
+                            <h3>{{ $subcontractors }}</h3><span>Sub Contractor </span>
                         </li>
                         <li>
-                            <h3>1,100</h3><span>Principal Contractor</span>
+                            <h3>{{ $contractors }}</h3><span>Principal Contractor</span>
                         </li>
                     </ul>
                 </div>
@@ -256,7 +262,14 @@
                             break with the confidence that work will be easy to find afterwards.</p>
 
                         <div class="link wrapper">
-                            <a href="#">Register</a>
+                            <a
+                                href="@if (!empty($userLogin) && $userLogin != null) @if ($userType == 'subcontractor')
+                                                        {{ route('subcontractor.dashboard.index') }}
+                                                    @else
+                                                        {{ route('contractor.dashboard.index') }} @endif
+@else
+{{ route('front.createaccount') }}
+                                        @endif">Register</a>
                             <a href="#">Contact Us</a>
                         </div>
                     </div>
@@ -320,102 +333,67 @@
                         <h4>Featured Projects</h4>
 
                         <div class="link-normal-type2">
-                            <a href="#">Browse All Project</a>
+                            <a href="/project-search">Browse All Project</a>
                         </div>
                     </div>
                 </div>
 
 
-                <div class="full-list">
-                    <div class="col-12">
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <div class="p-logo">
-                                    <img src="assets/images/f-logo.png" alt="" class="img-fluid">
-                                </div>
-                            </div>
-
-                            <div class="col-sm-8">
-                                <div class="content">
-                                    <h6>Dylan's Mowing</h6>
-                                    <ul>
-                                        <li><i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                                        <li><i class="fa-regular fa-clock"></i> 2 minutes ago</li>
-                                    </ul>
-
-
-                                    <p>Lawn Mowing & Gardening Services</p>
-
-                                    <div class="gender">
-                                        <span>Gardener</span>
+                @foreach ($projects as $project)
+                    <div class="full-list">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <div class="p-logo">
+                                        <img src="{{ asset('storage/' . $project->project_logo) }}" alt="Project Logo"
+                                            class="img-fluid">
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="col-sm-2">
-                                <div class="budget">
-                                    <div class="copy"><i></i></div>
-                                    <h5>$100 - $150</h5>
-                                    <p>Budget</p>
-
-                                    <div class="link-light">
-                                        <a href="#">View Profile</a>
-                                    </div>
-
-                                    <div class="link">
-                                        <a href="#">Message</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                <div class="col-sm-8">
+                                    <div class="content">
+                                        <h6>{{ $project->project_name }}</h6>
+                                        <ul>
+                                            <li><i class="fa-solid fa-location-dot"></i> {{ $project->location }}</li>
+                                            <li><i class="fa-regular fa-clock"></i>
+                                                {{ $project->created_at->diffForHumans() }}</li>
+                                        </ul>
 
 
-                <div class="full-list">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <div class="p-logo">
-                                    <img src="assets/images/f-logo.png" alt="" class="img-fluid">
-                                </div>
-                            </div>
-
-                            <div class="col-sm-8">
-                                <div class="content">
-                                    <h6>Dylan's Mowing</h6>
-                                    <ul>
-                                        <li><i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                                        <li><i class="fa-regular fa-clock"></i> 2 minutes ago</li>
-                                    </ul>
-
-
-                                    <p>Lawn Mowing & Gardening Services</p>
-
-                                    <div class="gender">
-                                        <span>Gardener</span>
+                                        <p>{{ Str::limit($project->description, 100) }}</p>
+                                        <div class="gender">
+                                            @if (is_array($project->trade_category) && count($project->expertise_names))
+                                                @foreach ($project->expertise_names as $expertise)
+                                                    <span style="margin-bottom: 5px;">{{ $expertise }}</span>
+                                                @endforeach
+                                            @else
+                                                <span>{{ $project->trade_category }}</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="col-sm-2">
-                                <div class="budget">
-                                    <div class="copy"><i></i></div>
-                                    <h5>$100 - $150</h5>
-                                    <p>Budget</p>
+                                <div class="col-sm-2">
+                                    <div class="budget">
+                                        <div class="copy">
+                                            {{-- <i class="{{ $project->is_bookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark bookmark-icon"
+                                                data-id="{{ $project->id }}" style="cursor: pointer;"></i> --}}
+                                        </div>
+                                        <h5>{{ $project->budget }}</h5>
 
-                                    <div class="link-light">
-                                        <a href="#">View Profile</a>
-                                    </div>
+                                        <div class="link-light">
+                                            <a href="{{ route('front.projectDetils', $project->id) }}">View More</a>
+                                        </div>
 
-                                    <div class="link">
-                                        <a href="#">Message</a>
+                                        {{-- <div class="link">
+                                            <a href="#">Message</a>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @endforeach
 
             </div>
         </div>
@@ -668,96 +646,29 @@
                 <div class="title">
                     <h4>Membership Plans</h4>
 
-
                     <div class="radio-btn">
                         <div class="radio-item">
-                            <input type="radio" class="" id="month">
+                            <input type="radio" id="month" name="billing" value="monthly" checked>
                             <label for="month">Billed Monthly</label>
                         </div>
 
                         <div class="radio-item">
-                            <input type="radio" class="" id="year">
+                            <input type="radio" id="year" name="billing" value="yearly">
                             <label for="year">Billed Yearly <span>Save 10%</span></label>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row m-0">
-                <div class="col-md-4 p-0">
-                    <div class="plan-inner">
-                        <h5>Basic Plan</h5>
-                        <p>One time fee for one listing or task
-                            highlighted in search results.</p>
-
-                        <div class="price">
-                            <h3>$15 <span>/ monthly</span></h3>
-                        </div>
-
-                        <h6>Features of Basic Plan</h6>
-
-                        <ul>
-                            <li>2 Business Contact unlocks per month</li>
-                            <li>2 images on profile</li>
-                            <li>No Job Postings</li>
-                        </ul>
-
-                        <div class="link border">
-                            <a href="#">Buy Now</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 p-0">
-                    <div class="plan-inner orange">
-                        <div class="Recommended">
-                            <p>Recommended</p>
-                        </div>
-                        <h5>Standard Plan</h5>
-                        <p>One time fee for one listing or task
-                            highlighted in search results.</p>
-
-                        <div class="price">
-                            <h3>$29 <span>/ monthly</span></h3>
-                        </div>
-
-                        <h6>Features of Standard Plan</h6>
-
-                        <ul>
-                            <li>5 Business Contact unlocks per month</li>
-                            <li>3 Job Postings Per Month</li>
-                            <li>3 Images on Profile</li>
-                        </ul>
-
-                        <div class="link">
-                            <a href="#">Buy Now</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 p-0">
-                    <div class="plan-inner">
-                        <h5>Extended Plan</h5>
-                        <p>One time fee for one listing or task
-                            highlighted in search results.</p>
-
-                        <div class="price">
-                            <h3>$59 <span>/ monthly</span></h3>
-                        </div>
-
-                        <h6>Features of Extended Plan</h6>
-
-                        <ul>
-                            <li>Unlimited Contacts & Job Posting</li>
-                            <li>Option to have Listing in Both Principal and Sub Contractors</li>
-                            <li>Showcase of projects and work</li>
-                        </ul>
-
-                        <div class="link border">
-                            <a href="#">Buy Now</a>
-                        </div>
-                    </div>
-                </div>
+            <div class="row m-0" id="plans-container">
+                {{-- Plans will be injected here --}}
             </div>
         </div>
+
+        <form id="checkout-form" method="POST" action="{{ route('stripe.checkout') }}" style="display: none;">
+            @csrf
+            <input type="hidden" name="plan_id" id="plan-id-input">
+        </form>
     </section>
 
     <section class="trust-building-sec">
@@ -1159,7 +1070,7 @@
     <section class="footer-top">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
+                {{-- <div class="col-md-6">
                     <div class="left">
                         <h3>Begin your new journey with us.</h3>
                         <p>We value your input and continuously strive to improve our
@@ -1169,9 +1080,9 @@
                             <a href="#"> Try It Free for 14 Days</a>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="right">
                         <h3>24/7 Customer support</h3>
                         <p>Our dedicated support team is available around the clock to
@@ -1185,4 +1096,69 @@
             </div>
         </div>
     </section>
+@endsection
+@section('scripts')
+    <script>
+        const monthlyPlans = @json($monthlyPlans);
+        const yearlyPlans = @json($yearlyPlans);
+        const isLoggedIn = {{ $userLogin ? 'true' : 'false' }};
+
+        function renderPlans(plans) {
+            const container = document.getElementById('plans-container');
+            container.innerHTML = '';
+
+            plans.forEach(plan => {
+                const html = `
+                <div class="col-md-4 p-0">
+                    <div class="plan-inner ${plan.name === 'Standard Plan' ? 'orange' : ''}">
+                        ${plan.name === 'Standard Plan' ? '<div class="Recommended"><p>Recommended</p></div>' : ''}
+                        <h5>${plan.name}</h5>
+                        <p>${plan.description || ''}</p>
+                        <div class="price">
+                            <h3>AUD${plan.price} <span>/ ${plan.billing_type}</span></h3>
+                        </div>
+                        <h6>Features of ${plan.name}</h6>
+                        <ul>
+                            ${
+                                Array.isArray(plan.features)
+                                    ? plan.features
+                                    : (typeof plan.features === 'string'
+                                        ? JSON.parse(plan.features)
+                                        : [])
+                                    .map(f => `<li>${f}</li>`).join('')
+                            }
+                        </ul>
+                        <div class="link border">
+                            <a href="javascript:void(0)" onclick="handleBuyNow('${plan.id}')">Buy Now</a>
+                        </div>
+                    </div>
+                </div>`;
+                container.innerHTML += html;
+            });
+
+        }
+
+        function handleBuyNow(planId) {
+            if (!isLoggedIn) {
+                window.location.href = "{{ route('login') }}";
+            } else {
+                document.getElementById('plan-id-input').value = planId;
+                document.getElementById('checkout-form').submit();
+            }
+        }
+
+        // Initial render
+        renderPlans(monthlyPlans);
+
+        // Toggle handler
+        document.querySelectorAll('input[name="billing"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'monthly') {
+                    renderPlans(monthlyPlans);
+                } else {
+                    renderPlans(yearlyPlans);
+                }
+            });
+        });
+    </script>
 @endsection

@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('unlock_subcontractor_projects', function (Blueprint $table) {
+        Schema::create('additional_pays', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('user_id');
+            $table->string('price')->default(0);
             $table->string('user_type');
-            $table->unsignedBigInteger('project_id');
+            $table->string('payable_type');
+            $table->boolean('is_over')->default(false);
+            $table->text('stripe_session_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('project_id')->references('id')->on('sub_contractors')->onDelete('cascade');
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('unlock_subcontractor_projects');
+        Schema::dropIfExists('additional_pays');
     }
 };

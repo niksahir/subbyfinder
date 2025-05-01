@@ -12,14 +12,9 @@ class UnlockedProject extends Model
         'project_id',
     ];
 
-    public function Contractor()
+    public function user()
     {
-        return $this->belongsTo(Contractor::class, 'user_id');
-    }
-
-    public function SubContractor()
-    {
-        return $this->belongsTo(SubContractor::class, 'user_id');
+        return $this->morphTo();
     }
 
     public function project()
@@ -27,5 +22,4 @@ class UnlockedProject extends Model
         return $this->belongsTo(ContractorProject::class, 'project_id');
     }
 
-   
 }

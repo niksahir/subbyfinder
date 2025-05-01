@@ -28,10 +28,10 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    @if ($purchasedPlans['plan_id'] == 1 || $purchasedPlans['plan_id'] == 2 || $canPostProject == false)
+                    @if ($canPostProject == false)
                         <div class="form-wrapper" style="position: relative;">
                             <div id="formLockOverlay" class="lock-overlay">
-                                <a href="" class="purchase-btn">Unlock Adding Project</a>
+                                <a href="{{ route('contractor.unlockPostProject') }}" class="purchase-btn">Unlock Adding Project</a>
                             </div>
                             <form method="POST" id="create_project_form_lock" class="create_project_form_lock"
                                 action="" enctype="multipart/form-data">

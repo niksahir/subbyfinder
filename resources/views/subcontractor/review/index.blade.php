@@ -34,8 +34,8 @@
 
                     <div class="inner-wrapper">
                         <div class="image">
-                            <img src="{{ $unlockedProject->project ? asset('storage/' . $unlockedProject->project->project_logo) : '' }}" alt=""
-                            class="img-fluid">
+                            <img src="{{ $unlockedProject->project ? asset('storage/' . $unlockedProject->project->project_logo) : '' }}"
+                                alt="" class="img-fluid">
                         </div>
 
                         <div class="content">
@@ -126,8 +126,8 @@
 
                     <div class="inner-wrapper">
                         <div class="image">
-                            <img src="{{ $unlockedProject->project ? asset('storage/' . $unlockedProject->project->profile_photo) : '' }}" alt=""
-                            class="img-fluid">
+                            <img src="{{ $unlockedProject->project ? asset('storage/' . $unlockedProject->project->profile_photo) : '' }}"
+                                alt="" class="img-fluid">
 
                         </div>
 
@@ -518,7 +518,7 @@
 
 
 
-                                <div class="form-group mb-4">
+                                <div class="rating form-group mb-4 d-none">
                                     <label>Workmanship</label>
                                     <div class="star-rating">
                                         <input type="radio" name="workmanship" id="workmanship-5"
@@ -534,7 +534,7 @@
                                     </div>
                                 </div>
 
-                                <div class=" form-group mb-4">
+                                <div class=" rating form-group mb-4 d-none">
                                     <label>Integrity</label>
                                     <div class="star-rating">
                                         <input type="radio" name="integrity" id="integrity-5" value="5"><label
@@ -550,7 +550,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-4">
+                                <div class="rating form-group mb-4 d-none">
                                     <label>Presentation</label>
                                     <div class="star-rating">
                                         <input type="radio" name="presentation" id="presentation-5"
@@ -566,7 +566,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-4">
+                                <div class="rating form-group mb-4 d-none">
                                     <label>Communication</label>
                                     <div class="star-rating">
                                         <input type="radio" name="communication" id="communication-5"
@@ -621,6 +621,9 @@
                 document.getElementById('finalReviewSection').classList.toggle('d-none', value !== 'yes');
                 document.getElementById('completionEstimateSection').classList.toggle('d-none', value !==
                     'no');
+                document.querySelectorAll('.rating').forEach(ratingEl => {
+                    ratingEl.classList.remove('d-none');
+                });
             });
         });
     </script>

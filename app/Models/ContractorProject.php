@@ -81,4 +81,9 @@ class ContractorProject extends Model
     {
         return $this->morphMany(ReviewContractor::class, 'project');
     }
+
+    public function unlockedProjects()
+    {
+        return $this->morphMany(UnlockedProject::class, 'user');
+    }
 }
