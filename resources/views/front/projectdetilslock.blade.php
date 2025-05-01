@@ -92,7 +92,11 @@
 
                         <div class="info">
                             <div class="lock-button">
-                                @if ($unlockProject == false)
+                                @if ($userId == null)
+                                    <a class="text-decoration-none" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModalLogin">Unlock
+                                        Contact</a>
+                                @elseif ($unlockProject == false)
                                     <a href="{{ '/unloack-project/' . $project->id }}" class="text-decoration-none"
                                         data-bs-toggle="modal" data-bs-target="#exampleModal">Unlock
                                         Contact</a>
@@ -590,6 +594,23 @@
                 </div>
                 <div class="modal-footer">
                     <a href="{{ '/unloack-project/' . $project->id }}" class="btn">Buy</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalLogin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Login</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Please Login For Unlock Contact</h4>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('login') }}" class="btn">Login</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

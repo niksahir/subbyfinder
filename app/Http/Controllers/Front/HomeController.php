@@ -270,6 +270,10 @@ class HomeController extends Controller
             ? round($filteredRatings->avg(), 1)
             : null;
 
+        if ($userId == null) {
+            $unlockProject = false;
+            return view('front.projectdetilslock', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
+        }
 
         // dd($mergedReviews);
         $unloackedProject = UnlockedProject::where('user_id', $userId->id)
@@ -287,6 +291,7 @@ class HomeController extends Controller
             $unlockProject = false;
             return view('front.projectdetilslock', compact('subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
         }
+
         $unloackedProjectCount = UnlockedProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
             ->count();
@@ -409,6 +414,34 @@ class HomeController extends Controller
                 'location' => $location,
                 'project' => $project,
             ]);
+        } else {
+            $projects = ContractorProject::where('location', 'like', '%' . $location . '%')
+                ->where('project_name', 'like', '%' . $project . '%')
+                ->paginate(10);
+
+            $subcontractors = SubContractor::where('location', 'like', '%' . $location . '%')
+                ->where('contact_name', 'like', '%' . $project . '%')
+                ->paginate(10);
+
+            if ($projects != null && $subcontractors == null) {
+                return redirect()->route('front.projectSearch', [
+                    'location' => $location,
+                    'project' => $project,
+                ]);
+            } else if ($subcontractors != null && $projects == null) {
+                return redirect()->route(
+                    'front.subcontractorsearch',
+                    [
+                        'location' => $location,
+                        'project' => $project,
+                    ]
+                );
+            } else {
+                return redirect()->route('front.projectSearch', [
+                    'location' => $location,
+                    'project' => $project,
+                ]);
+            }
         }
     }
 
@@ -551,7 +584,7 @@ class HomeController extends Controller
             $uloackedProject->user_type = $userType;
             $uloackedProject->save();
 
-            return redirect()->route('front.subcontractorprojectdetils', $projectId);
+            return redirect()->route('front.projectDetils', $projectId);
             // ->with('success', 'Project unlocked successfully!');
         } else {
             return redirect('/')->with('error', 'Payment failed. Please try again.');
@@ -691,7 +724,6 @@ class HomeController extends Controller
         }
     }
 
-
     public function subcontractorprojectdetilslock($id)
     {
         $project = SubContractor::findOrfail($id);
@@ -754,6 +786,11 @@ class HomeController extends Controller
         $reviews = ReviewSubContractor::where('project_id', $id)
             ->where('project_type', 'subcontractor_project')
             ->get();
+
+        if ($userId == null) {
+            $unlockProject = false;
+            return view('front.subcontractorprojectdetilslock', compact('userId', 'subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'protfolioCount', 'contractorProjects'));
+        }
 
         $unloackedProject = UnlockSubcontractorProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
