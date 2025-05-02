@@ -342,8 +342,8 @@
                                 <h6>Past Project Completed : </h6>
                             </div>
 
-                            @if ($protfolio->subContractorProtfolio->isNotEmpty())
-                                @foreach ($protfolio->subContractorProtfolio as $p)
+                            @if ($portfolio->subContractorProtfolio->isNotEmpty())
+                                @foreach ($portfolio->subContractorProtfolio as $p)
                                     <div class="prject-with-images mb-5 pb-3">
                                         <div class="row">
                                             <div class="col-md-9">
@@ -649,7 +649,7 @@
                                 <h6>Service Area Map</h6>
                             </div>
 
-                            <p>{{ $protfolio->availability }}</p>
+                            <p>{{ $portfolio->availability }}</p>
                             {{-- <p>Mon <span>07:00 AM - 03:00 PM</span></p>
                             <p>Tue <span>07:00 AM - 03:00 PM</span></p>
                             <p>Wed <span>07:00 AM - 03:00 PM</span></p>
@@ -661,7 +661,7 @@
 
                     {{-- <div class="post-item">
                         <img src="{{ asset('assets/images/m-1.png') }}" alt="" class="img-fluid">
-                        <h3>{{ $protfolioCount ?? '0' }}</h3>
+                        <h3>{{ $portfolioCount ?? '0' }}</h3>
                         <p>Project Posted</p>
                     </div> --}}
 
@@ -669,7 +669,7 @@
                         <div class="full-label">
                             <h6>Certificates </h6>
                         </div>
-                        @foreach ($protfolio->certifications as $certificat)
+                        @foreach ($portfolio->certifications as $certificat)
                             <img src="{{ asset('storage/' . $certificat->file_path) }}" alt=""
                                 class="img-fluid">
                         @endforeach

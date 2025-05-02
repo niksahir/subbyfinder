@@ -215,38 +215,32 @@ class HomeController extends Controller
 
 
 
-    public function projectDetils($id)
+    public function projectDetails($id)
     {
         $userId = $this->userLogin;
         $userType = $this->getUserType();
 
         $project = ContractorProject::with('contractor')->findOrFail($id);
-
         $projectTypes = $project->project_type_models;
+        $portfolio = SubcontractorProtfolio::get();
+        $projectCount = ContractorProject::where('contractor_id', $project->contractor_id)->count();
+        $contractorProjects = ContractorProject::with('contractor')->where('contractor_id', $project->contractor_id)->latest()->take(5)->get();
 
-        $protfolio = SubcontractorProtfolio::get();
-
-        $projectCount = ContractorProject::where('contractor_id', $project->contractor_id)->with('contractor')->count();
-        $contractorProjects = ContractorProject::with('contractor')->get();
-
-        // Fetch raw reviews
+        // Fetch and merge reviews
         $contractorReviews = ReviewContractor::where('project_id', $id)
             ->where('project_type', 'contractor_project')
-            ->with(relations: 'user')
+            ->with('user')
             ->get();
+
         $subcontractorReviews = ReviewSubContractor::where('project_id', $id)
             ->where('project_type', 'contractor_project')
-            ->with(relations: 'user')
+            ->with('user')
             ->get();
 
-        // dd($subcontractorReviews);
-
-        // Merge models
         $mergedReviews = $contractorReviews->merge($subcontractorReviews);
 
-        // Extract ratings only for averaging
+        // Calculate average rating
         $ratings = collect();
-
         foreach ($contractorReviews as $review) {
             $ratings = $ratings->merge([
                 $review->doj,
@@ -255,7 +249,6 @@ class HomeController extends Controller
                 $review->safety,
             ]);
         }
-
         foreach ($subcontractorReviews as $review) {
             $ratings = $ratings->merge([
                 $review->workmanship,
@@ -264,87 +257,101 @@ class HomeController extends Controller
                 $review->communication,
             ]);
         }
-
         $filteredRatings = $ratings->filter(fn($v) => $v !== null);
         $averageRating = $filteredRatings->isNotEmpty()
             ? round($filteredRatings->avg(), 1)
             : null;
 
-        if ($userId == null) {
+        // If user not logged in
+        if (!$userId) {
             $unlockProject = false;
-            return view('front.projectdetilslock', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
+            return view('front.projectdetilslock', compact(
+                'userId',
+                'subcontractorReviews',
+                'contractorReviews',
+                'averageRating',
+                'userType',
+                'project',
+                'unlockProject',
+                'projectTypes',
+                'portfolio',
+                'projectCount',
+                'contractorProjects'
+            ));
         }
 
-        // dd($mergedReviews);
-        $unloackedProject = UnlockedProject::where('user_id', $userId->id)
+        // Check if project already unlocked
+        $unlockedProject = UnlockedProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
             ->where('project_id', $id)
             ->first();
 
-        $userSubcription = UserSubscription::where('user_id', $userId->id)
-            ->where('is_active', 1)
+        // Check active subscription
+        $userSubscription = UserSubscription::where('user_id', $userId->id)
             ->where('user_type', $userType)
+            ->where('is_active', 1)
             ->latest()
             ->first();
 
-        if ($userSubcription == null) {
-            $unlockProject = false;
-            return view('front.projectdetilslock', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
-        }
-
-        $unloackedProjectCount = UnlockedProject::where('user_id', $userId->id)
-            ->where('user_type', $userType)
-            ->count();
-        $unlockedSubcontractorProjectCount = UnlockSubcontractorProject::where('user_id', $userId->id)
-            ->where('user_type', $userType)
-            ->count();
-
         $unlockProject = false;
-        $now = now();
-        $startDate = $userSubcription->start_date;
-        $endDate = $userSubcription->end_date;
 
-        $monthsSinceStart = $startDate->diffInMonths($now);
+        if ($userSubscription) {
+            $now = now();
+            $startDate = $userSubscription->start_date;
+            $endDate = $userSubscription->end_date;
 
-        $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
-        $currentBillingEnd = $currentBillingStart->copy()->addMonth();
+            if ($now <= $endDate) {
+                $monthsSinceStart = $startDate->diffInMonths($now);
+                $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
+                $currentBillingEnd = $currentBillingStart->copy()->addMonth();
 
-        $unlockedContractorProjectThisMonth = UnlockedProject::where('user_id', $userId->id)
-            ->where('user_type', $userType)
-            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
-            ->count();
+                // Count unlocked projects this billing period
+                $unlockedContractorCount = UnlockedProject::where('user_id', $userId->id)
+                    ->where('user_type', $userType)
+                    ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+                    ->count();
 
-        $unlockedSubcontractorProjectThisMonth = UnlockSubcontractorProject::where('user_id', $userId->id)
-            ->where('user_type', $userType)
-            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
-            ->count();
+                $unlockedSubcontractorCount = UnlockSubcontractorProject::where('user_id', $userId->id)
+                    ->where('user_type', $userType)
+                    ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+                    ->count();
 
-        $unlockedThisMonth = $unlockedContractorProjectThisMonth + $unlockedSubcontractorProjectThisMonth;
+                $unlockedThisMonth = $unlockedContractorCount + $unlockedSubcontractorCount;
 
-        $planId = $userSubcription->plan_id;
-        $unlockLimit = null;
+                // Determine unlock limit
+                $planId = $userSubscription->plan_id;
+                $unlockLimit = match (true) {
+                    in_array($planId, [1, 2]) => 2,
+                    in_array($planId, [3, 4]) => 5,
+                    in_array($planId, [5, 6]) => null, // unlimited
+                    default => 0,
+                };
 
-        if (in_array($planId, [1, 2])) {
-            $unlockLimit = 2;
-        } elseif (in_array($planId, [3, 4])) {
-            $unlockLimit = 5;
-        } elseif (in_array($planId, [5, 6])) {
-            $unlockLimit = null; // Unlimited
-        }
-
-        // Final decision
-        if ($endDate >= $now) {
-            if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
-                $unlockProject = true;
+                // Decide whether user can unlock this project
+                if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
+                    $unlockProject = true;
+                }
             }
         }
 
-        if ($unloackedProject) {
-            return view('front.projectdetils', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
-        } else {
-            return view('front.projectdetilslock', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'projectCount', 'contractorProjects'));
-        }
+        // Final view decision
+        $canView = $unlockedProject || $unlockProject;
+
+        return view($canView ? 'front.projectdetils' : 'front.projectdetilslock', compact(
+            'userId',
+            'subcontractorReviews',
+            'contractorReviews',
+            'averageRating',
+            'userType',
+            'project',
+            'projectTypes',
+            'portfolio',
+            'projectCount',
+            'contractorProjects',
+            'unlockProject'
+        ));
     }
+
 
     public function subcontractorsearch(Request $request)
     {
@@ -451,7 +458,7 @@ class HomeController extends Controller
         return view('front.projectdetilslock', compact('project'));
     }
 
-    public function unloackproject($id)
+    public function unlockproject($id)
     {
         $userId = $this->userLogin;
         $userType = $this->getUserType();
@@ -591,7 +598,7 @@ class HomeController extends Controller
         }
     }
 
-    public function unloackSubcontractorProject($id)
+    public function unlockSubcontractorProject($id)
     {
         $userId = $this->userLogin;
         $userType = $this->getUserType();
@@ -732,34 +739,31 @@ class HomeController extends Controller
 
     public function subcontractorprojectdetils($id)
     {
-
         $userId = $this->userLogin;
         $userType = $this->getUserType();
         $averageRating = null;
 
         $project = SubContractor::findOrFail($id);
         $projectTypes = $project->project_type_models;
-        $protfolio = Subcontractor::where('id', $id)->with('subContractorProtfolio', 'certifications')->first();
-        $protfolioCount = SubContractorProtfolio::where('user_id', $id)->count();
+        $portfolio = SubContractor::with('subContractorProtfolio', 'certifications')->find($id);
+        $portfolioCount = SubContractorProtfolio::where('user_id', $id)->count();
         $contractorProjects = ContractorProject::with('contractor')->get();
 
-        // Fetch raw reviews
+        // Fetch reviews
         $contractorReviews = ReviewContractor::where('project_id', $id)
             ->where('project_type', 'subcontractor_project')
-            ->with(relations: 'user')
+            ->with('user')
             ->get();
 
         $subcontractorReviews = ReviewSubContractor::where('project_id', $id)
             ->where('project_type', 'subcontractor_project')
-            ->with(relations: 'user')
+            ->with('user')
             ->get();
 
-        // Merge models
         $mergedReviews = $contractorReviews->merge($subcontractorReviews);
 
-        // Extract ratings only for averaging
+        // Ratings for average
         $ratings = collect();
-
         foreach ($contractorReviews as $review) {
             $ratings = $ratings->merge([
                 $review->doj,
@@ -768,7 +772,6 @@ class HomeController extends Controller
                 $review->safety,
             ]);
         }
-
         foreach ($subcontractorReviews as $review) {
             $ratings = $ratings->merge([
                 $review->workmanship,
@@ -787,79 +790,112 @@ class HomeController extends Controller
             ->where('project_type', 'subcontractor_project')
             ->get();
 
-        if ($userId == null) {
+        // If user not logged in
+        if (!$userId) {
             $unlockProject = false;
-            return view('front.subcontractorprojectdetilslock', compact('userId','userId', 'subcontractorReviews', 'contractorReviews', 'averageRating', 'userType', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'protfolioCount', 'contractorProjects'));
+            return view('front.subcontractorprojectdetilslock', compact(
+                'userId',
+                'userType',
+                'subcontractorReviews',
+                'contractorReviews',
+                'averageRating',
+                'mergedReviews',
+                'reviews',
+                'project',
+                'unlockProject',
+                'projectTypes',
+                'portfolio',
+                'portfolioCount',
+                'contractorProjects'
+            ));
         }
 
-        $unloackedProject = UnlockSubcontractorProject::where('user_id', $userId->id)
+        // Check if already unlocked
+        $unlockedProject = UnlockSubcontractorProject::where('user_id', $userId->id)
             ->where('user_type', $userType)
             ->where('project_id', $id)
             ->first();
 
-        $userSubcription = UserSubscription::where('user_id', $userId->id)
-            ->where('is_active', 1)
+        // Get active subscription
+        $userSubscription = UserSubscription::where('user_id', $userId->id)
             ->where('user_type', $userType)
+            ->where('is_active', 1)
             ->latest()
             ->first();
 
-        if ($userSubcription == null) {
-            $unlockProject = false;
-            return view('front.subcontractorprojectdetilslock', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'projectTypes', 'protfolio', 'protfolioCount', 'contractorProjects'));
-        }
-
-        $unloackedProjectCount = UnlockSubcontractorProject::where('user_id', $userId->id)
-            ->where('user_type', $userType)
-            ->count();
-
-        $unloackedContractorProjectCount = UnlockedProject::where('user_id', $userId->id)
-            ->where('user_type', $userType)
-            ->count();
-
         $unlockProject = false;
-        $now = now();
-        $startDate = $userSubcription->start_date;
-        $endDate = $userSubcription->end_date;
+        if ($userSubscription) {
+            $now = now();
+            $startDate = $userSubscription->start_date;
+            $endDate = $userSubscription->end_date;
+            $monthsSinceStart = $startDate->diffInMonths($now);
+            $billingStart = $startDate->copy()->addMonths($monthsSinceStart);
+            $billingEnd = $billingStart->copy()->addMonth();
 
-        $monthsSinceStart = $startDate->diffInMonths($now);
+            $contractorUnlocks = UnlockedProject::where('user_id', $userId->id)
+                ->where('user_type', $userType)
+                ->whereBetween('created_at', [$billingStart, $billingEnd])
+                ->count();
 
-        $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
-        $currentBillingEnd = $currentBillingStart->copy()->addMonth();
+            $subcontractorUnlocks = UnlockSubcontractorProject::where('user_id', $userId->id)
+                ->where('user_type', $userType)
+                ->whereBetween('created_at', [$billingStart, $billingEnd])
+                ->count();
 
-        $unlockedContractorProjectThisMonth = UnlockedProject::where('user_id', $userId->id)
-            ->where('user_type', $userType)
-            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
-            ->count();
+            $unlocksThisMonth = $contractorUnlocks + $subcontractorUnlocks;
 
-        $unlockedSubcontractorProjectThisMonth = UnlockSubcontractorProject::where('user_id', $userId->id)
-            ->where('user_type', $userType)
-            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
-            ->count();
+            // Determine unlock limit
+            $planId = $userSubscription->plan_id;
+            $unlockLimit = match (true) {
+                in_array($planId, [1, 2]) => 2,
+                in_array($planId, [3, 4]) => 5,
+                in_array($planId, [5, 6]) => null, // unlimited
+                default => 0,
+            };
 
-        $unlockedThisMonth = $unlockedContractorProjectThisMonth + $unlockedSubcontractorProjectThisMonth;
-
-        $planId = $userSubcription->plan_id;
-        $unlockLimit = null;
-
-        if (in_array($planId, [1, 2])) {
-            $unlockLimit = 2;
-        } elseif (in_array($planId, [3, 4])) {
-            $unlockLimit = 5;
-        } elseif (in_array($planId, [5, 6])) {
-            $unlockLimit = null; // Unlimited
-        }
-        // Final decision
-        if ($endDate >= $now) {
-            if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
-                $unlockProject = true;
+            $unlockProject = false;
+            if ($now <= $endDate) {
+                if (is_null($unlockLimit) || $unlocksThisMonth < $unlockLimit) {
+                    $unlockProject = true;
+                }
             }
         }
-        if ($unloackedProject) {
-            return view('front.subcontractorprojectdetils', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects')); // Desin not ready
+
+        // Final view
+        if ($unlockedProject) {
+            return view('front.subcontractorprojectdetils', compact(
+                'userId',
+                'userType',
+                'subcontractorReviews',
+                'contractorReviews',
+                'averageRating',
+                'mergedReviews',
+                'reviews',
+                'project',
+                'portfolio',
+                'portfolioCount',
+                'projectTypes',
+                'contractorProjects'
+            ));
         } else {
-            return view('front.subcontractorprojectdetilslock', compact('userId','subcontractorReviews', 'contractorReviews', 'averageRating', 'mergedReviews', 'reviews', 'project', 'unlockProject', 'protfolio', 'protfolioCount', 'projectTypes', 'contractorProjects'));
+            return view('front.subcontractorprojectdetilslock', compact(
+                'userId',
+                'userType',
+                'subcontractorReviews',
+                'contractorReviews',
+                'averageRating',
+                'mergedReviews',
+                'reviews',
+                'project',
+                'unlockProject',
+                'portfolio',
+                'portfolioCount',
+                'projectTypes',
+                'contractorProjects'
+            ));
         }
     }
+
 
     public function contractor(Request $request)
     {

@@ -125,12 +125,12 @@
                                         data-bs-target="#exampleModalLogin">Unlock
                                         Contact</a>
                                 @elseif ($unlockProject == false)
-                                    <a href="{{ '/unloack-subcontractor-project/' . $project->id }}"
+                                    <a href="{{ '/unlock-subcontractor-project/' . $project->id }}"
                                         class="text-decoration-none" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal">Unlock
                                         Contact</a>
                                 @else
-                                    <a href="{{ '/unloack-subcontractor-project/' . $project->id }}"
+                                    <a href="{{ '/unlock-subcontractor-project/' . $project->id }}"
                                         class="text-decoration-none">Unlock
                                         Contact</a>
                                 @endif
@@ -340,8 +340,8 @@
                                 <h6>Past Project Completed : </h6>
                             </div>
 
-                            @if ($protfolio->subContractorProtfolio->isNotEmpty())
-                                @foreach ($protfolio->subContractorProtfolio as $p)
+                            @if ($portfolio->subContractorProtfolio->isNotEmpty())
+                                @foreach ($portfolio->subContractorProtfolio as $p)
                                     <div class="prject-with-images mb-5 pb-3">
                                         <div class="row">
                                             <div class="col-md-9">
@@ -664,7 +664,7 @@
                             <div class="full-label">
                                 <h6>Certificates </h6>
                             </div>
-                            @foreach ($protfolio->certifications as $certificat)
+                            @foreach ($portfolio->certifications as $certificat)
                                 <img src="{{ asset('storage/' . $certificat->file_path) }}" alt=""
                                     class="img-fluid">
                             @endforeach
@@ -684,7 +684,7 @@
                     <h4>Your Unlock Contact Limit Is Over,For More Unlock Pay AUD9</h4>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{ '/unloack-subcontractor-project/' . $project->id }}" class="btn">Buy</a>
+                    <a href="{{ '/unlock-subcontractor-project/' . $project->id }}" class="btn">Buy</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
