@@ -71,7 +71,7 @@
                         <div class="form-group mb-3 @error('protfolio_image[]') is-invalid @enderror">
                             <label for="name">Image</label>
                             <input type="file" class="form-control" id="protfolio_image" name="protfolio_image[]"
-                                accept="jpg,jpeg,png" multiple>
+                                accept="image/png, image/jpeg, image/jpg, image/webp" multiple>
                             @error('protfolio_image[]')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -499,7 +499,7 @@
                         <div class="form-group mb-3 @error('protfolio_image[]') is-invalid @enderror">
                             <label for="name">Image</label>
                             <input type="file" class="form-control" id="editprotfolio_image" name="protfolio_image[]"
-                                accept="jpg,jpeg,png" multiple>
+                                accept="image/png, image/jpeg, image/jpg, image/webp" multiple>
                             <input type="hidden" name="existing_images" id="editportfolio_image" value="">
 
                             <div class="form-group mb-3 mt-3">
