@@ -131,6 +131,7 @@
 
             receiverId = item.dataset.id;
             receiverType = item.dataset.type;
+            console.log('Selected user:', receiverId, receiverType);
 
             // Enable send button
             document.getElementById('sendMessageBtn').disabled = false;
@@ -154,6 +155,21 @@
                 .catch(err => {
                     console.error('Failed to load messages', err);
                 });
+
+            axios.post('/mark-as-seen', {
+                from_user_id: receiverId,
+                receiver_type: receiverType
+            }, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content')
+                }
+            }).then(res => {
+                loadContacts();
+            }).catch(err => {
+                console.error('Failed to mark as seen', err);
+            });
+
         });
 
 

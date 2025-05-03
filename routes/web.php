@@ -68,8 +68,7 @@ Route::middleware(['auth:contractor,subcontractor'])->group(function () {
     Route::post('/send-message', [MessageController::class, 'send'])->name('sendMessage');
     Route::get('/get-messages', [MessageController::class, 'getMessages']);
     Route::post('/send-image', [MessageController::class, 'sendImage']);
-
-
+    Route::post('/mark-as-seen', [MessageController::class, 'markAsSeen']);
 });
 Route::prefix('sub-contractor')->name('subcontractor.')->group(function () {
    Route::resource('login', SubContractorLoginController::class);

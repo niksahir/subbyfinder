@@ -54,7 +54,7 @@ class MessageController extends Controller
             'to_user_id' => 'required|integer',
             'receiver_type' => 'required|string'
         ]);
-        
+
         $path = $request->file('image')->store('chat-images', 'public');
 
         $message = Message::create([
@@ -87,5 +87,31 @@ class MessageController extends Controller
         })->orderBy('created_at')->get();
 
         return response()->json(['messages' => $messages]);
+    }
+
+    public function markAsSeen(Request $request)
+    {
+        $request->validate([
+            'from_user_id' => 'required|integer',
+            'receiver_type' => 'required|string|in:contractor,subcontractor',
+        ]);
+
+        // Determine current authenticated user ID and type
+        $sender = auth('contractor')->user() ?? auth('subcontractor')->user();
+        $toUserType = auth('contractor')->check() ? 'contractor' : 'subcontractor';
+
+        if (!isset($toUserId)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        // Mark messages from `from_user_id` to authenticated user as seen
+        Message::where('from_user_id', $request->from_user_id)
+            ->where('to_user_id', $sender)
+            ->where('to_user_type', $toUserType)
+            ->where('from_user_type', $request->receiver_type)
+            ->where('is_seen', false)
+            ->update(['is_seen' => true]);
+
+        return response()->json(['status' => 'success']);
     }
 }
