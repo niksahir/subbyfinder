@@ -84,7 +84,7 @@
                             <img src="{{ asset('storage/' . Auth::user()->profile_photo) }}" alt="Profile Photo"
                                 class="img-fluid">
                         @else
-                            <img src="{{ asset('assets/images/team-1.jpg') }}" alt="Default Image" class="img-fluid">
+                            <img src="" alt="No Image" class="img-fluid">
                         @endif
                         <span></span>
                     </div>

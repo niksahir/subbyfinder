@@ -3,6 +3,10 @@
     Sub Contractor
 @endsection
 
+@php
+    $suppressInlineAlert = false;
+@endphp
+
 @section('content')
     <div class="row">
         <div class="col-md-6">
@@ -32,12 +36,13 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('subcontractor.protfolio.index') }}" method="POST"
+                    <form action="{{ route('subcontractor.protfolio.store') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="form-group mb-3 @error('project_name') is-invalid @enderror">
                             <label for="name">Project Name</label>
-                            <input type="text" class="form-control" id="name" name="project_name">
+                            <input type="text" class="form-control" id="name" value="{{ old('project_name') }}"
+                                name="project_name" placeholder="Project Name">
                             @error('project_name')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -47,7 +52,8 @@
                         <div class="form-inner">
                             <label for="exampleInputPassword1" class="form-label">Location</label>
                             <div class="@error('location') is-invalid @enderror">
-                                <select class="form-control js-example-tags" name="location" id="location">
+                                <select class="form-control js-example-tags" name="location" value="{{ old('location') }}"
+                                    id="location">
                                     <option value="" selected>Select Location</option>
                                     @foreach ($locations as $key => $location)
                                         <option value="{{ $location->name }}">
@@ -66,7 +72,7 @@
                             <label for="name">Image</label>
                             <input type="file" class="form-control" id="protfolio_image" name="protfolio_image[]"
                                 accept="jpg,jpeg,png" multiple>
-                            @error('location')
+                            @error('protfolio_image[]')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -74,7 +80,8 @@
                         </div>
                         <div class="form-group mb-3 @error('description') is-invalid @enderror">
                             <label for="name">Description</label>
-                            <input type="text" class="form-control" id="description" name="description">
+                            <input type="text" class="form-control" id="description" value="{{ old('description') }}"
+                                name="description" placeholder="Description">
                             @error('description')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -83,7 +90,8 @@
                         </div>
                         <div class="form-group mb-3 @error('price') is-invalid @enderror">
                             <label for="name">Price</label>
-                            <input type="text" class="form-control" id="price" name="price">
+                            <input type="text" class="form-control" id="price" value="{{ old('price') }}"
+                                name="price" placeholder="Price">
                             @error('price')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -113,12 +121,14 @@
                         <div class="col-12">
                             <div class="label">My Account</div>
                         </div>
-
-                        @if (session('success'))
+                        {{-- @php
+                            $suppressInlineAlert = true;
+                        @endphp
+                        @if (session('success') && $suppressInlineAlert)
                             <div class="alert alert-success">
                                 {{ session('success') }}
                             </div>
-                        @endif
+                        @endif --}}
 
                         <div class="col-md-3">
                             <div class="profile @error('profile_photo') is-invalid @enderror">
@@ -490,6 +500,7 @@
                             <label for="name">Image</label>
                             <input type="file" class="form-control" id="editprotfolio_image" name="protfolio_image[]"
                                 accept="jpg,jpeg,png" multiple>
+                            <input type="hidden" name="existing_images" id="editportfolio_image" value="">
 
                             <div class="form-group mb-3 mt-3">
                                 <label>Existing Images</label>
@@ -523,8 +534,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <input type="submit" class="btn btn-primary @if ($protfolioAdd == false) disabled @endif"
-                        value="Save changes">
+                    <input type="submit" class="btn btn-primary" value="Save changes">
                 </div>
                 </form>
             </div>
@@ -534,6 +544,139 @@
 @endsection
 
 @section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('#exampleModal form');
+
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+
+                // Clear old errors
+                form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                form.querySelectorAll('.invalid-feedback.js-error').forEach(el => el.remove());
+
+                // Helper to show error
+                function showError(input, message) {
+                    input.classList.add('is-invalid');
+                    const error = document.createElement('div');
+                    error.className = 'invalid-feedback js-error';
+                    error.innerHTML = `<strong>${message}</strong>`;
+                    input.parentNode.appendChild(error);
+                    isValid = false;
+                }
+
+                // Project Name
+                const projectName = form.querySelector('[name="project_name"]');
+                if (!projectName.value.trim()) {
+                    showError(projectName, 'The project name is required.');
+                }
+
+                // Location
+                const location = form.querySelector('[name="location"]');
+                if (!location.value.trim()) {
+                    showError(location, 'The location is required.');
+                }
+
+                // Image
+                const imageInput = form.querySelector('[name="protfolio_image[]"]');
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+                if (imageInput.files.length === 0) {
+                    showError(imageInput, 'At least one image is required.');
+                } else {
+                    for (let file of imageInput.files) {
+                        if (!allowedTypes.includes(file.type)) {
+                            showError(imageInput, 'Only JPG, JPEG, PNG, and WEBP images are allowed.');
+                            break;
+                        }
+                    }
+                }
+
+                // Description
+                const description = form.querySelector('[name="description"]');
+                if (!description.value.trim()) {
+                    showError(description, 'The description is required.');
+                }
+
+                // Price
+                const price = form.querySelector('[name="price"]');
+                if (!price.value.trim()) {
+                    showError(price, 'The price is required.');
+                } else if (isNaN(price.value)) {
+                    showError(price, 'The price must be a number.');
+                }
+
+                if (!isValid) e.preventDefault();
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('#exampleModalEdit form');
+
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+
+                // Clear old errors
+                form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                form.querySelectorAll('.invalid-feedback.js-error').forEach(el => el.remove());
+
+                // Helper to show error
+                function showError(input, message) {
+                    input.classList.add('is-invalid');
+                    const error = document.createElement('div');
+                    error.className = 'invalid-feedback js-error';
+                    error.innerHTML = `<strong>${message}</strong>`;
+                    input.parentNode.appendChild(error);
+                    isValid = false;
+                }
+
+                // Project Name
+                const projectName = form.querySelector('[name="project_name"]');
+                if (!projectName.value.trim()) {
+                    showError(projectName, 'The project name is required.');
+                }
+
+                // Location
+                const location = form.querySelector('[name="location"]');
+                if (!location.value.trim()) {
+                    showError(location, 'The location is required.');
+                }
+
+                // Image
+                const imageInput = form.querySelector('[name="protfolio_image[]"]');
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+                const existingImages = form.querySelector('[name="existing_images"]').value;
+                if (imageInput.files.length === 0 && !existingImages) {
+                    showError(imageInput, 'At least one image is required.');
+                } else {
+                    for (let file of imageInput.files) {
+                        if (!allowedTypes.includes(file.type)) {
+                            showError(imageInput, 'Only JPG, JPEG, PNG, and WEBP images are allowed.');
+                            break;
+                        }
+                    }
+                }
+
+                // Description
+                const description = form.querySelector('[name="description"]');
+                if (!description.value.trim()) {
+                    showError(description, 'The description is required.');
+                }
+
+                // Price
+                const price = form.querySelector('[name="price"]');
+                if (!price.value.trim()) {
+                    showError(price, 'The price is required.');
+                } else if (isNaN(price.value)) {
+                    showError(price, 'The price must be a number.');
+                }
+
+                if (!isValid) e.preventDefault();
+            });
+        });
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -902,7 +1045,7 @@
                     success: function(response) {
                         if (response.status === 'success') {
                             location.reload();
-                            toastr.success(response.message);
+                            // toastr.success(response.message);
                         } else {
                             alert('Failed to delete project.');
                         }
@@ -955,18 +1098,51 @@
                         // });
 
                         // Show existing images
-                        $('#existing-images').empty(); // Clear old previews
+                        let remainingImages = []; // Define this outside the loop so it's accessible
+
+                        // Show existing images
+                        $('#existing-images').empty();
+
                         if (project.images && Array.isArray(project.images)) {
-                            project.images.forEach(imageUrl => {
-                                const fullImageUrl =
-                                    `/storage/${imageUrl}`; // Adjust this path if needed
+                            remainingImages = [...project.images]; // Clone original image list
+
+                            // Set the hidden input initially
+                            $('#editportfolio_image').val(JSON.stringify(remainingImages));
+
+                            project.images.forEach((imageUrl, index) => {
+                                const fullImageUrl = `/storage/${imageUrl}`;
+                                const imageId = `image-${index}`;
+
                                 $('#existing-images').append(`
-                                <div>
-                                    <img src="${fullImageUrl}" alt="Image" style="height: 100px; width: auto; border-radius: 4px; margin-right: 10px;">
-                                </div>
-                            `);
+            <div id="${imageId}" style="display: inline-block; position: relative; margin-right: 10px;">
+                <img src="${fullImageUrl}" alt="Image"
+                     style="height: 100px; width: auto; border-radius: 4px;">
+                <button class="delete-image" data-index="${index}"
+                        data-url="${imageUrl}"
+                        style="position: absolute; font-size:10px; top: 0; right: 0; background: red; padding: 3px 5px; color: white; border: none; cursor: pointer;">X</button>
+            </div>
+        `);
                             });
                         }
+
+                        // Attach handler outside loop, once
+                        $('#existing-images').off('click').on('click', '.delete-image', function() {
+                            const index = $(this).data('index');
+                            const imageUrl = $(this).data('url');
+
+                            // Remove image from DOM
+                            $(`#image-${index}`).remove();
+
+                            // Update array
+                            remainingImages = remainingImages.filter(img => img !== imageUrl);
+
+                            // Update hidden field
+                            $('#editportfolio_image').val(JSON.stringify(remainingImages));
+                            console.log(remainingImages);
+                        });
+
+
+
 
                         $('#editdescription').val(project.description);
                         $('#editprice').val(project.price);

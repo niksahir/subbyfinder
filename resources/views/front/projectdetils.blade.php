@@ -219,7 +219,7 @@
                                                         <div class="link-light">
                                                             <a
                                                                 href="{{ route('front.projectDetils', $contractorProject->id) }}">View
-                                                                Profile</a>
+                                                                Project</a>
                                                         </div>
 
                                                         <div class="link">

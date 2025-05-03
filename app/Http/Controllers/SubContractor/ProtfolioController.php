@@ -33,7 +33,7 @@ class ProtfolioController extends Controller
                 'project_name' => 'required',
                 'location' => 'required',
                 'protfolio_image' => 'required|array',
-                'protfolio_image.*' => 'image|max:2048',
+                'protfolio_image.*' => 'image|max:2048|mimes:jpeg,png,jpg,webp',
                 'description' => 'required',
                 'price' => 'required',
             ]);
@@ -84,7 +84,8 @@ class ProtfolioController extends Controller
                 'images' => json_decode($protfolio->images, true) ?? [] // decode JSON string
             ],
             'locations' => $locations
-        ]);    }
+        ]);
+    }
 
     /**
      * Update the specified resource in storage.
@@ -95,28 +96,38 @@ class ProtfolioController extends Controller
             'project_name' => 'required',
             'location' => 'required',
             'protfolio_image' => 'nullable|array',
-            'protfolio_image.*' => 'image|max:2048',
+            'protfolio_image.*' => 'image|max:2048|mimes:jpeg,png,jpg,webp',
             'description' => 'required',
             'price' => 'required',
+            'existing_images' => 'nullable|string' // hidden input from the frontend
         ]);
+
 
         $protfolio = SubcontractorProtfolio::findOrFail($id);
 
-        if ($request->hasFile('protfolio_image')) {
-            $imagePaths = [];
+        // Decode existing images from hidden input (JSON string)
+        $existingImages = json_decode($request->input('existing_images'), true) ?? [];
 
+        // Store new images
+        $newImagePaths = [];
+        if ($request->hasFile('protfolio_image')) {
             foreach ($request->file('protfolio_image') as $image) {
                 $imagePath = $image->store('protfolio_image', 'public');
-                $imagePaths[] = $imagePath;
+                $newImagePaths[] = $imagePath;
             }
-
-            $validated['images'] = json_encode($imagePaths, true);
         }
+
+        // Combine existing and new images
+        $finalImageList = array_merge($existingImages, $newImagePaths);
+
+        // Save combined image list to the database
+        $validated['images'] = $finalImageList;
 
         $protfolio->update($validated);
 
-        return redirect(route('subcontractor.setting.index'))->with('success', 'Protfolio updated successfully!');
+        return redirect(route('subcontractor.setting.index'))->with('success', 'Portfolio updated successfully!');
     }
+
 
     /**
      * Remove the specified resource from storage.
