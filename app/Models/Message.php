@@ -14,5 +14,6 @@ class Message extends Model
         'to_user_id',
         'receiver_type',
         'body',
+        'image',
     ];
 }

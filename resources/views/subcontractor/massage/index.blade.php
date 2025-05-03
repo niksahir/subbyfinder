@@ -120,7 +120,7 @@
         let receiverType;
 
         // Example: dynamically set when user clicks contact
-        receiverId = 1; // Example contractor id
+        receiverId = 5; // Example contractor id
         receiverType = 'contractor';
 
         document.getElementById('sendMessageBtn').addEventListener('click', function() {
