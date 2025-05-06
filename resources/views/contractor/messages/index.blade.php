@@ -205,15 +205,13 @@
 
             const formData = new FormData();
             formData.append('image', file);
-            formData.append('to_user_id', parseInt(receiverId));
-
+            formData.append('to_user_id', receiverId);
             formData.append('receiver_type', receiverType);
 
             axios.post('/send-image', formData)
                 .then(res => {
                     appendMessage(res.data.message, 'outgoing');
                     loadContacts();
-
                 })
                 .catch(err => {
                     console.error('Image send failed:', err);
@@ -237,34 +235,44 @@
             appendMessage(data.message, 'incoming');
         });
 
-        function appendMessage(msg, type = 'incoming') {
+        function appendMessage(msg) {
+            loadContacts();
+            // Check if the message belongs to the current chat window
+            const isCurrentChat =
+                (receiverId == msg.from_user_id && receiverType === msg.sender_type) ||
+                (receiverId == msg.to_user_id && receiverType === msg.receiver_type);
+
+            if (!isCurrentChat) {
+                console.log('Not the current chat:', msg);
+
+                return}; // Skip unrelated messages
+
+            const isMyMessage = msg.from_user_id === window.authUser.id && msg.sender_type === window.authUser.type;
+            const direction = isMyMessage ? 'outgoing' : 'incoming';
+
+
             const chatBox = document.querySelector('.message-box');
             const messageElement = document.createElement('div');
-            messageElement.classList.add('message', type);
+            messageElement.classList.add('message', direction);
 
-            if (type === 'outgoing') {
+            if (direction === 'outgoing') {
                 messageElement.classList.add('text-end');
             }
 
-            // Prepare content
             let content = '';
-
-            // If there's text
             if (msg.body) {
-                content += `<p><strong>${type === 'incoming' ? 'New message from:' : 'You:'}</strong> ${msg.body}</p>`;
+                content += `<p><strong>${direction === 'incoming' ? 'New message from:' : 'You:'}</strong> ${msg.body}</p>`;
             }
 
-            // If there's an image
             if (msg.image) {
                 content += `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">`;
             }
 
             messageElement.innerHTML = content;
             chatBox.appendChild(messageElement);
-
-            // Scroll to bottom
             chatBox.scrollTop = chatBox.scrollHeight;
         }
+
 
         // Initially disable send button
         document.getElementById('sendMessageBtn').disabled = true;

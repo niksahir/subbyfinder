@@ -66,13 +66,17 @@ class MessageController extends Controller
             'image' => $path,
         ]);
 
+        broadcast(new MessageSent($message));
+        
         // You may broadcast it here if needed
         return response()->json(['message' => $message]);
     }
 
     public function getMessages(Request $request)
     {
-        $userId = auth('contractor')->id();
+        $userId = auth('contractor')->id() ?? auth('subcontractor')->id();
+        $usertype = auth('contractor')->check() ? 'contractor' : 'subcontractor';
+
         $receiverId = $request->receiver_id;
         $receiverType = $request->receiver_type;
 
@@ -80,10 +84,10 @@ class MessageController extends Controller
             $q->where('from_user_id', $userId)
                 ->where('to_user_id', $receiverId)
                 ->where('receiver_type', $receiverType);
-        })->orWhere(function ($q) use ($userId, $receiverId, $receiverType) {
+        })->orWhere(function ($q) use ($userId, $receiverId, $usertype) {
             $q->where('from_user_id', $receiverId)
                 ->where('to_user_id', $userId)
-                ->where('receiver_type', 'contractor');
+                ->where('receiver_type', $usertype);
         })->orderBy('created_at')->get();
 
         return response()->json(['messages' => $messages]);
@@ -100,15 +104,15 @@ class MessageController extends Controller
         $sender = auth('contractor')->user() ?? auth('subcontractor')->user();
         $toUserType = auth('contractor')->check() ? 'contractor' : 'subcontractor';
 
-        if (!isset($toUserId)) {
+        if (!isset($sender->id)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         // Mark messages from `from_user_id` to authenticated user as seen
         Message::where('from_user_id', $request->from_user_id)
-            ->where('to_user_id', $sender)
-            ->where('to_user_type', $toUserType)
-            ->where('from_user_type', $request->receiver_type)
+            ->where('to_user_id', $sender->id)
+            ->where('receiver_type', $toUserType)
+            ->where('sender_type', $request->receiver_type)
             ->where('is_seen', false)
             ->update(['is_seen' => true]);
 
