@@ -25,6 +25,7 @@ class ReviewSubContractor extends Model
         'integrity',
         'presentation',
         'communication',
+        'compation_estimate_checked_at',
     ];
 
 

@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
         // Schedule your command here: Run Every Monday at 3 AM
         $schedule->command('send:project-alerts')->weeklyOn(1, '03:00');
+        $schedule->command('review:send-reminders')->daily();
     }
 
     /**

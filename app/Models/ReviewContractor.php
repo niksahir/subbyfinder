@@ -25,6 +25,7 @@ class ReviewContractor extends Model
         'payment_terms',
         'support_staff',
         'safety',
+        'completion_estimate_checked_at',
     ];
 
 
