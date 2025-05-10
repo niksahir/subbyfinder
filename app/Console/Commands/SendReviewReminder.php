@@ -6,6 +6,7 @@ use App\Mail\ReviewReminderMail;
 use App\Models\ReviewContractor;
 use App\Models\ReviewSubContractor;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class SendReviewReminder extends Command
@@ -38,6 +39,15 @@ class SendReviewReminder extends Command
 
     protected function processReminders($model)
     {
+
+        $userType = null;
+
+        if (Auth::guard('contractor')->check()) {
+            $userType = 'contractor';
+        } elseif (Auth::guard('subcontractor')->check()) {
+            $userType = 'subcontractor';
+        }
+
         $records = $model::whereNotNull('completion_estimate')
             ->whereNull('completion_estimate_checked_at')
             ->whereIn('completion_estimate', [7, 30, 90])
@@ -48,7 +58,7 @@ class SendReviewReminder extends Command
             $targetDate = $record->created_at->copy()->addDays($daysToWait);
 
             if ($targetDate->isToday()) {
-                Mail::to($record->user->email)->send(new ReviewReminderMail($record));
+                Mail::to($record->user->email)->send(new ReviewReminderMail($record, $userType));
                 $record->completion_estimate_checked_at = now();
                 $record->save();
             }

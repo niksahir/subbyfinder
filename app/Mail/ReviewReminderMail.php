@@ -18,8 +18,11 @@ class ReviewReminderMail extends Mailable
      */
     public $record;
 
-    public function __construct($record)
+    public $userType;
+
+    public function __construct($record, $userType)
     {
+        $this->userType = $userType;
         $this->record = $record;
     }
 
@@ -42,6 +45,7 @@ class ReviewReminderMail extends Mailable
             view: 'emails.reviewreminder',  // Make sure you create this view
             with: [
                 'record' => $this->record,
+                'userType' => $this->userType,
             ]
         );
     }

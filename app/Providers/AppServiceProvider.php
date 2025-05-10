@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\ContractorProject;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -26,6 +27,11 @@ class AppServiceProvider extends ServiceProvider
         Relation::morphMap([
             'subcontractor' => SubContractor::class,
             'contractor' => Contractor::class,
+        ]);
+
+        Relation::morphMap([
+            'contractor_project' => ContractorProject::class,
+            'subcontractor_project' => SubContractor::class,
         ]);
     }
 }
