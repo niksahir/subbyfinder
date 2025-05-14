@@ -31,7 +31,8 @@
                     @if ($canPostProject == false)
                         <div class="form-wrapper" style="position: relative;">
                             <div id="formLockOverlay" class="lock-overlay">
-                                <a href="{{ route('contractor.unlockPostProject') }}" class="purchase-btn">Unlock Adding Project</a>
+                                <a href="{{ route('contractor.unlockPostProject') }}" class="purchase-btn">Unlock Adding
+                                    Project</a>
                             </div>
                             <form method="POST" id="create_project_form_lock" class="create_project_form_lock"
                                 action="" enctype="multipart/form-data">
@@ -40,7 +41,7 @@
                                     <legend> <span></span> Add Project</legend>
 
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        {{-- <div class="col-md-3">
                                             <label for="exampleInputPassword1" class="form-label">Logo</label>
                                             <div class="profile @error('project_logo') is-invalid @enderror">
                                                 <input type="file" accept="image/*" name="project_logo"
@@ -54,12 +55,12 @@
                                                     <strong>{{ $message }}</strong>
                                                 </span>
                                             @enderror
-                                        </div>
-                                        <div class="col-md-9">
+                                        </div> --}}
+                                        <div class="col-md-12">
                                             <div class="col-md-12">
                                                 <div class="form-inner">
                                                     <label for="exampleInputEmail1" class="form-label">Project Name</label>
-                                                    <input type="email"
+                                                    <input type="text"
                                                         class="form-control @error('project_name') is-invalid @enderror"
                                                         id="exampleInputEmail1" aria-describedby="emailHelp"
                                                         value="{{ old('project_name') }}" name="project_name">
@@ -114,7 +115,7 @@
 
 
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            {{-- <div class="col-md-6">
                                                 <div class="form-inner">
                                                     <label for="exampleInputEmail1" class="form-label">ABN</label>
                                                     <input type="text" value="{{ old('abn') }}"
@@ -141,7 +142,7 @@
                                                         </span>
                                                     @enderror
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
 
                                             <div class="col-md-6">
@@ -237,7 +238,7 @@
                                 <legend> <span></span> Add Project</legend>
 
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    {{-- <div class="col-md-3">
                                         <label for="exampleInputPassword1" class="form-label">Logo</label>
                                         <div class="profile @error('project_logo') is-invalid @enderror">
                                             <input type="file" accept="image/*" name="project_logo"
@@ -251,12 +252,12 @@
                                                 <strong>{{ $message }}</strong>
                                             </span>
                                         @enderror
-                                    </div>
-                                    <div class="col-md-9">
+                                    </div> --}}
+                                    <div class="col-md-12">
                                         <div class="col-md-12">
                                             <div class="form-inner">
                                                 <label for="exampleInputEmail1" class="form-label">Project Name</label>
-                                                <input type="email"
+                                                <input type="text"
                                                     class="form-control @error('project_name') is-invalid @enderror"
                                                     id="exampleInputEmail1" aria-describedby="emailHelp"
                                                     value="{{ old('project_name') }}" name="project_name">
@@ -311,7 +312,7 @@
 
 
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        {{-- <div class="col-md-6">
                                             <div class="form-inner">
                                                 <label for="exampleInputEmail1" class="form-label">ABN</label>
                                                 <input type="text" value="{{ old('abn') }}"
@@ -338,7 +339,7 @@
                                                     </span>
                                                 @enderror
                                             </div>
-                                        </div>
+                                        </div> --}}
 
 
                                         <div class="col-md-6">
@@ -362,40 +363,40 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="exampleInputEmail1" class="form-label"> Budget</label>
-                                            <div class="@error('budget') is-invalid @enderror">
-                                                <select name="budget" class="form-select" required>
-                                                    <option value="5K under">
-                                                        Under $5k
-                                                    </option>
-                                                    <option value="10K">
-                                                        $5-10K
-                                                    </option>
-                                                    <option value="25K">
-                                                        $10-25K
-                                                    </option>
-                                                    <option value="50K">
-                                                        $25-50K
-                                                    </option>
-                                                    <option value="100K">
-                                                        $50-100K
-                                                    </option>
-                                                    <option value="100k above">
-                                                        $100k or above
-                                                    </option>
-                                                </select>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="exampleInputEmail1" class="form-label"> Budget</label>
+                                                <div class="@error('budget') is-invalid @enderror">
+                                                    <select name="budget" class="form-select" required>
+                                                        <option value="5K under">
+                                                            Under $5k
+                                                        </option>
+                                                        <option value="10K">
+                                                            $5-10K
+                                                        </option>
+                                                        <option value="25K">
+                                                            $10-25K
+                                                        </option>
+                                                        <option value="50K">
+                                                            $25-50K
+                                                        </option>
+                                                        <option value="100K">
+                                                            $50-100K
+                                                        </option>
+                                                        <option value="100k above">
+                                                            $100k or above
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                @error('budget')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
                                             </div>
-                                            @error('budget')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
                                         </div>
                                     </div>
+
 
                                     <div class="col-md-6">
                                         <div class="form-inner">
@@ -422,7 +423,7 @@
 
                                 <div class="form-btn">
                                     <a href="{{ route('contractor.projects.index') }}">Cancel</a>
-                                    <a href="#" id="create_project_link">Post</a>
+                                    <input type="submit" class="save-project" id="create_project_link" value="Post">
                                 </div>
 
                         </form>

@@ -138,6 +138,24 @@
         textarea {
             resize: none;
         }
+
+        .save-project {
+            width: 160px;
+            padding: 14px 30px;
+            border-radius: 4px;
+            display: inline-block;
+            text-decoration: none;
+            border: 1px solid transparent;
+            background-color: var(--c-primary);
+            color: var(--c-white);
+            text-align: center;
+            -webkit-transition: all 0.32s ease-in-out;
+            transition: all 0.32s ease-in-out;
+        }
+
+        .save-project:hover {
+            background-color: var(--c-secondary);
+        }
     </style>
 </head>
 

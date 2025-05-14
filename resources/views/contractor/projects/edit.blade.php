@@ -37,7 +37,7 @@
                             <legend><span></span> Edit Project</legend>
 
                             <div class="row">
-                                <div class="col-md-3">
+                                {{-- <div class="col-md-3">
                                     <label for="exampleInputPassword1" class="form-label">Logo</label>
                                     <div class="profile @error('project_logo') is-invalid @enderror">
                                         <input type="file" accept="image/*" name="project_logo"
@@ -51,9 +51,9 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
-                                </div>
+                                </div> --}}
 
-                                <div class="col-md-9">
+                                <div class="col-md-12">
                                     <div class="col-md-12">
                                         <div class="form-inner">
                                             <label for="exampleInputEmail1" class="form-label">Project Name</label>
@@ -76,7 +76,8 @@
                                                 <select class="form-control js-example-tags" name="location" id="location">
                                                     <option value="">Select Location</option>
                                                     @foreach ($locations as $key => $location)
-                                                        <option value="{{ $location->name }}" {{ $location->name == $project->location ? 'selected' : '' }}>
+                                                        <option value="{{ $location->name }}"
+                                                            {{ $location->name == $project->location ? 'selected' : '' }}>
                                                             {{ $location->name }}
                                                         </option>
                                                     @endforeach
@@ -106,7 +107,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        {{-- <div class="col-md-6">
                                             <div class="form-inner">
                                                 <label for="exampleInputEmail1" class="form-label">ABN</label>
                                                 <input type="text"
@@ -132,7 +133,7 @@
                                                     </span>
                                                 @enderror
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         <div class="col-md-6">
                                             <div class="form-inner">
@@ -155,33 +156,33 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="exampleInputEmail1" class="form-label">Budget</label>
-                                            <div class="@error('budget') is-invalid @enderror">
-                                                <select name="budget" class="form-select">
-                                                    @foreach ([
-                                                        '5K under' => 'Under $5k',
-                                                        '10K' => '$5-10K',
-                                                        '25K' => '$10-25K',
-                                                        '50K' => '$25-50K',
-                                                        '100K' => '$50-100K',
-                                                        '100k above' => '$100k or above',
-                                                    ] as $value => $label)
-                                                        <option value="{{ $value }}"
-                                                            {{ $value == old('budget', $project->budget) ? 'selected' : '' }}>
-                                                            {{ $label }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="exampleInputEmail1" class="form-label">Budget</label>
+                                                <div class="@error('budget') is-invalid @enderror">
+                                                    <select name="budget" class="form-select">
+                                                        @foreach ([
+            '5K under' => 'Under $5k',
+            '10K' => '$5-10K',
+            '25K' => '$10-25K',
+            '50K' => '$25-50K',
+            '100K' => '$50-100K',
+            '100k above' => '$100k or above',
+        ] as $value => $label)
+                                                            <option value="{{ $value }}"
+                                                                {{ $value == old('budget', $project->budget) ? 'selected' : '' }}>
+                                                                {{ $label }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                @error('budget')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
                                             </div>
-                                            @error('budget')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
                                         </div>
                                     </div>
 
@@ -189,8 +190,7 @@
                                         <div class="form-inner">
                                             <label class="form-label">Project type</label>
                                             <div class="@error('project_type') is-invalid @enderror">
-                                                <select name="project_type" class="form-control" multiple
-                                                    data-multi-select>
+                                                <select name="project_type" class="form-control" multiple data-multi-select>
                                                     @foreach ($project_types as $key => $project_type)
                                                         <option value="{{ $project_type->id }}"
                                                             {{ in_array($project_type->id, old('project_type', $project->project_type ?? [])) ? 'selected' : '' }}>
@@ -209,9 +209,9 @@
                                 </div>
 
                                 <div class="form-btn">
-                                    <a href="{{ route('contractor.projects.index') }}"
-                                        class="btn btn-secondary">Cancel</a>
-                                    <a href="#" id="update_project_link">Update</a>
+                                    <a href="{{ route('contractor.projects.index') }}" class="btn btn-secondary">Cancel</a>
+                                    <input type="submit" class="save-project" id="create_project_link" value="Update">
+
 
                                 </div>
 

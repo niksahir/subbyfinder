@@ -22,7 +22,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = ContractorProject::where('contractor_id', Auth::guard('contractor')->id())->latest()->paginate(10);
+        $projects = ContractorProject::where('contractor_id', Auth::guard('contractor')->id())->with('contractor')->latest()->paginate(10);
         return view("contractor.projects.index", compact('projects'));
     }
 
@@ -162,18 +162,19 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         // try{
-
+        // dd($request->all());
         $validatedData = $request->validate([
-            'project_logo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'project_logo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'project_name' => 'required|string|max:255',
             'location' => 'required',
             'description' => 'required|string',
-            'abn' => 'required|string',
-            'license' => 'required|string',
+            // 'abn' => 'required|string',
+            // 'license' => 'required|string',
             'trade_category' => 'required|array',
             'budget' => 'required',
             'project_type' => 'required|array'
         ]);
+        // dd($validatedData);
 
         $contractorId = Auth::guard('contractor')->id();
 
@@ -189,9 +190,9 @@ class ProjectController extends Controller
         $validatedData['location'] = $locationName;
 
         // Upload logo
-        $logoPath = $request->file('project_logo')->store('project_logos', 'public');
+        // $logoPath = $request->file('project_logo')->store('project_logos', 'public');
 
-        $validatedData['project_logo'] = $logoPath;
+        // $validatedData['project_logo'] = $logoPath;
         // Create project with contractor_id
         ContractorProject::create($validatedData);
 
@@ -214,7 +215,7 @@ class ProjectController extends Controller
             $additionalPay->save();
         }
 
-        return redirect()->route('contractor.projects.index');
+        return redirect()->route('contractor.projects.index')->with('success', 'Project created successfully!');
         // }catch(\Exception $e){
         //         return $e->getMessage();
         //     }
@@ -250,12 +251,12 @@ class ProjectController extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'project_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'project_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'project_name' => 'required|string|max:255',
             'location' => 'required',
             'description' => 'required|string',
-            'abn' => 'required|string',
-            'license' => 'required|string',
+            // 'abn' => 'required|string',
+            // 'license' => 'required|string',
             'trade_category' => 'required|array',
             'budget' => 'required',
             'project_type' => 'required|array'
@@ -290,7 +291,7 @@ class ProjectController extends Controller
         // Update project
         $project->update($validatedData);
 
-        return redirect()->route('contractor.projects.index');
+        return redirect()->route('contractor.projects.index')->with('success', 'Project updated successfully!');
     }
 
     /**
