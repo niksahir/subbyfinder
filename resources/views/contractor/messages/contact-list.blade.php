@@ -1,4 +1,7 @@
 <div class="pepoles">
+    <div id="noResultsMessage" class="text-center text-muted my-3 d-none">
+        No messages found
+    </div>
     @foreach ($sortedProjects as $item)
         @php
             $project = $item['project'];
@@ -8,18 +11,18 @@
         @endphp
 
         <div class="inner-item user-chat-trigger d-flex align-items-start" style="cursor: pointer;"
-            data-id="{{ $project->id }}" data-type="subcontractor"
-            data-name="{{ $project->contact_name }}"
+            data-id="{{ $project->id }}" data-type="subcontractor" data-name="{{ $project->contact_name }}"
             data-photo="{{ asset('storage/' . $project->profile_photo) }}">
 
-            <img src="{{ asset('storage/' . $project->profile_photo) }}" alt=""
-                class="img-fluid rounded-circle" width="45" height="45">
+            <img src="{{ asset('storage/' . $project->profile_photo) }}" alt="" class="img-fluid rounded-circle"
+                width="45" height="45">
 
             <div class="content flex-grow-1 ms-2">
                 <h6 class="d-flex justify-content-between mb-1">
                     <span>{{ $project->contact_name }}</span>
                     @if ($item['last_message_time'])
-                        <small class="text-muted">{{ \Carbon\Carbon::parse($item['last_message_time'])->format('h:i A') }}</small>
+                        <small
+                            class="text-muted">{{ \Carbon\Carbon::parse($item['last_message_time'])->format('h:i A') }}</small>
                     @endif
                 </h6>
 

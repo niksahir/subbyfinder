@@ -45,6 +45,21 @@ class MessageController extends Controller
         }
     }
 
+    public function unseenCount()
+    {
+        $sender = auth('contractor')->user() ?? auth('subcontractor')->user();
+        $senderType = auth('contractor')->check() ? 'contractor' : 'subcontractor';
+
+        $count = Message::where('to_user_id', $sender->id)
+            ->where('receiver_type', $senderType)
+            ->where('is_seen', 0)
+            ->select('from_user_id')
+            ->distinct()
+            ->count('from_user_id');
+
+        return response()->json(['count' => $count]);
+    }
+
     public function sendImage(Request $request)
     {
         $sender = auth('contractor')->user() ?? auth('subcontractor')->user();
@@ -67,7 +82,7 @@ class MessageController extends Controller
         ]);
 
         broadcast(new MessageSent($message));
-        
+
         // You may broadcast it here if needed
         return response()->json(['message' => $message]);
     }

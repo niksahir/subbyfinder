@@ -85,6 +85,33 @@
 @endsection
 @section('scripts')
     <script>
+        document.getElementById('searchContacts').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            let matchCount = 0;
+
+            const items = document.querySelectorAll('#contactListWrapper .inner-item');
+
+            items.forEach(function(el) {
+                const name = (el.dataset.name || '').toLowerCase();
+
+                if (name.includes(searchTerm)) {
+                    el.classList.remove('d-none');
+                    matchCount++;
+                } else {
+                    el.classList.add('d-none');
+                }
+            });
+
+            // Toggle "No messages found"
+            const noResultsDiv = document.getElementById('noResultsMessage');
+            if (matchCount === 0) {
+                noResultsDiv.classList.remove('d-none');
+            } else {
+                noResultsDiv.classList.add('d-none');
+            }
+        });
+
+
         function loadContacts() {
             $.ajax({
                 url: '{{ route('subcontractor.messages.index') }}', // adjust route if needed
@@ -100,19 +127,6 @@
 
         // Call this function where appropriate
         loadContacts();
-
-        document.getElementById('searchContacts').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-
-            document.querySelectorAll('#contactListWrapper .pepoles .inner-item').forEach(function(user) {
-                const name = user.dataset.name.toLowerCase();
-                if (name.includes(searchTerm)) {
-                    user.style.display = '';
-                } else {
-                    user.style.display = 'none';
-                }
-            });
-        });
 
         document.getElementById('triggerFileInput').addEventListener('click', function() {
             document.getElementById('imageInput').click();
@@ -167,10 +181,30 @@
                 }
             }).then(res => {
                 loadContacts();
+
+                axios.get('/unseen-count')
+                    .then(countRes => {
+                        const newCount = countRes.data.count;
+                        const sidebarBadge = document.getElementById('sidebar-unseen-count');
+
+                        if (sidebarBadge) {
+                            if (newCount > 0) {
+                                sidebarBadge.textContent = newCount;
+                                sidebarBadge.classList.remove('d-none');
+                            } else {
+                                sidebarBadge.textContent = '';
+                                sidebarBadge.classList.add('d-none');
+                            }
+                        }
+                    });
+
+                // Remove individual badge from selected user
+                const badge = item.querySelector('.unseen-badge');
+                if (badge) badge.remove();
+
             }).catch(err => {
                 console.error('Failed to mark as seen', err);
             });
-
         });
 
 
@@ -233,8 +267,35 @@
 
         channel.bind('MessageSent', function(data) {
             console.log('Received message:', data.message);
-            appendMessage(data.message, 'incoming');
+
+            const msg = data.message;
+
+            const isCurrentChat =
+                (receiverId == msg.from_user_id && receiverType === msg.sender_type) ||
+                (receiverId == msg.to_user_id && receiverType === msg.receiver_type);
+
+            if (isCurrentChat) {
+                appendMessage(msg); // Message for open chat
+
+                axios.post('/mark-as-seen', {
+                    from_user_id: msg.from_user_id,
+                    receiver_type: msg.sender_type
+                }, {
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    }
+                }).then(() => {
+                    loadContacts();
+                    refreshUnseenCount(); // Just in case any other sender still has unseen
+                });
+            } else {
+                console.log('Message not for current chat:', msg);
+                loadContacts(); // So unseen badge appears on sender in the list
+                refreshUnseenCount(); // Only do this when it's not for the active chat
+            }
         });
+
 
         function appendMessage(msg) {
             console.log(parseInt(receiverId), receiverType);
@@ -251,7 +312,8 @@
                 return
             }; // Skip unrelated messages
 
-            const isMyMessage = msg.from_user_id === window.authUser.id && msg.sender_type === window.authUser.type;
+            const isMyMessage = msg.from_user_id === window.authUser.id && msg.sender_type === window.authUser
+                .type;
             const direction = isMyMessage ? 'outgoing' : 'incoming';
 
 
@@ -265,11 +327,13 @@
 
             let content = '';
             if (msg.body) {
-                content += `<p><strong>${direction === 'incoming' ? 'New message from:' : 'You:'}</strong> ${msg.body}</p>`;
+                content +=
+                    `<p><strong>${direction === 'incoming' ? 'New message from:' : 'You:'}</strong> ${msg.body}</p>`;
             }
 
             if (msg.image) {
-                content += `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">`;
+                content +=
+                    `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">`;
             }
 
             messageElement.innerHTML = content;
@@ -281,5 +345,23 @@
         // Initially disable send button
         document.getElementById('sendMessageBtn').disabled = true;
         loadContacts();
+
+        function refreshUnseenCount() {
+            axios.get('/unseen-count')
+                .then(countRes => {
+                    const newCount = countRes.data.count;
+                    const sidebarBadge = document.getElementById('sidebar-unseen-count');
+
+                    if (sidebarBadge) {
+                        if (newCount > 0) {
+                            sidebarBadge.textContent = newCount;
+                            sidebarBadge.classList.remove('d-none');
+                        } else {
+                            sidebarBadge.textContent = '';
+                            sidebarBadge.classList.add('d-none');
+                        }
+                    }
+                });
+        }
     </script>
 @endsection

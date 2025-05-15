@@ -1,4 +1,7 @@
 <div class="pepoles">
+    <div id="noResultsMessage" class="text-center text-muted my-3 d-none">
+        No messages found
+    </div>
     @foreach ($sortedProjects as $item)
         @php
             $project = $item['project'];
@@ -19,7 +22,8 @@
                 <h6 class="d-flex justify-content-between mb-1">
                     <span>{{ $project->contractor->contact_name }}</span>
                     @if ($item['last_message_time'])
-                        <small class="text-muted">{{ \Carbon\Carbon::parse($item['last_message_time'])->format('h:i A') }}</small>
+                        <small
+                            class="text-muted">{{ \Carbon\Carbon::parse($item['last_message_time'])->format('h:i A') }}</small>
                     @endif
                 </h6>
 
