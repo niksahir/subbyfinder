@@ -39,6 +39,8 @@
                             <i class="fa-solid fa-thumbtack"></i>
                             <i class="fa-regular fa-star"></i>
                             <i class="fa-solid fa-ellipsis-vertical"></i>
+                            <i class="fas fa-trash delete-chat-btn" title="Delete All Messages"
+                                style="cursor: pointer;"></i>
                         </div>
 
                     </div>
