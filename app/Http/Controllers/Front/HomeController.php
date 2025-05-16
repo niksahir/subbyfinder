@@ -77,6 +77,26 @@ class HomeController extends Controller
         $yearlyPlans = Plan::where('billing_type', 'yearly')->get();
         $locations = Location::all();
 
+        $subcontractorsReviews = reviewContractor::with('user')
+            ->latest()
+            ->take(2)
+            ->get()
+            ->map(function ($review) {
+                // Calculate average rating for each review
+                $average = collect([
+                    $review->doj,
+                    $review->payment_terms,
+                    $review->support_staff,
+                    $review->safety,
+                ])->avg();
+
+                // Attach average to the review
+                $review->average_rating = round($average, 2);
+                return $review;
+            })
+            ->sortByDesc('average_rating') // sort by average descending
+            ->values();
+
         return view(
             'front.home',
             ['userLogin' => $this->userLogin],
@@ -88,7 +108,8 @@ class HomeController extends Controller
                 'monthlyPlans',
                 'yearlyPlans',
                 'locations',
-                'userType'
+                'userType',
+                'subcontractorsReviews'
             )
         );
     }
