@@ -294,28 +294,20 @@
 
 
         function appendMessage(msg) {
-            console.log(parseInt(receiverId), receiverType);
-
-            loadContacts();
-            // Check if the message belongs to the current chat window
             const isCurrentChat =
                 (receiverId == msg.from_user_id && receiverType === msg.sender_type) ||
                 (receiverId == msg.to_user_id && receiverType === msg.receiver_type);
 
-            if (!isCurrentChat) {
-                console.log('Message not for current chat:', msg);
+            if (!isCurrentChat) return;
 
-                return
-            }; // Skip unrelated messages
-
-            const isMyMessage = msg.from_user_id === window.authUser.id && msg.sender_type === window.authUser
-                .type;
+            const isMyMessage = msg.from_user_id === window.authUser.id && msg.sender_type === window.authUser.type;
             const direction = isMyMessage ? 'outgoing' : 'incoming';
-
 
             const chatBox = document.querySelector('.message-box');
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', direction);
+            messageElement.dataset.id = msg.id; // <-- Assign message ID for deletion
+            messageElement.style.cursor = 'pointer';
 
             if (direction === 'outgoing') {
                 messageElement.classList.add('text-end');
@@ -323,13 +315,11 @@
 
             let content = '';
             if (msg.body) {
-                content +=
-                    `<p><strong>${direction === 'incoming' ? 'New message from:' : 'You:'}</strong> ${msg.body}</p>`;
+                content += `<p><strong>${direction === 'incoming' ? 'New message from:' : 'You:'}</strong> ${msg.body}</p>`;
             }
 
             if (msg.image) {
-                content +=
-                    `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">`;
+                content += `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">`;
             }
 
             messageElement.innerHTML = content;
@@ -359,6 +349,48 @@
                     }
                 });
         }
+
+        document.querySelector('.message-box').addEventListener('click', function(e) {
+            const messageEl = e.target.closest('.message');
+            if (!messageEl) return;
+
+            const messageId = messageEl.dataset.id;
+            if (!messageId) return;
+
+            if (confirm('Do you want to delete this message?')) {
+                axios.delete(`/delete-message/${messageId}`, {
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    }
+                }).then(() => {
+                    messageEl.remove();
+                    loadContacts();
+                }).catch(err => {
+                    console.error('Delete failed', err);
+                    alert('Could not delete message.');
+                });
+            }
+        });
+
+        document.querySelector('.delete-chat-btn').addEventListener('click', function() {
+            if (!receiverId || !receiverType) return;
+
+            if (confirm('Are you sure you want to delete all messages in this chat?')) {
+                axios.delete(`/delete-all-messages/${receiverId}/${receiverType}`, {
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    }
+                }).then(() => {
+                    document.querySelector('.message-box').innerHTML = '';
+                    loadContacts();
+                }).catch(err => {
+                    console.error('Delete All Failed', err);
+                    alert('Could not delete chat.');
+                });
+            }
+        });
     </script>
 @endsection
 

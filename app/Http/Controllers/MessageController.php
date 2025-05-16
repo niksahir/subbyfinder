@@ -133,4 +133,41 @@ class MessageController extends Controller
 
         return response()->json(['status' => 'success']);
     }
+
+    public function destroy($id)
+    {
+        $message = Message::findOrFail($id);
+
+
+        $userId = auth('contractor')->id() ?? auth('subcontractor')->id();
+        $usertype = auth('contractor')->check() ? 'contractor' : 'subcontractor';
+        // Optional: Restrict delete to sender only
+        if ($message->from_user_id !== $userId || $message->sender_type !== $usertype) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $message->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function deleteAll($receiverId, $receiverType)
+    {
+        $userId = auth('contractor')->id() ?? auth('subcontractor')->id();
+        $usertype = auth('contractor')->check() ? 'contractor' : 'subcontractor';
+
+        Message::where(function ($query) use ($receiverId, $receiverType, $userId, $usertype) {
+            $query->where('from_user_id', $userId)
+                ->where('sender_type', $usertype)
+                ->where('to_user_id', $receiverId)
+                ->where('receiver_type', $receiverType);
+        })->orWhere(function ($query) use ($receiverId, $receiverType, $userId, $usertype) {
+            $query->where('from_user_id', $receiverId)
+                ->where('sender_type', $receiverType)
+                ->where('to_user_id', $userId)
+                ->where('receiver_type', $usertype);
+        })->delete();
+
+        return response()->json(['status' => 'success']);
+    }
 }
