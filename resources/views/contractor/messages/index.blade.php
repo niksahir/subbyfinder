@@ -48,7 +48,7 @@
 
                     {{-- <div class="center-user-info">
                         <img src="{{ asset('assets/images/team-2.jpg') }}" alt="">
-                        <h6>Jan Mayer</h6>
+                        <h6>Jan Mayer</h6> 
                         <p>Recruiter at <span>Nomad</span> </p>
                         <p>This is the very beginning of your direct message with <b>Jan Mayer</b></p>
 
