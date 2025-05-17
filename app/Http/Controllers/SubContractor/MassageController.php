@@ -21,9 +21,11 @@ class MassageController extends Controller
             ->where('user_type', 'subcontractor')
             ->with('project')
             ->get()
-            ->unique(function ($item) {
-                return $item->project->id; // or use any other unique property of the project
+            ->groupBy('contractor_id')
+            ->map(function ($projects) {
+                return $projects->first(); // Get only the first project for each contractor
             });
+
 
         $contacts = $unlockedProjects->map(function ($item) use ($contractorId) {
             $latestMessage = Message::where(function ($q) use ($contractorId, $item) {
