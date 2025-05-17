@@ -33,8 +33,8 @@ Contractor
          <div class="col-md-4">
             <div class="block-item">
                <div class="text">
-                  <p>Task Bids Won</p>
-                  <h3>22</h3>
+                  <p>Project Posted</p>
+                  <h3>{{ $projects }}</h3>
                </div>
 
                <div class="icon">
@@ -58,7 +58,7 @@ Contractor
             <div class="block-item">
                <div class="text">
                   <p>Reviews</p>
-                  <h3>28</h3>
+                  <h3>{{ $reviewedProjects }}</h3>
                </div>
 
                <div class="icon">
