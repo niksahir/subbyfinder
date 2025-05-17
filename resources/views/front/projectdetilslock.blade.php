@@ -193,9 +193,6 @@
                                                                 Project</a>
                                                         </div>
 
-                                                        <div class="link">
-                                                            <a href="#">Message</a>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -453,7 +450,7 @@
                 <div class="col-md-4">
                     <div class="right-side">
                         <div class="link">
-                            <a href="#">Message</a>
+                            <a href="" data-bs-toggle="modal" data-bs-target="#exampleModalChat">Message</a>
                         </div>
 
                         <div class="enquire-box">
@@ -594,6 +591,22 @@
                 </div>
                 <div class="modal-footer">
                     <a href="{{ '/unlock-project/' . $project->id }}" class="btn">Buy</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalChat" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Unlock Project</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>Please Unlock Project</h5>
+                </div>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

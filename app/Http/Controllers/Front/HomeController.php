@@ -335,7 +335,7 @@ class HomeController extends Controller
         }
 
         // Final view decision
-        $canView = $unlockedProject || $unlockProject;
+        $canView = $unlockedProject && $unlockProject;
 
         return view($canView ? 'front.projectdetils' : 'front.projectdetilslock', compact(
             'userId',
@@ -559,7 +559,10 @@ class HomeController extends Controller
         $uloackedProject->user_type = $userType;
         $uloackedProject->save();
 
-        return redirect()->route('front.projectDetils', $id);
+        return redirect()->route('front.projectDetils', $id)->with([
+            'userId' => $userId,
+            'userType' => $userType,
+        ]);
     }
 
     public function handleStripePaymentProject(Request $request)

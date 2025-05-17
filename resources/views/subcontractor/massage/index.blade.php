@@ -26,7 +26,7 @@
                 <div class="chat-detail d-none flex-column" style="height: 100vh;">
                     <div class="user-topbar">
                         <div class="name-with-img">
-                            <img src="{{ asset('assets/images/team-1.jpg') }}" alt="" class="img-fluid">
+                            <img src="{{ asset('assets/images/team-1.jpg') }}" alt="Profile Photo" class="img-fluid">
 
                             <div class="name">
                                 <h6>Jan Mayer</h6>

@@ -19,6 +19,9 @@ class ChatController extends Controller
     {
         $contractorId = Auth::guard('contractor')->id();
 
+        $receiverId = $request->input('receiver_id');
+        $receiverType = $request->input('receiver_type');
+
         $unlockedProjects = UnlockSubcontractorProject::where('user_id', $contractorId)
             ->where('user_type', 'contractor')
             ->with('project')
@@ -57,7 +60,7 @@ class ChatController extends Controller
             return view("contractor.messages.contact-list", compact('sortedProjects'))->render();
         }
 
-        return view("contractor.messages.index", compact('sortedProjects'));
+        return view("contractor.messages.index", compact('sortedProjects','receiverId', 'receiverType'));
     }
 
 

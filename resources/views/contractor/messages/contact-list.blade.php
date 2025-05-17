@@ -14,8 +14,8 @@
             data-id="{{ $project->id }}" data-type="subcontractor" data-name="{{ $project->contact_name }}"
             data-photo="{{ asset('storage/' . $project->profile_photo) }}">
 
-            <img src="{{ asset('storage/' . $project->profile_photo) }}" alt="" class="img-fluid rounded-circle"
-                width="45" height="45">
+            <img src="{{ asset('storage/' . $project->profile_photo) }}" alt="Profile Photo" class="img-fluid rounded-circle"
+                width="45" height="45" >
 
             <div class="content flex-grow-1 ms-2">
                 <h6 class="d-flex justify-content-between mb-1">

@@ -281,9 +281,6 @@
                                                                 Project</a>
                                                         </div>
 
-                                                        <div class="link">
-                                                            <a href="#">Message</a>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -536,7 +533,11 @@
                 <div class="col-md-4">
                     <div class="right-side">
                         <div class="link">
-                            <a href="#">Message</a>
+                             @if($userType == 'contractor')
+                                <a href="{{ route('contractor.messages.index') }}">Message</a>
+                             @else
+                                <a href="{{ route('subcontractor.messages.index') }}">Message</a>
+                            @endif
                         </div>
 
                         <div class="enquire-box">

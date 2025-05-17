@@ -26,7 +26,7 @@
                 <div class="chat-detail d-none flex-column" style="height: 100vh;">
                     <div class="user-topbar">
                         <div class="name-with-img">
-                            <img src="{{ asset('assets/images/team-1.jpg') }}" alt="" class="img-fluid">
+                            <img src="{{ asset('assets/images/team-1.jpg') }}" alt="Profile Photo" class="img-fluid">
 
                             <div class="name">
                                 <h6>Jan Mayer</h6>
@@ -90,6 +90,19 @@
 @endsection
 @section('scripts')
     <script>
+        @if (isset($receiverId) && isset($receiverType))
+        console.log('Receiver ID:', {{ $receiverId }}, 'Receiver Type:', '{{ $receiverType }}');
+
+            window.addEventListener('DOMContentLoaded', function() {
+                const contactItem =
+                    document.querySelector(
+                        `.user-chat-trigger [data-id="{{ $receiverId }}"][data-type="{{ $receiverType }}"]`);
+                if (contactItem) {
+                    contactItem.click(); // Trigger the chat load
+                }
+            });
+        @endif
+
         document.getElementById('searchContacts').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
             let matchCount = 0;

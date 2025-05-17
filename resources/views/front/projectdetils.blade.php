@@ -205,7 +205,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-md-4">
                                                     <div class="budget">
                                                         <div class="copy">
@@ -222,9 +221,9 @@
                                                                 Project</a>
                                                         </div>
 
-                                                        <div class="link">
+                                                        {{-- <div class="link">
                                                             <a href="#">Message</a>
-                                                        </div>
+                                                        </div> --}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -555,8 +554,13 @@
 
                 <div class="col-md-4">
                     <div class="right-side">
+                        {{-- @dd($contractorProject->contractor->id) --}}
                         <div class="link">
-                            <a href="#">Message</a>
+                            @if($userType == 'contractor')
+                                <a href="{{ route('contractor.messages.index') }}">Message</a>
+                             @else
+                                <a href="{{ route('subcontractor.messages.index') }}">Message</a>
+                            @endif
                         </div>
 
                         <div class="enquire-box">
