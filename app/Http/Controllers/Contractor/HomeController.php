@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Contractor;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contractor;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,12 @@ class HomeController extends Controller {
     * Display a listing of the resource.
     */
    public function index() {
-      return view("contractor.dashboard.index");
+
+    $userId = auth::guard('contractor')->user()->id ?? auth::guard('subcontractor')->user()->id;
+    $userType = auth::guard('contractor')->user() ? 'contractor' : 'subcontractor';
+
+      $Contractor = Contractor::where('id', $userId)->first();
+      return view("contractor.dashboard.index", compact('Contractor', 'userType'));
    }
 
    /**

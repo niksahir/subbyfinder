@@ -8,7 +8,7 @@ Contractor
 <div class="row mb-5">
    <div class="col-md-6">
       <div class="title">
-         <h4>Howdy, Tom!</h4>
+         <h4>{{ $Contractor->contact_name }}</h4>
          <p>We are glad to see you again!</p>
       </div>
    </div>
