@@ -22,7 +22,10 @@ class ChatController extends Controller
         $unlockedProjects = UnlockSubcontractorProject::where('user_id', $contractorId)
             ->where('user_type', 'contractor')
             ->with('project')
-            ->get();
+            ->get()
+            ->unique(function ($item) {
+                return $item->project->id; // or use any other unique property of the project
+            });
 
         $contacts = $unlockedProjects->map(function ($item) use ($contractorId) {
             $latestMessage = Message::where(function ($q) use ($contractorId, $item) {
