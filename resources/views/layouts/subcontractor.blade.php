@@ -179,7 +179,7 @@
     </style>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
     <div id="loader-overlay"></div>
     <div id="loader" style="display: none;">
         <img src="{{ asset('assets/images/loader-1.gif') }}" alt="Loading..." />

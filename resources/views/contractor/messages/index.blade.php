@@ -3,7 +3,7 @@
     Chat - Subby Finder
 @endsection
 @section('content')
-    <section class="charting-section">
+    <section class="charting-section min-vh-100">
         <div class="row">
             <div class="col-md-5">
                 <div class="left-chat">
@@ -23,7 +23,7 @@
             </div>
 
             <div class="col-md-7">
-                <div class="chat-detail d-flex flex-column" style="height: 100vh;">
+                <div class="chat-detail d-none flex-column" style="height: 100vh;">
                     <div class="user-topbar">
                         <div class="name-with-img">
                             <img src="{{ asset('assets/images/team-1.jpg') }}" alt="" class="img-fluid">
@@ -36,9 +36,9 @@
 
 
                         <div class="icons">
-                            <i class="fa-solid fa-thumbtack"></i>
+                            {{-- <i class="fa-solid fa-thumbtack"></i>
                             <i class="fa-regular fa-star"></i>
-                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                            <i class="fa-solid fa-ellipsis-vertical"></i> --}}
                             <i class="fas fa-trash delete-chat-btn" title="Delete All Messages"
                                 style="cursor: pointer;"></i>
                         </div>
@@ -48,7 +48,7 @@
 
                     {{-- <div class="center-user-info">
                         <img src="{{ asset('assets/images/team-2.jpg') }}" alt="">
-                        <h6>Jan Mayer</h6> 
+                        <h6>Jan Mayer</h6>
                         <p>Recruiter at <span>Nomad</span> </p>
                         <p>This is the very beginning of your direct message with <b>Jan Mayer</b></p>
 
@@ -77,6 +77,9 @@
                         <button id="sendMessageBtn"> <i class="fa-solid fa-paper-plane"></i></button>
                     </div>
 
+                </div>
+                <div class="no-messages d-flex flex-column justify-content-center align-items-center text-center h-100">
+                    <p>Select user for chat</p>
                 </div>
             </div>
         </div>
@@ -145,6 +148,13 @@
             receiverId = item.dataset.id;
             receiverType = item.dataset.type;
             console.log('Selected user:', receiverId, receiverType);
+
+            document.querySelectorAll('.chat-detail').forEach(function(el) {
+                el.classList.remove('d-none');
+                el.classList.add('d-flex');
+            });
+
+            document.querySelector('.no-messages').classList.add('d-none');
 
             // Enable send button
             document.getElementById('sendMessageBtn').disabled = false;
