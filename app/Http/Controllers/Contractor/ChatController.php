@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Contractor;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contractor;
 use App\Models\Message;
 use App\Models\UnlockedProject;
 use App\Models\UnlockSubcontractorProject;
@@ -45,12 +46,15 @@ class ChatController extends Controller
                 ->where('is_seen', false)
                 ->count();
 
+            $image = Contractor::where('id', $contractorId)->first();
+
             return [
                 'project' => $item->project,
                 'last_message_time' => $latestMessage?->created_at,
                 'last_message_body' => $latestMessage?->body,
                 'last_message_image' => $latestMessage?->image,
                 'unseen_count' => $unseenCount,
+                'image' => $image->profile_photo,
             ];
         });
 
@@ -60,7 +64,7 @@ class ChatController extends Controller
             return view("contractor.messages.contact-list", compact('sortedProjects'))->render();
         }
 
-        return view("contractor.messages.index", compact('sortedProjects','receiverId', 'receiverType'));
+        return view("contractor.messages.index", compact('sortedProjects', 'receiverId', 'receiverType'));
     }
 
 

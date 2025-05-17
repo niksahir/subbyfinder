@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessageSent;
+use App\Models\Contractor;
 use App\Models\Message;
+use App\Models\SubContractor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -95,6 +97,12 @@ class MessageController extends Controller
         $receiverId = $request->receiver_id;
         $receiverType = $request->receiver_type;
 
+        if ($usertype === 'contractor') {
+            $image = Contractor::find($userId)->profile_photo;
+        }else {
+            $image = SubContractor::find($userId)->profile_photo;
+        }
+
         $messages = Message::where(function ($q) use ($userId, $receiverId, $receiverType) {
             $q->where('from_user_id', $userId)
                 ->where('to_user_id', $receiverId)
@@ -105,7 +113,7 @@ class MessageController extends Controller
                 ->where('receiver_type', $usertype);
         })->orderBy('created_at')->get();
 
-        return response()->json(['messages' => $messages]);
+        return response()->json(['messages' => $messages, 'image' => $image]);
     }
 
     public function markAsSeen(Request $request)

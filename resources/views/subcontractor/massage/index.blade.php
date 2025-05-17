@@ -48,7 +48,7 @@
                     </div>
 
 
-                    {{-- <div class="center-user-info">
+                    <div class="center-user-info">
                         <img src="{{ asset('assets/images/team-2.jpg') }}" alt="">
                         <h6>Jan Mayer</h6>
                         <p>Recruiter at <span>Nomad</span> </p>
@@ -57,7 +57,7 @@
                         <div class="today">
                             <p><i class="fa-solid fa-angle-down"></i> Today</p>
                         </div>
-                    </div> --}}
+                    </div>
 
                     <div class="message-box flex-grow-1 overflow-auto px-3 py-2 border d-flex flex-column" id="messageBox">
                         <div class="mt-auto d-flex flex-column">
@@ -118,22 +118,18 @@
             }
         });
 
-
         function loadContacts() {
             $.ajax({
-                url: '{{ route('subcontractor.messages.index') }}', // adjust route if needed
+                url: '{{ route('subcontractor.messages.index') }}',
                 method: 'GET',
                 success: function(response) {
-                    $('#contactListWrapper').html(response); // wrapper for .pepoles
+                    $('#contactListWrapper').html(response);
                 },
                 error: function() {
                     alert('Failed to load contacts.');
                 }
             });
         }
-
-        // Call this function where appropriate
-        loadContacts();
 
         document.getElementById('triggerFileInput').addEventListener('click', function() {
             document.getElementById('imageInput').click();
@@ -144,7 +140,9 @@
 
         window.authUser = {
             id: {{ auth('subcontractor')->id() }},
-            type: 'subcontractor'
+            type: 'subcontractor',
+            name: "{{ auth('subcontractor')->user()->name }}",
+            photo: "{{ auth('subcontractor')->user()->profile_photo ? asset('storage/' . auth('subcontractor')->user()->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
         };
 
         document.getElementById('contactListWrapper').addEventListener('click', function(e) {
@@ -155,13 +153,6 @@
             receiverType = item.dataset.type;
             console.log('Selected user:', receiverId, receiverType);
 
-            // Enable send button
-            document.getElementById('sendMessageBtn').disabled = false;
-
-            // Update user topbar
-            document.querySelector('.chat-detail .user-topbar img').src = item.dataset.photo;
-            document.querySelector('.chat-detail .user-topbar .name h6').textContent = item.dataset.name;
-
             document.querySelectorAll('.chat-detail').forEach(function(el) {
                 el.classList.remove('d-none');
                 el.classList.add('d-flex');
@@ -169,12 +160,27 @@
 
             document.querySelector('.no-messages').classList.add('d-none');
 
+            // Enable send button
+            document.getElementById('sendMessageBtn').disabled = false;
+
+            // Update user topbar
+            document.querySelector('.chat-detail .user-topbar img').src = item.dataset.photo;
+            document.querySelector('.chat-detail .user-topbar .name h6').textContent = item.dataset.name;
+            document.querySelector('.chat-detail .center-user-info h6').textContent = item.dataset.name;
+            document.querySelector('.chat-detail .center-user-info p b').textContent = item.dataset.name;
+            document.querySelector('.chat-detail .center-user-info img').src = item.dataset.photo;
+
+            // console.log('Image:', item.dataset.incomig);
+            // document.querySelector('#incoming_image').src = item.dataset
+            //     .incomig;
+
             // Clear old messages
             const chatDetail = document.querySelector('.chat-detail');
             chatDetail.querySelectorAll('.message').forEach(msg => msg.remove());
 
             // Fetch previous messages via AJAX
             axios.get(`/get-messages?receiver_id=${receiverId}&receiver_type=${receiverType}`)
+                // const image = res.data.image;
                 .then(res => {
                     res.data.messages.forEach(msg => {
                         appendMessage(msg, msg.from_user_id == window.authUser.id ? 'outgoing' :
@@ -283,13 +289,13 @@
             console.log('Received message:', data.message);
 
             const msg = data.message;
-
+            const image = data.image;
             const isCurrentChat =
                 (receiverId == msg.from_user_id && receiverType === msg.sender_type) ||
                 (receiverId == msg.to_user_id && receiverType === msg.receiver_type);
 
             if (isCurrentChat) {
-                appendMessage(msg); // Message for open chat
+                appendMessage(msg, image); // Message for open chat
 
                 axios.post('/mark-as-seen', {
                     from_user_id: msg.from_user_id,
@@ -311,7 +317,8 @@
         });
 
 
-        function appendMessage(msg) {
+        function appendMessage(msg, image) {
+
             const isCurrentChat =
                 (receiverId == msg.from_user_id && receiverType === msg.sender_type) ||
                 (receiverId == msg.to_user_id && receiverType === msg.receiver_type);
@@ -331,13 +338,50 @@
                 messageElement.classList.add('text-end');
             }
 
-            let content = '';
-            if (msg.body) {
-                content += `<p><strong>${direction === 'incoming' ? 'New message from:' : 'You:'}</strong> ${msg.body}</p>`;
-            }
+            let senderName = msg.sender_name || 'User';
+            let senderImage = msg.sender_image || `{{ asset('assets/images/icons8-person-94.png') }}`;
+            // let messageTime = msg.created_at || 'Just now';
 
-            if (msg.image) {
-                content += `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">`;
+            const isoTime = msg.created_at;
+            const date = new Date(isoTime);
+
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            };
+
+            const messageTime = date.toLocaleString('en-US', options);
+
+            let content = '';
+
+            if (isMyMessage) {
+                content += `
+        <div class="d-flex align-items-start justify-content-end text-end mb-2">
+            <div>
+                ${msg.body ? `<div class="text-dark p-2 rounded mb-1 outgoing">${msg.body}</div>` : ''}
+                ${msg.image ? `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">` : ''}
+                <div class="text-muted small">${messageTime}</div>
+            </div>
+            <img src="${window.authUser.photo}" class="rounded-circle ms-2" alt="You" style="width: 40px; height: 40px;">
+        </div>
+    `;
+            } else {
+                // Incoming message
+                content += `
+            <div class="d-flex align-items-start mb-3">
+                <img src="${senderImage}" class="rounded-circle me-2" alt="${senderName}" style="width: 40px; height: 40px;">
+                <div>
+                    <p class="mb-1 fw-bold">${senderName}</p>
+                    ${msg.body ? `<div class="bg-light p-2 rounded border mb-1 incoming">${msg.body}</div>` : ''}
+                    ${msg.image ? `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">` : ''}
+                    <div class="text-muted small mt-1">${messageTime}</div>
+                </div>
+            </div>
+        `;
             }
 
             messageElement.innerHTML = content;
@@ -383,6 +427,7 @@
                     }
                 }).then(() => {
                     messageEl.remove();
+                    loadContacts();
                 }).catch(err => {
                     console.error('Delete failed', err);
                     alert('Could not delete message.');

@@ -46,18 +46,52 @@
                     </div>
 
 
-                    {{-- <div class="center-user-info">
-                        <img src="{{ asset('assets/images/team-2.jpg') }}" alt="">
+                    <div class="center-user-info">
+                        <img src="{{ asset('assets/images/team-1.jpg') }}" alt="Profile Photo" class="img-fluid">
                         <h6>Jan Mayer</h6>
-                        <p>Recruiter at <span>Nomad</span> </p>
+                        {{-- <p>Recruiter at <span>Nomad</span> </p> --}}
                         <p>This is the very beginning of your direct message with <b>Jan Mayer</b></p>
 
                         <div class="today">
                             <p><i class="fa-solid fa-angle-down"></i> Today</p>
                         </div>
-                    </div> --}}
+                    </div>
+
 
                     <div class="message-box flex-grow-1 overflow-auto px-3 py-2 border d-flex flex-column" id="messageBox">
+                        <div class="mt-auto d-flex flex-column">
+
+                            <!-- Jan Mayer's message (incoming) -->
+                            {{-- <div class="d-flex align-items-start mb-3">
+                                <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Jan Mayer">
+                                <div>
+                                    <p class="mb-1 fw-bold">Jan Mayer</p>
+                                    <div class="bg-light p-2 rounded border message incoming mb-2">
+                                        Hey Jake, I wanted to reach out because we saw your work contributions and were
+                                        impressed by your work.
+                                    </div>
+                                    <div class="bg-light p-2 rounded border message outgoing">
+                                        We want to invite you for a quick interview
+                                    </div>
+                                    <div class="text-muted small mt-1">12 mins ago</div>
+                                </div>
+                            </div>
+
+                            <!-- Your message (outgoing) -->
+                            <div class="d-flex align-items-start justify-content-end text-end mb-2">
+                                <div>
+                                    <div class="bg-primary text-white p-2 rounded mb-1 outgoing">
+                                        Hi Jan, sure I would love to. Thanks for taking the time to see my work!
+                                    </div>
+                                    <div class="text-muted small">12 mins ago</div>
+                                </div>
+                                <img src="https://via.placeholder.com/40" class="rounded-circle ms-2" alt="You">
+                            </div> --}}
+
+                        </div>
+                    </div>
+
+                    {{-- <div class="message-box flex-grow-1 overflow-auto px-3 py-2 border d-flex flex-column" id="messageBox">
                         <div class="mt-auto d-flex flex-column">
                             <!-- Messages -->
                             <div class="message incoming mb-2">
@@ -67,7 +101,7 @@
                                 <p><strong>You:</strong> Hi, how can I help?</p>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="send-box-item">
                         <input type="text" class="form-control" placeholder="Reply message" id="messageInput">
@@ -91,7 +125,7 @@
 @section('scripts')
     <script>
         @if (isset($receiverId) && isset($receiverType))
-        console.log('Receiver ID:', {{ $receiverId }}, 'Receiver Type:', '{{ $receiverType }}');
+            console.log('Receiver ID:', {{ $receiverId }}, 'Receiver Type:', '{{ $receiverType }}');
 
             window.addEventListener('DOMContentLoaded', function() {
                 const contactItem =
@@ -151,7 +185,9 @@
 
         window.authUser = {
             id: {{ auth('contractor')->id() }},
-            type: 'contractor'
+            type: 'contractor',
+            name: "{{ auth('contractor')->user()->name }}",
+            photo: "{{ auth('contractor')->user()->profile_photo ? asset('storage/' . auth('contractor')->user()->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
         };
 
         document.getElementById('contactListWrapper').addEventListener('click', function(e) {
@@ -175,6 +211,13 @@
             // Update user topbar
             document.querySelector('.chat-detail .user-topbar img').src = item.dataset.photo;
             document.querySelector('.chat-detail .user-topbar .name h6').textContent = item.dataset.name;
+            document.querySelector('.chat-detail .center-user-info h6').textContent = item.dataset.name;
+            document.querySelector('.chat-detail .center-user-info p b').textContent = item.dataset.name;
+            document.querySelector('.chat-detail .center-user-info img').src = item.dataset.photo;
+
+            // console.log('Image:', item.dataset.incomig);
+            // document.querySelector('#incoming_image').src = item.dataset
+            //     .incomig;
 
             // Clear old messages
             const chatDetail = document.querySelector('.chat-detail');
@@ -182,6 +225,7 @@
 
             // Fetch previous messages via AJAX
             axios.get(`/get-messages?receiver_id=${receiverId}&receiver_type=${receiverType}`)
+                // const image = res.data.image;
                 .then(res => {
                     res.data.messages.forEach(msg => {
                         appendMessage(msg, msg.from_user_id == window.authUser.id ? 'outgoing' :
@@ -290,13 +334,13 @@
             console.log('Received message:', data.message);
 
             const msg = data.message;
-
+            const image = data.image;
             const isCurrentChat =
                 (receiverId == msg.from_user_id && receiverType === msg.sender_type) ||
                 (receiverId == msg.to_user_id && receiverType === msg.receiver_type);
 
             if (isCurrentChat) {
-                appendMessage(msg); // Message for open chat
+                appendMessage(msg, image); // Message for open chat
 
                 axios.post('/mark-as-seen', {
                     from_user_id: msg.from_user_id,
@@ -318,7 +362,8 @@
         });
 
 
-        function appendMessage(msg) {
+        function appendMessage(msg, image) {
+
             const isCurrentChat =
                 (receiverId == msg.from_user_id && receiverType === msg.sender_type) ||
                 (receiverId == msg.to_user_id && receiverType === msg.receiver_type);
@@ -338,13 +383,48 @@
                 messageElement.classList.add('text-end');
             }
 
-            let content = '';
-            if (msg.body) {
-                content += `<p><strong>${direction === 'incoming' ? 'New message from:' : 'You:'}</strong> ${msg.body}</p>`;
-            }
+            // let senderName = msg.sender_name || 'User';
+            let senderImage = msg.sender_image || `{{ asset('assets/images/icons8-person-94.png') }}`;
 
-            if (msg.image) {
-                content += `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">`;
+            const isoTime = msg.created_at;
+            const date = new Date(isoTime);
+
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            };
+
+            const messageTime = date.toLocaleString('en-US', options);
+
+            let content = '';
+
+            if (isMyMessage) {
+                content += `
+        <div class="d-flex align-items-start justify-content-end text-end mb-2">
+            <div>
+                ${msg.body ? `<div class="text-dark p-2 rounded mb-1 outgoing">${msg.body}</div>` : ''}
+                ${msg.image ? `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">` : ''}
+                <div class="text-muted small">${messageTime}</div>
+            </div>
+            <img src="${window.authUser.photo}" class="rounded-circle ms-2" alt="You" style="width: 40px; height: 40px;">
+        </div>
+    `;
+            } else {
+                // Incoming message
+                content += `
+            <div class="d-flex align-items-start mb-3">
+                <img src="${senderImage}" class="rounded-circle me-2" alt="" style="width: 40px; height: 40px;">
+                <div>
+                    ${msg.body ? `<div class="bg-light p-2 rounded border mb-1 incoming">${msg.body}</div>` : ''}
+                    ${msg.image ? `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">` : ''}
+                    <div class="text-muted small mt-1">${messageTime}</div>
+                </div>
+            </div>
+        `;
             }
 
             messageElement.innerHTML = content;
