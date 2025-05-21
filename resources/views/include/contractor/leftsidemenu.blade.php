@@ -23,7 +23,7 @@
             </li>
             @php
                 $unseenMessages = \App\Models\Message::where('to_user_id', Auth::guard('contractor')->user()->id)
-                    ->where('receiver_type', 'subcontractor')
+                    ->where('receiver_type', 'contractor')
                     ->where('is_seen', 0)
                     ->select('from_user_id')
                     ->distinct()

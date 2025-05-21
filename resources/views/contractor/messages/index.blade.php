@@ -122,7 +122,7 @@
 
     </section>
 @endsection
-@section('scripts')
+{{-- @section('scripts')
     <script>
         @if (isset($receiverId) && isset($receiverType))
             console.log('Receiver ID:', {{ $receiverId }}, 'Receiver Type:', '{{ $receiverType }}');
@@ -293,6 +293,7 @@
             }).then(res => {
                 appendMessage(res.data.message, 'outgoing');
                 messageInput.value = '';
+                refreshUnseenCount();
                 loadContacts();
             }).catch(error => {
                 console.error('Message send failed', error);
@@ -311,6 +312,7 @@
             axios.post('/send-image', formData)
                 .then(res => {
                     appendMessage(res.data.message, 'outgoing');
+                    refreshUnseenCount();
                     loadContacts();
                 })
                 .catch(err => {
@@ -384,7 +386,7 @@
             }
 
             // let senderName = msg.sender_name || 'User';
-            let senderImage = msg.sender_image || `{{ asset('assets/images/icons8-person-94.png') }}`;
+            // let senderImage = msg.sender.profile_photo || `{{ asset('assets/images/icons8-person-94.png') }}`;/
 
             const isoTime = msg.created_at;
             const date = new Date(isoTime);
@@ -414,10 +416,12 @@
         </div>
     `;
             } else {
+                let senderImage = (msg.sender && msg.sender.profile_photo) || `{{ asset('assets/images/icons8-person-94.png') }}`;
+
                 // Incoming message
                 content += `
             <div class="d-flex align-items-start mb-3">
-                <img src="${senderImage}" class="rounded-circle me-2" alt="" style="width: 40px; height: 40px;">
+                <img src="/storage/${senderImage}" class="rounded-circle me-2" alt="" style="width: 40px; height: 40px;">
                 <div>
                     ${msg.body ? `<div class="bg-light p-2 rounded border mb-1 incoming">${msg.body}</div>` : ''}
                     ${msg.image ? `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">` : ''}
@@ -497,7 +501,7 @@
             }
         });
     </script>
-@endsection
+@endsection --}}
 
 {{-- @section('scripts')
     <script>

@@ -73,7 +73,7 @@ Route::middleware(['auth:contractor,subcontractor'])->group(function () {
     Route::get('/get-messages', [MessageController::class, 'getMessages']);
     Route::post('/send-image', [MessageController::class, 'sendImage']);
     Route::post('/mark-as-seen', [MessageController::class, 'markAsSeen']);
-    Route::get('/unseen-count', [MessageController::class, 'unseenCount']);
+    Route::get('/unseen-count', [MessageController::class, 'unseenCount'])->name('message.unseenCount');
     Route::delete('/delete-message/{id}', [MessageController::class, 'destroy'])->name('messages.destroy');
     Route::delete('/delete-all-messages/{receiverId}/{receiverType}', [MessageController::class, 'deleteAll']);
 });

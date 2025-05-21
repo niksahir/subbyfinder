@@ -9,15 +9,17 @@
             $isUnseen = $item['unseen_count'] > 0;
             $isImage = $item['last_message_image'] && !$item['last_message_body'];
             $preview = $item['last_message_body'] ?? ($isImage ? '📷 Image' : 'No messages yet');
+            $image = $item['image'] ? $item['image'] : asset('assets/images/icons8-person-94.png');
         @endphp
 
         <div class="inner-item user-chat-trigger d-flex align-items-start" style="cursor: pointer;"
             data-id="{{ $contractor->id }}" data-type="contractor"
             data-name="{{ $contractor->contact_name }}"
-            data-photo="{{ asset('storage/' . $contractor->profile_photo) }}">
+            data-photo="{{ $contractor->profile_photo ? asset('storage/' . $contractor->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
+            data-incomig="{{ $image }}">
 
-            <img src="{{ asset('storage/' . $contractor->profile_photo) }}" alt="Profile Photo"
-                class="img-fluid rounded-circle" width="45" height="45">
+            <img src="{{ $contractor->profile_photo ? asset('storage/' . $contractor->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
+                alt="Profile Photo" class="img-fluid rounded-circle" width="45" height="45">
 
             <div class="content flex-grow-1 ms-2">
                 <h6 class="d-flex justify-content-between mb-1">

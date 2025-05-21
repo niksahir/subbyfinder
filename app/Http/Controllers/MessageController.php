@@ -99,18 +99,20 @@ class MessageController extends Controller
 
         if ($usertype === 'contractor') {
             $image = Contractor::find($userId)->profile_photo;
-        }else {
+        } else {
             $image = SubContractor::find($userId)->profile_photo;
         }
 
         $messages = Message::where(function ($q) use ($userId, $receiverId, $receiverType) {
             $q->where('from_user_id', $userId)
                 ->where('to_user_id', $receiverId)
-                ->where('receiver_type', $receiverType);
+                ->where('receiver_type', $receiverType)
+                ->with('sender');
         })->orWhere(function ($q) use ($userId, $receiverId, $usertype) {
             $q->where('from_user_id', $receiverId)
                 ->where('to_user_id', $userId)
-                ->where('receiver_type', $usertype);
+                ->where('receiver_type', $usertype)
+                ->with('sender');
         })->orderBy('created_at')->get();
 
         return response()->json(['messages' => $messages, 'image' => $image]);

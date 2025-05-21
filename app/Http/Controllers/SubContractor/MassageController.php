@@ -61,6 +61,7 @@ class MassageController extends Controller
                 'last_message_body' => $latestMessage?->body,
                 'last_message_image' => $latestMessage?->image,
                 'unseen_count' => $unseenCount,
+                'image' => $contractor->profile_photo,
             ];
         });
 
@@ -86,9 +87,11 @@ class MassageController extends Controller
                 'last_message_body' => $latestMessage?->body,
                 'last_message_image' => $latestMessage?->image,
                 'unseen_count' => $unseenCount,
+                'image' =>  $latestMessage?->sender->profile_photo,
             ];
         });
-        // dd($lockedContacts);
+        // dd($lockedContacts)
+
         // Step 5: Merge and sort
         $allContacts = $contactsFromUnlocked->merge($lockedContacts)->filter(fn($item) => $item['contractor'] !== null);
 
@@ -99,7 +102,7 @@ class MassageController extends Controller
         if ($request->ajax()) {
             return view("subcontractor.massage.contact-list", compact('sortedProjects'))->render();
         }
-
+        // dd($sortedProjects);
         return view("subcontractor.massage.index", compact('sortedProjects'));
     }
     /**

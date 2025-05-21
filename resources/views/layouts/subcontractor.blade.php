@@ -206,6 +206,25 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script>
+        window.authUser = {
+            id: {{ auth('subcontractor')->id() }},
+            type: 'subcontractor',
+            name: "{{ auth('subcontractor')->user()->name }}",
+            photo: "{{ auth('subcontractor')->user()->profile_photo ? asset('storage/' . auth('subcontractor')->user()->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
+        };
+
+        const pusher = new Pusher('{{ config('broadcasting.connections.pusher.key') }}', {
+            cluster: '{{ config('broadcasting.connections.pusher.options.cluster') }}',
+            forceTLS: true
+        });
+
+        window.routes = {
+            loadContacts: "{{ route('subcontractor.messages.index') }}"
+        };
+       const defaultImage = "{{ asset('assets/images/icons8-person-94.png') }}";
+    </script>
+    <script src="{{ asset('assets/subcontractor/js/chat.js') }}"></script>
+    <script>
         jQuery.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': '{{ Session::token() }}'
@@ -251,6 +270,51 @@
             });
         });
     </script>
+    {{-- <script>
+        window.authUser = {
+            id: {{ auth('subcontractor')->id() }},
+            type: 'subcontractor',
+            name: "{{ auth('subcontractor')->user()->name }}",
+            photo: "{{ auth('subcontractor')->user()->profile_photo ? asset('storage/' . auth('subcontractor')->user()->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
+        };
+        const pusher = new Pusher('{{ config('broadcasting.connections.pusher.key') }}', {
+            cluster: '{{ config('broadcasting.connections.pusher.options.cluster') }}',
+            forceTLS: true
+        });
+
+        const channel = pusher.subscribe('chat.' + window.authUser.id + '.' + window.authUser.type);
+        console.log('Subscribed to channel:', 'chat.' + window.authUser.id + '.' + window.authUser.type);
+
+        channel.bind_global(function(eventName, data) {
+            console.log('Global event received:', eventName, data);
+        });
+
+        channel.bind('MessageSent', function(data) {
+            refreshUnseenCount();
+        })
+
+
+        function refreshUnseenCount() {
+            $.ajax({
+                url: "{{ route('message.unseenCount') }}", // Route to get unseen count
+                type: 'GET',
+                success: function(response) {
+                    const newCount = response.count;
+                    const sidebarBadge = document.getElementById('sidebar-unseen-count');
+
+                    if (sidebarBadge) {
+                        if (newCount > 0) {
+                            sidebarBadge.textContent = newCount;
+                            sidebarBadge.classList.remove('d-none');
+                        } else {
+                            sidebarBadge.textContent = '';
+                            sidebarBadge.classList.add('d-none');
+                        }
+                    }
+                }
+            });
+        }
+    </script> --}}
 </body>
 
 </html>

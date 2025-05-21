@@ -188,6 +188,26 @@
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        window.authUser = {
+            id: {{ auth('contractor')->id() }},
+            type: 'contractor',
+            name: "{{ auth('contractor')->user()->name }}",
+            photo: "{{ auth('contractor')->user()->profile_photo ? asset('storage/' . auth('contractor')->user()->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
+        };
+
+        const pusher = new Pusher('{{ config('broadcasting.connections.pusher.key') }}', {
+            cluster: '{{ config('broadcasting.connections.pusher.options.cluster') }}',
+            forceTLS: true
+        });
+
+        window.routes = {
+            loadContacts: "{{ route('contractor.messages.index') }}"
+        };
+       const defaultImage = "{{ asset('assets/images/icons8-person-94.png') }}";
+
+    </script>
+    <script src="{{ asset('assets/contractor/js/chat.js') }}"></script>
+    <script>
         jQuery.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': '{{ Session::token() }}'
