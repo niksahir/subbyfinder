@@ -23,49 +23,98 @@ class ChatController extends Controller
         $receiverId = $request->input('receiver_id');
         $receiverType = $request->input('receiver_type');
 
+        // Step 1: Get unlocked projects of this contractor with their subcontractors
         $unlockedProjects = UnlockSubcontractorProject::where('user_id', $contractorId)
             ->where('user_type', 'contractor')
-            ->with('project')
+            ->with('project') // assuming project has subcontractor relation
             ->get()
-            ->unique(function ($item) {
-                return $item->project->id; // or use any other unique property of the project
-            });
+            ->unique(fn($item) => $item->project->id);
 
-        $contacts = $unlockedProjects->map(function ($item) use ($contractorId) {
-            $latestMessage = Message::where(function ($q) use ($contractorId, $item) {
-                $q->where('from_user_id', $contractorId)->where('to_user_id', $item->project_id);
-            })
-                ->orWhere(function ($q) use ($contractorId, $item) {
-                    $q->where('from_user_id', $item->project_id)->where('to_user_id', $contractorId);
-                })
-                ->orderByDesc('created_at')
-                ->first();
+        // Get unlocked subcontractor IDs related to projects
+        $unlockedSubcontractorIds = $unlockedProjects->map(fn($item) => $item->project->id)->unique()->values()->all();
 
-            $unseenCount = Message::where('from_user_id', $item->project_id)
+        // Step 2: Get IDs of subcontractors who have messaged the contractor (locked contacts)
+        $messageSenderIds = Message::where('to_user_id', $contractorId)
+            ->pluck('from_user_id')
+            ->unique()
+            ->diff($unlockedSubcontractorIds) // exclude unlocked subcontractors
+            ->values()
+            ->all();
+
+        // Step 3: Prepare contacts from unlocked projects
+        $contactsFromUnlocked = $unlockedProjects->map(function ($item) use ($contractorId) {
+            $subcontractor = $item->project;
+
+            $latestMessage = Message::where(function ($q) use ($contractorId, $subcontractor) {
+                $q->where('from_user_id', $contractorId)->where('to_user_id', $subcontractor->id);
+            })->orWhere(function ($q) use ($contractorId, $subcontractor) {
+                $q->where('from_user_id', $subcontractor->id)->where('to_user_id', $contractorId);
+            })->latest()->first();
+
+            $unseenCount = Message::where('from_user_id', $subcontractor->id)
                 ->where('to_user_id', $contractorId)
                 ->where('is_seen', false)
                 ->count();
 
-            $image = Contractor::where('id', $contractorId)->first();
-
             return [
+                'subcontractor' => $subcontractor,
                 'project' => $item->project,
                 'last_message_time' => $latestMessage?->created_at,
                 'last_message_body' => $latestMessage?->body,
                 'last_message_image' => $latestMessage?->image,
                 'unseen_count' => $unseenCount,
-                'image' => $image->profile_photo,
+                'image' => $subcontractor->profile_photo,
             ];
         });
 
-        $sortedProjects = $contacts->sortByDesc(fn($item) => $item['last_message_time'] ?? now()->subYears(100));
+        // Step 4: Prepare contacts from locked subcontractors who have messaged
+        $lockedContacts = collect($messageSenderIds)->map(function ($subcontractorId) use ($contractorId) {
+            $latestMessage = Message::where(function ($q) use ($contractorId, $subcontractorId) {
+                $q->where('from_user_id', $contractorId)->where('to_user_id', $subcontractorId);
+            })->orWhere(function ($q) use ($contractorId, $subcontractorId) {
+                $q->where('from_user_id', $subcontractorId)->where('to_user_id', $contractorId);
+            })->latest()->first();
+
+            $unseenCount = Message::where('from_user_id', $subcontractorId)
+                ->where('to_user_id', $contractorId)
+                ->where('is_seen', false)
+                ->count();
+
+            $subcontractor = $latestMessage?->sender;  // Make sure Message model has sender morphTo()
+
+            return [
+                'subcontractor' => $subcontractor,
+                'project' => null,
+                'last_message_time' => $latestMessage?->created_at,
+                'last_message_body' => $latestMessage?->body,
+                'last_message_image' => $latestMessage?->image,
+                'unseen_count' => $unseenCount,
+                'image' => $subcontractor?->profile_photo,
+            ];
+        });
+
+        // Step 5: Merge, filter nulls, sort contacts by latest message time
+        $allContacts = $contactsFromUnlocked->merge($lockedContacts)
+            ->filter(fn($item) => $item['subcontractor'] !== null)
+            ->sortByDesc(fn($item) => $item['last_message_time'] ?? now()->subYears(100))
+            ->values();
+
+        // Optional: fetch contractor profile photo once
+        $contractor = Contractor::find($contractorId);
+        $profilePhoto = $contractor?->profile_photo;
 
         if ($request->ajax()) {
-            return view("contractor.messages.contact-list", compact('sortedProjects'))->render();
+            return view("contractor.messages.contact-list", ['sortedProjects' => $allContacts, 'profilePhoto' => $profilePhoto])->render();
         }
 
-        return view("contractor.messages.index", compact('sortedProjects', 'receiverId', 'receiverType'));
+        return view("contractor.messages.index", [
+            'sortedProjects' => $allContacts,
+            'receiverId' => $receiverId,
+            'receiverType' => $receiverType,
+            'profilePhoto' => $profilePhoto,
+        ]);
     }
+
 
 
 

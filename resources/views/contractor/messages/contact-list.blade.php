@@ -5,22 +5,23 @@
     @foreach ($sortedProjects as $item)
         @php
             $project = $item['project'];
+            $subcontractor = $item['subcontractor'];
             $isUnseen = $item['unseen_count'] > 0;
             $isImage = $item['last_message_image'] && !$item['last_message_body'];
             $preview = $item['last_message_body'] ?? ($isImage ? '📷 Image' : 'No messages yet');
             $image = $item['image'] ? $item['image'] : asset('assets/images/icons8-person-94.png');
         @endphp
-        
+
         <div class="inner-item user-chat-trigger d-flex align-items-start" style="cursor: pointer;"
-            data-id="{{ $project->id }}" data-type="subcontractor" data-name="{{ $project->contact_name }}"
-            data-photo="{{ $project->profile_photo ? asset('storage/' . $project->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
+            data-id="{{ $subcontractor->id }}" data-type="subcontractor" data-name="{{ $subcontractor->contact_name }}"
+            data-photo="{{ $subcontractor->profile_photo ? asset('storage/' . $subcontractor->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
             data-incomig="{{ $image }}">
-            <img src="{{ $project->profile_photo ? asset('storage/' . $project->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
+            <img src="{{ $subcontractor->profile_photo ? asset('storage/' . $subcontractor->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
                 alt="Profile Photo" class="img-fluid rounded-circle" width="45" height="45">
 
             <div class="content flex-grow-1 ms-2">
                 <h6 class="d-flex justify-content-between mb-1">
-                    <span>{{ $project->contact_name }}</span>
+                    <span>{{ $subcontractor->contact_name }}</span>
                     @if ($item['last_message_time'])
                         <small
                             class="text-muted">{{ \Carbon\Carbon::parse($item['last_message_time'])->format('h:i A') }}</small>
