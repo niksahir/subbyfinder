@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SubContractor;
 
 use App\Http\Controllers\Controller;
 use App\Models\SubContractor;
+use App\Models\UserSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,10 +15,18 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $userId = auth::guard('contractor')->user()->id ?? auth::guard('subcontractor')->user()->id;
+        $userType = auth::guard('contractor')->user() ? 'contractor' : 'subcontractor';
+
+        // $projects = ContractorProject::where('contractor_id', $userId)->count();
+
+        // $reviewedProjects = ReviewContractor::where('user_id', $userId)->where('user_type', 'contractor')->count();
+
+        $userSubcriptions = UserSubscription::where('user_id', $userId)->where('user_type', $userType)->with('plan')->get();
 
         $subContractor = SubContractor::where('id', Auth::guard('subcontractor')->id())->first();
 
-        return view("subcontractor.dashboard.index",compact('subContractor'));
+        return view("subcontractor.dashboard.index", compact('subContractor','userSubcriptions'));
     }
 
     /**

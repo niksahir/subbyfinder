@@ -100,7 +100,7 @@ Contractor
 
          <div class="col-md-4">
             <div class="note">
-               <h5> <img src="{{ asset('assets/images/notes.png') }}" alt=""> Notes</h5>
+               {{-- <h5> <img src="{{ asset('assets/images/notes.png') }}" alt=""> Notes</h5>
 
 
                <div class="inner-box">
@@ -116,7 +116,7 @@ Contractor
                         <li><i class="fa-solid fa-trash"></i></li>
                      </ul>
                   </div>
-               </div>
+               </div> --}}
 
 
                <div class="inner-box">
@@ -174,20 +174,22 @@ Contractor
          <div class="col-md-6">
             <div class="order">
                <div class="title">
-                  <h6><img src="{{ asset('assets/images/order.png') }}" alt="" class="img-fluid mx-2"> Orders</h6>
+                  <h6><img src="{{ asset('assets/images/order.png') }}" alt="" class="img-fluid mx-2"> Transaction</h6>
                </div>
 
 
-               <div class="box-item">
-                  <h5>Professional Plan</h5>
-                  <span class="wrong">Unpaid</span>
+               @foreach ($userSubcriptions as $userSubcription)
+                   <div class="box-item">
+                  <h5>{{ $userSubcription->plan->name }}</h5>
+                  <span class="success">paid</span>
 
                   <ul>
-                     <li>Order: #326</li>
-                     <li>Date: 12/08/2019</li>
+                     <li>Order: #{{ $userSubcription->id }}</li>
+                     <li>Date: {{ \Carbon\Carbon::parse($userSubcription->created_at)->format('d/m/Y')}} </li>
                   </ul>
                </div>
-               <div class="box-item">
+               @endforeach
+               {{-- <div class="box-item">
                   <h5>Professional Plan</h5>
                   <span class="success">paid</span>
 
@@ -213,7 +215,7 @@ Contractor
                      <li>Order: #326</li>
                      <li>Date: 12/08/2019</li>
                   </ul>
-               </div>
+               </div> --}}
             </div>
          </div>
       </div>

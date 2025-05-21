@@ -3,14 +3,19 @@
 namespace App\Http\Controllers\SubContractor;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserSubscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class WalletController extends Controller {
    /**
     * Display a listing of the resource.
     */
    public function index() {
-      return view("subcontractor.wallet.index");
+
+    $userSubcriptions = UserSubscription::where('user_id', Auth::guard('subcontractor')->user()->id)->where('user_type', 'subcontractor')->with('plan')->get();
+
+      return view("subcontractor.wallet.index", compact('userSubcriptions'));
    }
 
    /**

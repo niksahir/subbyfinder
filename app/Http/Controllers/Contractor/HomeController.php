@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Contractor;
 use App\Models\ContractorProject;
 use App\Models\ReviewContractor;
+use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,9 @@ class HomeController extends Controller
 
         $reviewedProjects = ReviewContractor::where('user_id', $userId)->where('user_type','contractor')->count();
 
-        return view("contractor.dashboard.index", compact('Contractor', 'userType','projects','reviewedProjects'));
+        $userSubcriptions = UserSubscription::where('user_id', $userId)->where('user_type', $userType)->with('plan')->get();
+
+        return view("contractor.dashboard.index", compact('Contractor', 'userType','projects','reviewedProjects','userSubcriptions'));
     }
 
     /**

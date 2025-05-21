@@ -8,12 +8,12 @@ Contractor
    <div class="col-md-6">
       <div class="title">
          <h4>
-            Wallet
+            Payment History
          </h4>
       </div>
    </div>
 
-   <div class="col-md-6">
+   {{-- <div class="col-md-6">
       <div class="breadcrumb">
          <ul>
             <li>
@@ -25,13 +25,13 @@ Contractor
             <li><a href="#">Wallet</a></li>
          </ul>
       </div>
-   </div>
+   </div> --}}
 </div>
 
 <section class="chart-sec">
    <div class="container-fluid">
       <div class="row">
-         <div class="col-md-7">
+         {{-- <div class="col-md-7">
             <div class="chart-wrapper">
                <div class="top-bar">
                   <h6>
@@ -73,11 +73,11 @@ Contractor
                <h6>Total Earning</h6>
                <h3>$4000</h3>
             </div>
-         </div>
+         </div> --}}
 
          <div class="col-12">
             <div class="table-wrapper table-responsive w-100 pb-5 mb-5  ">
-               <h5>Payment History</h5>
+               {{-- <h5>Payment History</h5> --}}
 
                <table class="table table-bordered">
                   <thead>
@@ -85,32 +85,36 @@ Contractor
                         <th>#</th>
                         <th>Transaction Id</th>
                         <th>Date</th>
-                        <th>Company Name</th>
-                        <th>Project Name</th>
+                        <th>Payment Type</th>
+                        {{-- <th>Project Name</th> --}}
                         <th>Amount</th>
                      </tr>
                   </thead>
                   <tbody>
-                     <tr>
-                        <td>1</td>
-                        <td>T234567865</td>
-                        <td>24 Jan 2025</td>
-                        <td>
-                           <img src="{{ asset('assets/images/company-name.png') }}" alt="" class="img-fluid">
-                        </td>
-                        <td>Dylan's Mowing</td>
-                        <td>$100 </td>
+                    @php
+                        $no = 1;
+                    @endphp
+                    @foreach ($userSubcriptions as $userSubcription)
+                         <tr>
+                        <td>{{ $no }}</td>
+                        <td>{{ $userSubcription->stripe_session_id }}</td>
+                        <td>{{ date('d-m-Y', strtotime($userSubcription->created_at)) }}</td>
+                        {{-- <td><img src="{{ asset('assets/images/company-name.png') }}" alt="" class="img-fluid"></td> --}}
+                        <td>Subscription plan purchase</td>
+                        <td>AUD{{ $userSubcription->plan->price }} </td>
                      </tr>
-                     <tr>
+                        @php
+                            $no++;
+                        @endphp
+                    @endforeach
+                     {{-- <tr>
                         <td>2</td>
                         <td>T234567865</td>
                         <td>24 Jan 2025</td>
-                        <td>
-                           <img src="{{ asset('assets/images/company-name.png') }}" alt="" class="img-fluid">
-                        </td>
+                        <td><img src="{{ asset('assets/images/company-name.png') }}" alt="" class="img-fluid"></td>
                         <td>Dylan's Mowing</td>
                         <td>$100 </td>
-                     </tr>
+                     </tr> --}}
 
                   </tbody>
                </table>

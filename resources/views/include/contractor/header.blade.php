@@ -40,10 +40,10 @@
 
                     <div class="user">
                         @if (Auth::check() && Auth::user()->profile_photo)
-                            <img src="{{ asset('storage/' . Auth::user()->profile_photo) }}" alt="Profile Photo"
-                                class="img-fluid">
+                            <a href="{{ route('contractor.dashboard.index') }}"><img src="{{ asset('storage/' . Auth::user()->profile_photo) }}"
+                                    alt="Profile Photo" class="img-fluid"></a>
                         @else
-                            <img src="" alt="No Image" class="img-fluid">
+                            <a href="{{ route('contractor.dashboard.index') }}"><img src="" alt="No Image" class="img-fluid"></a>
                         @endif
                         <span></span>
                     </div>

@@ -78,7 +78,7 @@
                      fill="currentColor" />
                </svg>
 
-               Wallet </a>
+               Transaction </a>
          </li>
          <p>Account</p>
          <li class="{{ Route::currentRouteName() == 'subcontractor.setting.index' ? 'active':'' }}">
