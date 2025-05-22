@@ -26,6 +26,8 @@ class ReviewContractor extends Model
         'support_staff',
         'safety',
         'completion_estimate_checked_at',
+        'created_at',
+        'updated_at',
     ];
 
 

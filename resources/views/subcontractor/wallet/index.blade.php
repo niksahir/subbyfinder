@@ -102,6 +102,20 @@ Sub Contractor
                             $no++;
                         @endphp
                     @endforeach
+                    @foreach ($userAdditionalPays as $userAdditionalPay)
+                                    <tr>
+                                        <td>{{ $no }}</td>
+                                        <td>{{ $userAdditionalPay->stripe_session_id }}</td>
+                                        <td>{{ date('d-m-Y', strtotime($userAdditionalPay->created_at)) }}</td>
+                                        {{-- <td><img src="{{ asset('assets/images/company-name.png') }}" alt="" class="img-fluid"></td> --}}
+                                        <td class="text-capitalize">{{ str_replace('_', ' ', $userAdditionalPay->payable_type) }}
+                                        </td>
+                                        <td>AUD {{ $userAdditionalPay->price }} </td>
+                                    </tr>
+                                    @php
+                                        $no++;
+                                    @endphp
+                                @endforeach
                      {{-- <tr>
                         <td>2</td>
                         <td>T234567865</td>

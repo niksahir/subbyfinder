@@ -5,6 +5,7 @@ use App\Http\Controllers\Contractor\BookmarkController;
 use App\Http\Controllers\Contractor\ChatController;
 use App\Http\Controllers\Contractor\HomeController;
 use App\Http\Controllers\Contractor\LoginController as ContractorLoginController;
+use App\Http\Controllers\Contractor\NoteController as ContractorNoteController;
 use App\Http\Controllers\Contractor\ProjectController;
 use App\Http\Controllers\Contractor\RegisterController as ContractorRegisterController;
 use App\Http\Controllers\Contractor\ReviewsController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\SubContractor\BookmarkController as SubContractorBookma
 use App\Http\Controllers\SubContractor\HomeController as SubContractorHomeController;
 use App\Http\Controllers\SubContractor\LoginController as SubContractorLoginController;
 use App\Http\Controllers\SubContractor\MassageController;
+use App\Http\Controllers\Subcontractor\NoteController;
 use App\Http\Controllers\SubContractor\ProjectController as SubContractorProjectController;
 use App\Http\Controllers\SubContractor\RegisterController as SubContractorRegisterController;
 use App\Http\Controllers\SubContractor\ReviewController;
@@ -45,45 +47,59 @@ Route::get('job-search', [FrontHomeController::class, 'jobSearch'])->name('front
 Route::post('send-enquiry-mail', [FrontHomeController::class, 'sendEnquiryMail'])->name('front.sendEnquiryMail');
 Route::get('handleStripePayment', [FrontHomeController::class, 'handleStripePayment'])->name('front.handleStripePayment');
 Route::get('handleStripePaymentProject', [FrontHomeController::class, 'handleStripePaymentProject'])->name('front.handleStripePaymentProject');
+Route::get('/contractor/notifications/mark-all-read', [FrontHomeController::class, 'markAllAsRead'])->name('contractor.notifications.markAllAsRead');
+Route::get('/subcontractor/notifications/mark-all-read', [FrontHomeController::class, 'subContractorMarkAllAsRead'])->name('subcontractor.notifications.markAllAsRead');
+
 
 Route::get('/front', [App\Http\Controllers\HomeController::class, 'index'])->name('front');
 
 Route::prefix('contractor')->name('contractor.')->group(function () {
-   Route::resource('login', ContractorLoginController::class);
-   Route::resource('register', ContractorRegisterController::class);
-   Route::post('check-email', [ContractorRegisterController::class, 'checkEmail'])->name('checkEmail');
-   Route::middleware(['auth:contractor,subcontractor'])->group(function () {
-       Route::resource('bookmark', BookmarkController::class);
-   });
-   Route::middleware(['auth:contractor'])->group(function () {
-      Route::resource('dashboard', HomeController::class);
-      Route::resource('messages', ChatController::class);
-      Route::resource('reviews', ReviewsController::class);
-      Route::resource('projects', ProjectController::class);
-      Route::resource('wallet', WalletController::class);
-      Route::resource('setting', SettingController::class);
-      Route::get('unlockPostProject', [ProjectController::class, 'unlockPostProject'])->name('unlockPostProject');
-      Route::get('handleStripePaymentProject', [ProjectController::class, 'handleStripePaymentProject'])->name('handleStripePaymentProject');
-   });
+    Route::resource('login', ContractorLoginController::class);
+    Route::resource('register', ContractorRegisterController::class);
+    Route::post('check-email', [ContractorRegisterController::class, 'checkEmail'])->name('checkEmail');
+    Route::middleware(['auth:contractor,subcontractor'])->group(function () {
+        Route::resource('bookmark', BookmarkController::class);
+    });
+    Route::middleware(['auth:contractor'])->group(function () {
+        Route::resource('dashboard', HomeController::class);
+        Route::resource('messages', ChatController::class);
+        Route::resource('reviews', ReviewsController::class);
+        Route::resource('projects', ProjectController::class);
+        Route::resource('wallet', WalletController::class);
+        Route::resource('setting', SettingController::class);
+        Route::get('unlockPostProject', [ProjectController::class, 'unlockPostProject'])->name('unlockPostProject');
+        Route::get('handleStripePaymentProject', [ProjectController::class, 'handleStripePaymentProject'])->name('handleStripePaymentProject');
+        Route::resource('note', ContractorNoteController::class);
+        // routes/web.php
+        Route::get(
+            '/dashboard/profile-views/data',  // GET because we’re only reading
+            [HomeController::class, 'profileViewsData']
+        )->name('dashboard.profileViewsData');
+    });
 });
 Route::middleware(['auth:contractor,subcontractor'])->group(function () {
     Route::post('/update-email-alerts', [FrontHomeController::class, 'updateEmailAlerts'])->name('updateEmailAlerts');
 });
 Route::prefix('sub-contractor')->name('subcontractor.')->group(function () {
-   Route::resource('login', SubContractorLoginController::class);
-   Route::resource('register', SubContractorRegisterController::class);
-   Route::post('check-email', [SubContractorRegisterController::class, 'checkEmail'])->name('checkEmail');
-   Route::middleware(['auth:contractor,subcontractor'])->group(function () {
-    Route::resource('bookmark', SubContractorBookmarkController::class);
+    Route::resource('login', SubContractorLoginController::class);
+    Route::resource('register', SubContractorRegisterController::class);
+    Route::post('check-email', [SubContractorRegisterController::class, 'checkEmail'])->name('checkEmail');
+    Route::middleware(['auth:contractor,subcontractor'])->group(function () {
+        Route::resource('bookmark', SubContractorBookmarkController::class);
     });
-   Route::middleware(['auth:subcontractor'])->group(function () {
-      Route::resource('dashboard', SubContractorHomeController::class);
-      Route::resource('messages', MassageController::class);
-      Route::resource('reviews', ReviewController::class);
-      Route::resource('wallet', SubContractorWalletController::class);
-      Route::resource('setting', SubContractorSettingController::class);
-      Route::resource('protfolio', ProtfolioController::class);
-   });
+    Route::middleware(['auth:subcontractor'])->group(function () {
+        Route::resource('dashboard', SubContractorHomeController::class);
+        Route::resource('messages', MassageController::class);
+        Route::resource('reviews', ReviewController::class);
+        Route::resource('wallet', SubContractorWalletController::class);
+        Route::resource('setting', SubContractorSettingController::class);
+        Route::resource('protfolio', ProtfolioController::class);
+        Route::resource('note', NoteController::class);
+        Route::get(
+            '/dashboard/profile-views/data',  // GET because we’re only reading
+            [\App\Http\Controllers\SubContractor\HomeController::class, 'profileViewsData']
+        )->name('dashboard.profileViewsDatas');
+    });
 });
 
 Route::post('checkout', [StripeController::class, 'checkout'])->name('stripe.checkout');

@@ -1,25 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\SubContractor;
+namespace App\Http\Controllers\Contractor;
 
 use App\Http\Controllers\Controller;
-use App\Models\AdditionalPay;
-use App\Models\UserSubscription;
+use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class WalletController extends Controller
+class NoteController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-
-        $userSubcriptions = UserSubscription::where('user_id', Auth::guard('subcontractor')->user()->id)->where('user_type', 'subcontractor')->with('plan')->get();
-        $userAdditionalPays = AdditionalPay::where('user_id', Auth::guard('subcontractor')->user()->id)->where('user_type', 'subcontractor')->get();
-
-        return view("subcontractor.wallet.index", compact('userSubcriptions', 'userAdditionalPays'));
+        //
     }
 
     /**
@@ -35,7 +30,17 @@ class WalletController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $note = new Note();
+            $note->note = $request->note;
+            $note->user_id = Auth::guard('contractor')->user()->id;
+            $note->user_type = 'contractor';
+            $note->save();
+
+            return redirect()->back()->with('success', 'Note created successfully');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Something went wrong');
+        }
     }
 
     /**

@@ -17,6 +17,7 @@ use App\Models\Plan;
 use App\Models\Location;
 use App\Models\SubContractor;
 use App\Models\ContractorProject;
+use App\Models\ProfileView;
 use App\Models\SubcontractorProtfolio;
 use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Auth;
@@ -79,7 +80,6 @@ class HomeController extends Controller
 
         $subcontractorsReviews = reviewContractor::with('user')
             ->latest()
-            ->take(2)
             ->get()
             ->map(function ($review) {
                 // Calculate average rating for each review
@@ -246,6 +246,13 @@ class HomeController extends Controller
         $portfolio = SubcontractorProtfolio::get();
         $projectCount = ContractorProject::where('contractor_id', $project->contractor_id)->count();
         $contractorProjects = ContractorProject::with('contractor')->where('contractor_id', $project->contractor_id)->latest()->take(5)->get();
+
+        $profileCount = new ProfileView();
+        $profileCount->user_id = $userId->id;
+        $profileCount->user_type = $userType;
+        $profileCount->profile_id = $project->contractor_id;
+        $profileCount->profile_type = 'contractor_project';
+        $profileCount->save();
 
         // Fetch and merge reviews
         $contractorReviews = ReviewContractor::where('project_id', $id)
@@ -770,6 +777,13 @@ class HomeController extends Controller
         $portfolioCount = SubContractorProtfolio::where('user_id', $id)->count();
         $contractorProjects = ContractorProject::with('contractor')->get();
 
+        $profileCount = new ProfileView();
+        $profileCount->user_id = $userId->id;
+        $profileCount->user_type = $userType;
+        $profileCount->profile_id = $project->id;
+        $profileCount->profile_type = 'subcontractor_project';
+        $profileCount->save();
+
         // Fetch reviews
         $contractorReviews = ReviewContractor::where('project_id', $id)
             ->where('project_type', 'subcontractor_project')
@@ -1030,5 +1044,27 @@ class HomeController extends Controller
         } catch (\Exception $ex) {
             return redirect()->back()->with('error', 'Something went wrong!');
         }
+    }
+
+    public function markAllAsRead()
+    {
+        $user = auth('contractor')->user();
+
+        if ($user) {
+            $user->unreadNotifications->markAsRead();
+        }
+
+        return redirect()->back()->with('success', 'All notifications marked as read.');
+    }
+
+    public function subContractorMarkAllAsRead()
+    {
+        $user = auth('subcontractor')->user();
+
+        if ($user) {
+            $user->unreadNotifications->markAsRead();
+        }
+
+        return redirect()->back()->with('success', 'All notifications marked as read.');
     }
 }

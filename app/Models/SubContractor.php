@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class SubContractor extends Authenticatable
 {
     use HasFactory;
+    use Notifiable;
 
     protected $guard = 'subcontractor';
     protected $fillable = [
