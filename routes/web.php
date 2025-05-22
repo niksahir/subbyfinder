@@ -126,3 +126,4 @@ Route::prefix('sub-contractor')->name('subcontractor.')->group(function () {
 Route::post('checkout', [StripeController::class, 'checkout'])->name('stripe.checkout');
 Route::get('success', [StripeController::class, 'success'])->name('stripe.success');
 Route::get('cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
+});
