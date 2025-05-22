@@ -495,41 +495,50 @@
 
             <div class="swiper highestSwiper">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <div class="inner-slide">
-                            <div class="image">
-                                <img src="assets/images/team-1.jpg" alt="" class="img-fluid">
-                            </div>
-
-                            <div class="content">
-                                <h6>Tom Smith </h6>
-
-                                <ul>
-                                    <li>Electrician</li>
-                                    <li> <i class="fa-solid fa-location-dot"></i> San Francisco</li>
-                                </ul>
-
-                                <div class="ratimg">
-                                    <div class="number">
-                                        5.0
-                                    </div>
-
-                                    <div class="star"><i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                    </div>
+                    @foreach ($subcontractorsReviews as $subcontractorsReview)
+                        <div class="swiper-slide">
+                            <div class="inner-slide">
+                                <div class="image">
+                                    <img src="{{ asset('storage/' . $subcontractorsReview->project->profile_photo) }}"
+                                        alt="" class="img-fluid">
                                 </div>
 
-                                <div class="buttons">
-                                    <a href="#">View Profile </a>
-                                    <a href="#">Message </a>
+                                <div class="content">
+                                    <h6>{{ $subcontractorsReview->project->contact_name }} </h6>
+
+                                    <ul>
+                                        <li>Electrician</li>
+                                        <li> <i class="fa-solid fa-location-dot"></i>
+                                            {{ $subcontractorsReview->project->location ?? '-' }}</li>
+                                    </ul>
+
+                                    <div class="ratimg">
+                                        <div class="number">
+                                            {{ $subcontractorsReview->average_rating }}
+                                        </div>
+
+                                        <div class="star">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($i <= floor($subcontractorsReview->average_rating))
+                                                    <i class="fa-solid fa-star"></i>
+                                                @elseif ($i - $subcontractorsReview->average_rating < 1)
+                                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                                @else
+                                                    <i class="fa-regular fa-star"></i>
+                                                @endif
+                                            @endfor
+                                        </div>
+                                    </div>
+
+                                    <div class="buttons">
+                                        <a href="#">View Profile </a>
+                                        <a href="#">Message </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="swiper-slide">
+                    @endforeach
+                    {{-- <div class="swiper-slide">
                         <div class="inner-slide">
                             <div class="image">
                                 <img src="assets/images/team-2.jpg" alt="" class="img-fluid">
@@ -629,7 +638,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
 

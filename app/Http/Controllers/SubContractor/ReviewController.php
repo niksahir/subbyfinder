@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\SubContractor;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contractor;
+use App\Models\ContractorProject;
 use App\Models\ReviewSubContractor;
 use App\Models\UnlockedProject;
 use App\Models\UnlockSubcontractorProject;
+use App\Notifications\ReceivedReviewNotification;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -48,7 +51,7 @@ class ReviewController extends Controller
                 return $unlockedSubContractorProject;
             });
 
-        $reviewProjects = ReviewSubContractor::where('user_id',$userId)->where('user_type',$userType)->get();
+        $reviewProjects = ReviewSubContractor::where('user_id', $userId)->where('user_type', $userType)->get();
 
 
         $mergedProjects = $unlockedProjects->merge($unlockedSubContractorProjects)
@@ -73,7 +76,7 @@ class ReviewController extends Controller
             $currentPage,
             ['path' => request()->url(), 'query' => request()->query()]
         );
-        return view("subcontractor.review.index", compact('projectsToDisplay','unlockedProjects','unlockedSubContractorProjects','reviewProjects','paginatedProjects'));
+        return view("subcontractor.review.index", compact('projectsToDisplay', 'unlockedProjects', 'unlockedSubContractorProjects', 'reviewProjects', 'paginatedProjects'));
     }
 
     /**
@@ -117,6 +120,14 @@ class ReviewController extends Controller
         $subContractorReview->presentation = $request->presentation;
         $subContractorReview->communication = $request->communication;
         $subContractorReview->save();
+
+        $project = ContractorProject::find($request->project_id);
+
+        // The contractor who owns the project (receiver of the review)
+        $reviewedUser = Contractor::find($project->contractor_id);
+
+        // Notify the contractor, and pass the reviewer (subcontractor) to the notification
+        $reviewedUser->notify(new ReceivedReviewNotification($subContractorReview, auth('subcontractor')->user()));
 
         return redirect()->route('subcontractor.reviews.index')->with('success', 'Review submitted successfully.');
     }

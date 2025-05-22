@@ -26,6 +26,8 @@ class ReviewSubContractor extends Model
         'presentation',
         'communication',
         'compation_estimate_checked_at',
+        'created_at',
+        'updated_at',
     ];
 
 

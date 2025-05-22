@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Contractor;
 
 use App\Http\Controllers\Controller;
 use App\Models\ReviewContractor;
+use App\Models\SubContractor;
 use App\Models\UnlockedProject;
 use App\Models\UnlockSubcontractorProject;
+use App\Notifications\ReceivedReviewNotification;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -72,7 +74,7 @@ class ReviewsController extends Controller
             ['path' => request()->url(), 'query' => request()->query()]
         );
 
-        return view("contractor.reviews.index", compact('paginatedProjects','projectsToDisplay', 'unlockedProjects', 'unlockedSubContractorProjects', 'reviewProjects'));
+        return view("contractor.reviews.index", compact('paginatedProjects', 'projectsToDisplay', 'unlockedProjects', 'unlockedSubContractorProjects', 'reviewProjects'));
     }
 
     /**
@@ -115,6 +117,17 @@ class ReviewsController extends Controller
         $subContractorReview->support_staff = $request->support_staff;
         $subContractorReview->safety = $request->safety;
         $subContractorReview->save();
+
+        // $project = SubContractor::find($request->id);
+        // dd($project);
+        // The contractor who owns the project (receiver of the review)
+        $reviewedUser = SubContractor::find($request->project_id);
+        // dd($reviewedUser);
+        try {
+            $reviewedUser->notify(new ReceivedReviewNotification($subContractorReview, auth('contractor')->user()));
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+        }
 
         return redirect()->route('contractor.reviews.index')->with('success', 'Review submitted successfully.');
     }
