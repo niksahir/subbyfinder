@@ -488,7 +488,7 @@
                 <div class="col-12">
                     <div class="title-wtapper">
                         <h4>Highest Rated Sub Contractor </h4>
-                        <a href="#"> Browse All Sub Contractor </a>
+                        <a href="{{ route('front.subcontractorsearch') }}"> Browse All Sub Contractor </a>
                     </div>
                 </div>
             </div>
