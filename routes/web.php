@@ -18,7 +18,7 @@ use App\Http\Controllers\SubContractor\BookmarkController as SubContractorBookma
 use App\Http\Controllers\SubContractor\HomeController as SubContractorHomeController;
 use App\Http\Controllers\SubContractor\LoginController as SubContractorLoginController;
 use App\Http\Controllers\SubContractor\MassageController;
-use App\Http\Controllers\Subcontractor\NoteController;
+use App\Http\Controllers\SubContractor\NoteController;
 use App\Http\Controllers\SubContractor\ProjectController as SubContractorProjectController;
 use App\Http\Controllers\SubContractor\RegisterController as SubContractorRegisterController;
 use App\Http\Controllers\SubContractor\ReviewController;
