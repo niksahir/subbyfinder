@@ -94,11 +94,6 @@ Route::prefix('sub-contractor')->name('subcontractor.')->group(function () {
     Route::post('check-email', [SubContractorRegisterController::class, 'checkEmail'])->name('checkEmail');
     Route::middleware(['auth:contractor,subcontractor'])->group(function () {
         Route::resource('bookmark', SubContractorBookmarkController::class);
-    Route::resource('login', SubContractorLoginController::class);
-    Route::resource('register', SubContractorRegisterController::class);
-    Route::post('check-email', [SubContractorRegisterController::class, 'checkEmail'])->name('checkEmail');
-    Route::middleware(['auth:contractor,subcontractor'])->group(function () {
-        Route::resource('bookmark', SubContractorBookmarkController::class);
     });
     Route::middleware(['auth:subcontractor'])->group(function () {
         Route::resource('dashboard', SubContractorHomeController::class);
@@ -123,7 +118,6 @@ Route::prefix('sub-contractor')->name('subcontractor.')->group(function () {
     });
 });
 
-});
 Route::post('checkout', [StripeController::class, 'checkout'])->name('stripe.checkout');
 Route::get('success', [StripeController::class, 'success'])->name('stripe.success');
 Route::get('cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
