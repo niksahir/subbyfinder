@@ -293,7 +293,7 @@ channel.bind('MessageSent', function (data) {
 
 
 function appendMessage(msg, image) {
-
+    toggleNoMessages();
     const isCurrentChat =
         (receiverId == msg.from_user_id && receiverType === msg.sender_type) ||
         (receiverId == msg.to_user_id && receiverType === msg.receiver_type);
