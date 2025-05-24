@@ -112,9 +112,9 @@
                     </div>
 
                 </div>
-                <div class="no-messages d-flex flex-column justify-content-center align-items-center text-center h-100">
+                {{-- <div class="no-messages d-flex flex-column justify-content-center align-items-center text-center h-100">
                     <p>Select user for chat</p>
-                </div>
+                </div> --}}
             </div>
         </div>
 

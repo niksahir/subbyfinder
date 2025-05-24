@@ -116,18 +116,11 @@ if (document.getElementById('contactListWrapper')) {
             .then(res => {
                 // const image = item.dataset.photo;
                 // console.log('Messages:', res.data.messages);
-                if (res.data.messages.length === 0) {
-                    document.querySelector('.no-messages').classList.remove('d-none');
-                    document.querySelector('.no-messages').classList.add('d-flex');
-                    return;
-                } else {
-                    document.querySelector('.no-messages').classList.add('d-none');
-                    document.querySelector('.no-messages').classList.remove('d-flex');
-                    res.data.messages.forEach(msg => {
-                        appendMessage(msg, msg.from_user_id == window.authUser.id ? 'outgoing' :
-                            'incoming');
+                res.data.messages.forEach(msg => {
+                    appendMessage(msg, msg.from_user_id == window.authUser.id ? 'outgoing' :
+                        'incoming');
                     });
-                }
+                toggleNoMessages();
 
             })
             .catch(err => {
@@ -203,6 +196,7 @@ if (document.getElementById('sendMessageBtn')) {
             messageInput.value = '';
             refreshUnseenCount();
             loadContacts();
+            toggleNoMessages();
         }).catch(error => {
             console.error('Message send failed', error);
         });
@@ -227,6 +221,7 @@ if (document.getElementById('imageInput')) {
                 appendMessage(res.data.message, 'outgoing');
                 refreshUnseenCount();
                 loadContacts();
+                toggleNoMessages();
             })
             .catch(err => {
                 console.error('Image send failed:', err);
@@ -278,12 +273,14 @@ channel.bind('MessageSent', function (data) {
             }
         }).then(() => {
             loadContacts();
-            refreshUnseenCount(); // Just in case any other sender still has unseen
+            refreshUnseenCount();
+            toggleNoMessages(); // Just in case any other sender still has unseen
         });
     } else {
         console.log('Message not for current chat:', msg);
         loadContacts(); // So unseen badge appears on sender in the list
-        refreshUnseenCount(); // Only do this when it's not for the active chat
+        refreshUnseenCount();
+        toggleNoMessages(); // Only do this when it's not for the active chat
     }
 });
 

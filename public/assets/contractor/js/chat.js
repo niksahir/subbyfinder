@@ -37,6 +37,7 @@ function loadContacts() {
 
             // Only auto-click if no chat is open
             if ($('.chat-detail:visible').length === 0) {
+                // toggleNoMessages();
                 const firstChat = $('#contactListWrapper .user-chat-trigger').first();
                 if (firstChat.length) {
                     firstChat.trigger('click');
@@ -56,20 +57,7 @@ if (document.getElementById('triggerFileInput')) {
     });
 }
 
-function toggleNoMessages() {
-    const hasMessages = document.querySelectorAll('.delete-message-wrapper').length > 0;
-    const noMessagesEl = document.querySelector('.no-messages');
 
-    if (noMessagesEl) {
-        if (hasMessages) {
-            noMessagesEl.classList.add('d-none');
-            noMessagesEl.classList.remove('d-flex');
-        } else {
-            noMessagesEl.classList.remove('d-none');
-            noMessagesEl.classList.add('d-flex');
-        }
-    }
-}
 
 let receiverId;
 let receiverType;
@@ -116,18 +104,11 @@ if (document.getElementById('contactListWrapper')) {
             .then(res => {
                 // const image = item.dataset.photo;
                 // console.log('Messages:', res.data.messages);
-                if (res.data.messages.length === 0) {
-                    document.querySelector('.no-messages').classList.remove('d-none');
-                    document.querySelector('.no-messages').classList.add('d-flex');
-                    return;
-                } else {
-                    document.querySelector('.no-messages').classList.add('d-none');
-                    document.querySelector('.no-messages').classList.remove('d-flex');
-                    res.data.messages.forEach(msg => {
-                        appendMessage(msg, msg.from_user_id == window.authUser.id ? 'outgoing' :
-                            'incoming');
+                res.data.messages.forEach(msg => {
+                    appendMessage(msg, msg.from_user_id == window.authUser.id ? 'outgoing' :
+                        'incoming');
                     });
-                }
+                toggleNoMessages();
 
             })
             .catch(err => {
@@ -204,6 +185,7 @@ if (document.getElementById('sendMessageBtn')) {
             messageInput.value = '';
             refreshUnseenCount();
             loadContacts();
+            toggleNoMessages();
         }).catch(error => {
             console.error('Message send failed', error);
         });
@@ -228,6 +210,7 @@ if (document.getElementById('imageInput')) {
                 appendMessage(res.data.message, 'outgoing');
                 refreshUnseenCount();
                 loadContacts();
+                toggleNoMessages();
             })
             .catch(err => {
                 console.error('Image send failed:', err);
@@ -261,6 +244,7 @@ channel.bind('MessageDeleted', function (data) {
 
 channel.bind('MessageSent', function (data) {
     refreshUnseenCount();
+    // toggleNoMessages();
     console.log('Received message:', data.message);
 
     const msg = data.message;
@@ -281,11 +265,13 @@ channel.bind('MessageSent', function (data) {
                     'content')
             }
         }).then(() => {
+            toggleNoMessages(); // Check if no messages left
             loadContacts();
             refreshUnseenCount(); // Just in case any other sender still has unseen
         });
     } else {
         console.log('Message not for current chat:', msg);
+        toggleNoMessages(); // Hide "No messages" if it was showing
         loadContacts(); // So unseen badge appears on sender in the list
         refreshUnseenCount(); // Only do this when it's not for the active chat
     }
@@ -432,3 +418,22 @@ document.addEventListener('click', function (e) {
         }
     }
 });
+
+function toggleNoMessages() {
+    const messageCount = document.querySelectorAll('.delete-message-wrapper').length;
+    console.log("Toggling no messages element. Has messages:", messageCount);
+
+    const noMsg = document.querySelector('.no-messages');
+    if (!noMsg) return;
+
+    if (messageCount === 0) {
+        noMsg.classList.remove('d-none');
+        noMsg.classList.add('d-flex');
+        console.log("Showing no messages element");
+    } else {
+        noMsg.classList.add('d-none');
+        noMsg.classList.remove('d-flex');
+        console.log("Hiding no messages element");
+    }
+}
+
