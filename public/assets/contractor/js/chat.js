@@ -56,6 +56,21 @@ if (document.getElementById('triggerFileInput')) {
     });
 }
 
+function toggleNoMessages() {
+    const hasMessages = document.querySelectorAll('.delete-message-wrapper').length > 0;
+    const noMessagesEl = document.querySelector('.no-messages');
+
+    if (noMessagesEl) {
+        if (hasMessages) {
+            noMessagesEl.classList.add('d-none');
+            noMessagesEl.classList.remove('d-flex');
+        } else {
+            noMessagesEl.classList.remove('d-none');
+            noMessagesEl.classList.add('d-flex');
+        }
+    }
+}
+
 let receiverId;
 let receiverType;
 let chatId;
@@ -164,6 +179,8 @@ if (document.getElementById('contactListWrapper')) {
 
 if (document.getElementById('sendMessageBtn')) {
     document.getElementById('sendMessageBtn').addEventListener('click', function () {
+        document.querySelector('.no-messages').classList.add('d-none');
+        document.querySelector('.no-messages').classList.remove('d-flex');
         const messageInput = document.getElementById('messageInput');
         const body = messageInput.value.trim();
 
@@ -195,6 +212,8 @@ if (document.getElementById('sendMessageBtn')) {
 
 if (document.getElementById('imageInput')) {
     document.getElementById('imageInput').addEventListener('change', function (e) {
+        document.querySelector('.no-messages').classList.add('d-none');
+        document.querySelector('.no-messages').classList.remove('d-flex');
         const file = e.target.files[0];
         if (!file) return;
 
@@ -230,10 +249,15 @@ channel.bind('MessageDeleted', function (data) {
     const messageEl = document.querySelector(`.message[data-id="${data.messageId}"]`);
     if (messageEl) {
         messageEl.remove();
-        loadContacts(); // Refresh contacts to update unseen counts
-        refreshUnseenCount(); // Ensure unseen count is updated
     }
+
+    // Check if any messages remain
+    toggleNoMessages();
+    // Refresh contacts and unseen count
+    loadContacts();
+    refreshUnseenCount();
 });
+
 
 channel.bind('MessageSent', function (data) {
     refreshUnseenCount();
@@ -313,8 +337,8 @@ function appendMessage(msg, image) {
 
     if (isMyMessage) {
         content += `
-        <div class="d-flex align-items-start justify-content-end text-end mb-2 mt-auto">
-            <div class="my-message position-relative" data-msg-id="${msg.id}">
+        <div class="d-flex align-items-start justify-content-end text-end mb-2 mt-auto delete-message-wrapper" data-msg-id="${msg.id}">
+            <div class="my-message position-relative">
                 <i class="fa-solid fa-trash-can text-danger delete-message position-absolute"
                 style="cursor: pointer; font-size: 20px; display: none; top: 0; left: 0;"></i>
 
@@ -336,7 +360,7 @@ function appendMessage(msg, image) {
 
         // Incoming message
         content += `
-            <div class="d-flex align-items-start mb-3 mt-auto">
+            <div class="d-flex align-items-start mb-3 mt-auto message delete-message-wrapper" data-msg-id="${msg.id}">
                 <img src="${senderImage}" class="rounded-circle me-2" alt="" style="width: 40px; height: 40px;">
                 <div>
                     ${msg.body ? `<div class="bg-light p-2 rounded border mb-1 incoming">${msg.body}</div>` : ''}
@@ -386,46 +410,25 @@ function refreshUnseenCount() {
 
 document.addEventListener('click', function (e) {
     if (e.target.classList.contains('delete-message')) {
-
-        const messageEl = e.target.closest('.my-message');
+        const messageEl = e.target.closest('.delete-message-wrapper');
         if (!messageEl) return;
 
         const messageId = messageEl.dataset.msgId;
-        if (!messageId) {
-            console.error('Message ID not found');
-            return;
-        };
+        if (!messageId) return alert('Message ID not found');
 
         if (confirm('Do you want to delete this message?')) {
             axios.delete(`/delete-message/${messageId}`, {
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
             }).then(() => {
-                messageEl.parentElement.remove();
+                messageEl.remove();
+                toggleNoMessages(); // check after delete
                 loadContacts();
+                refreshUnseenCount();
             }).catch(err => {
                 alert('Could not delete message.');
             });
         }
     }
 });
-
-// document.querySelector('.delete-chat-btn').addEventListener('click', function () {
-//     if (!receiverId || !receiverType) return;
-
-//     if (confirm('Are you sure you want to delete all messages in this chat?')) {
-//         axios.delete(`/delete-all-messages/${chatId}`, {
-//             headers: {
-//                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-//                     'content')
-//             }
-//         }).then(() => {
-//             document.querySelector('.message-box').innerHTML = '';
-//             loadContacts();
-//         }).catch(err => {
-//             console.error('Delete All Failed', err);
-//             alert('Could not delete chat.');
-//         });
-//     }
-// });
