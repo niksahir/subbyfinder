@@ -30,7 +30,7 @@
 
                             <div class="name">
                                 <h6>Jan Mayer</h6>
-                                <p>Recruiter at Nomad</p>
+                                {{-- <p>Recruiter at Nomad</p> --}}
                             </div>
                         </div>
 
@@ -39,28 +39,28 @@
                             {{-- <i class="fa-solid fa-thumbtack"></i>
                             <i class="fa-regular fa-star"></i>
                             <i class="fa-solid fa-ellipsis-vertical"></i> --}}
-                            <i class="fas fa-trash delete-chat-btn" title="Delete All Messages"
-                                style="cursor: pointer;"></i>
+                            {{-- <i class="fas fa-trash delete-chat-btn" title="Delete All Messages"
+                                style="cursor: pointer;"></i> --}}
                         </div>
 
                     </div>
 
 
-                    <div class="center-user-info">
+                    {{-- <div class="center-user-info">
                         <img src="{{ asset('assets/images/team-1.jpg') }}" alt="Profile Photo" class="img-fluid">
                         <h6>Jan Mayer</h6>
-                        {{-- <p>Recruiter at <span>Nomad</span> </p> --}}
+                        {{-- <p>Recruiter at <span>Nomad</span> </p>
                         <p>This is the very beginning of your direct message with <b>Jan Mayer</b></p>
 
                         <div class="today">
                             <p><i class="fa-solid fa-angle-down"></i> Today</p>
                         </div>
-                    </div>
+                    </div> --}}
 
 
                     <div class="message-box flex-grow-1 overflow-auto px-3 py-2 border d-flex flex-column" id="messageBox">
+                        <p class="no-messages d-flex justify-content-center align-items-center h-100"> Start Chating </p>
                         <div class="mt-auto d-flex flex-column">
-
                             <!-- Jan Mayer's message (incoming) -->
                             {{-- <div class="d-flex align-items-start mb-3">
                                 <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Jan Mayer">
@@ -107,7 +107,7 @@
                         <input type="text" class="form-control" placeholder="Reply message" id="messageInput">
                         <input type="file" id="imageInput" accept="image/*" style="display: none;">
                         <i class="fa-solid fa-paperclip" id="triggerFileInput" style="cursor: pointer;"></i>
-                        <img src="{{ asset('assets/images/smile.png') }}" alt="">
+                        {{-- <img src="{{ asset('assets/images/smile.png') }}" alt=""> --}}
                         <button id="sendMessageBtn"> <i class="fa-solid fa-paper-plane"></i></button>
                     </div>
 

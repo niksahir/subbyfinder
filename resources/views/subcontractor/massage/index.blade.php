@@ -30,7 +30,7 @@
 
                             <div class="name">
                                 <h6>Jan Mayer</h6>
-                                <p>Recruiter at Nomad</p>
+                                {{-- <p>Recruiter at Nomad</p> --}}
                             </div>
                         </div>
 
@@ -40,15 +40,15 @@
                             <i class="fa-regular fa-star"></i>
                             <i class="fa-solid fa-ellipsis-vertical"></i> --}}
                             <!-- Assuming you are using Bootstrap icons or Font Awesome -->
-                            <i class="fas fa-trash delete-chat-btn" title="Delete All Messages"
-                                style="cursor: pointer;"></i>
+                            {{-- <i class="fas fa-trash delete-chat-btn" title="Delete All Messages"
+                                style="cursor: pointer;"></i> --}}
 
                         </div>
 
                     </div>
 
 
-                    <div class="center-user-info">
+                    {{-- <div class="center-user-info">
                         <img src="{{ asset('assets/images/team-2.jpg') }}" alt="">
                         <h6>Jan Mayer</h6>
                         <p>Recruiter at <span>Nomad</span> </p>
@@ -57,17 +57,39 @@
                         <div class="today">
                             <p><i class="fa-solid fa-angle-down"></i> Today</p>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="message-box flex-grow-1 overflow-auto px-3 py-2 border d-flex flex-column" id="messageBox">
+                        <p class="no-messages d-none justify-content-center align-items-center h-100"> Start Chating </p>
                         <div class="mt-auto d-flex flex-column">
-                            <!-- Messages -->
-                            <div class="message incoming mb-2">
-                                <p><strong>New message from:</strong> Hello there!</p>
+
+                            <!-- Jan Mayer's message (incoming) -->
+                            {{-- <div class="d-flex align-items-start mb-3">
+                                <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Jan Mayer">
+                                <div>
+                                    <p class="mb-1 fw-bold">Jan Mayer</p>
+                                    <div class="bg-light p-2 rounded border message incoming mb-2">
+                                        Hey Jake, I wanted to reach out because we saw your work contributions and were
+                                        impressed by your work.
+                                    </div>
+                                    <div class="bg-light p-2 rounded border message outgoing">
+                                        We want to invite you for a quick interview
+                                    </div>
+                                    <div class="text-muted small mt-1">12 mins ago</div>
+                                </div>
                             </div>
-                            <div class="message outgoing text-end">
-                                <p><strong>You:</strong> Hi, how can I help?</p>
-                            </div>
+
+                            <!-- Your message (outgoing) -->
+                            <div class="d-flex align-items-start justify-content-end text-end mb-2">
+                                <div>
+                                    <div class="bg-primary text-white p-2 rounded mb-1 outgoing">
+                                        Hi Jan, sure I would love to. Thanks for taking the time to see my work!
+                                    </div>
+                                    <div class="text-muted small">12 mins ago</div>
+                                </div>
+                                <img src="https://via.placeholder.com/40" class="rounded-circle ms-2" alt="You">
+                            </div> --}}
+
                         </div>
                     </div>
 
@@ -75,7 +97,7 @@
                         <input type="text" class="form-control" placeholder="Reply message" id="messageInput">
                         <input type="file" id="imageInput" accept="image/*" style="display: none;">
                         <i class="fa-solid fa-paperclip" id="triggerFileInput" style="cursor: pointer;"></i>
-                        <img src="{{ asset('assets/images/smile.png') }}" alt="">
+                        {{-- <img src="{{ asset('assets/images/smile.png') }}" alt=""> --}}
                         <button id="sendMessageBtn"> <i class="fa-solid fa-paper-plane"></i></button>
                     </div>
 
@@ -91,6 +113,6 @@
     </section>
 @endsection
 @section('scripts')
-    
+
     </script>
 @endsection

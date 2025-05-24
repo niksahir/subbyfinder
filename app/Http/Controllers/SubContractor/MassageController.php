@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\SubContractor;
 
 use App\Http\Controllers\Controller;
+use App\Models\Chat;
+use App\Models\Contractor;
 use App\Models\Message;
+use App\Models\SubContractor;
 use App\Models\UnlockedProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,41 +19,51 @@ class MassageController extends Controller
     public function index(Request $request)
     {
         $subcontractorId = Auth::guard('subcontractor')->id();
+        $subcontractorType = 'subcontractor';
 
-        // Step 1: Get unlocked projects
+        // Step 1: Get unlocked projects for this subcontractor, eager load contractor
         $unlockedProjects = UnlockedProject::where('user_id', $subcontractorId)
-            ->where('user_type', 'subcontractor')
+            ->where('user_type', $subcontractorType)
             ->with('project.contractor')
             ->get()
-            ->groupBy('contractor_id')
-            ->map(function ($projects) {
-                return $projects->first();
-            });
+            ->unique(fn($item) => $item->project->contractor->id);
 
-        $unlockedContractorIds = $unlockedProjects->keys()->toArray();
-
-        // Step 2: Contractors who have ever sent a message (locked or unlocked)
-        $messageSenderIds = Message::where('to_user_id', $subcontractorId)
-            ->pluck('from_user_id')
+        // Get unlocked contractor IDs from projects
+        $unlockedContractorIds = $unlockedProjects->map(fn($item) => $item->project->contractor->id)
             ->unique()
-            ->diff($unlockedContractorIds) // only locked ones
             ->values()
             ->all();
 
-        // Step 3: Build contact list from unlocked projects
-        $contactsFromUnlocked = $unlockedProjects->map(function ($item) use ($subcontractorId) {
+        // Step 2: Get contractors who messaged subcontractor but are NOT unlocked (locked contacts)
+        $messageSenderIds = Message::where('to_user_id', $subcontractorId)
+            ->where('receiver_type', $subcontractorType)
+            ->where('sender_type', 'contractor')
+            ->pluck('from_user_id')
+            ->unique()
+            ->diff($unlockedContractorIds)
+            ->values()
+            ->all();
+
+        // Step 3: Build contacts from unlocked projects
+        $contactsFromUnlocked = $unlockedProjects->map(function ($item) use ($subcontractorId, $subcontractorType) {
             $contractor = $item->project->contractor;
 
-            $latestMessage = Message::where(function ($q) use ($subcontractorId, $contractor) {
-                $q->where('from_user_id', $subcontractorId)->where('to_user_id', $contractor->id);
-            })->orWhere(function ($q) use ($subcontractorId, $contractor) {
-                $q->where('from_user_id', $contractor->id)->where('to_user_id', $subcontractorId);
-            })
-                ->latest()
-                ->first();
+            $latestMessage = Message::where(function ($q) use ($subcontractorId, $subcontractorType, $contractor) {
+                $q->where('from_user_id', $subcontractorId)
+                    ->where('sender_type', $subcontractorType)
+                    ->where('to_user_id', $contractor->id)
+                    ->where('receiver_type', 'contractor');
+            })->orWhere(function ($q) use ($subcontractorId, $subcontractorType, $contractor) {
+                $q->where('from_user_id', $contractor->id)
+                    ->where('sender_type', 'contractor')
+                    ->where('to_user_id', $subcontractorId)
+                    ->where('receiver_type', $subcontractorType);
+            })->latest()->first();
 
             $unseenCount = Message::where('from_user_id', $contractor->id)
+                ->where('sender_type', 'contractor')
                 ->where('to_user_id', $subcontractorId)
+                ->where('receiver_type', $subcontractorType)
                 ->where('is_seen', false)
                 ->count();
 
@@ -65,45 +78,57 @@ class MassageController extends Controller
             ];
         });
 
-        // Step 4: Build list from locked contractors who have messaged
-        $lockedContacts = collect($messageSenderIds)->map(function ($contractorId) use ($subcontractorId) {
-            $latestMessage = Message::where(function ($q) use ($subcontractorId, $contractorId) {
-                $q->where('from_user_id', $subcontractorId)->where('to_user_id', $contractorId);
-            })->orWhere(function ($q) use ($subcontractorId, $contractorId) {
-                $q->where('from_user_id', $contractorId)->where('to_user_id', $subcontractorId);
-            })
-                ->latest()
-                ->first();
+        // Step 4: Build contacts from locked contractors who messaged subcontractor
+        $lockedContacts = collect($messageSenderIds)->map(function ($contractorId) use ($subcontractorId, $subcontractorType) {
+            $latestMessage = Message::where(function ($q) use ($subcontractorId, $subcontractorType, $contractorId) {
+                $q->where('from_user_id', $subcontractorId)
+                    ->where('sender_type', $subcontractorType)
+                    ->where('to_user_id', $contractorId)
+                    ->where('receiver_type', 'contractor');
+            })->orWhere(function ($q) use ($subcontractorId, $subcontractorType, $contractorId) {
+                $q->where('from_user_id', $contractorId)
+                    ->where('sender_type', 'contractor')
+                    ->where('to_user_id', $subcontractorId)
+                    ->where('receiver_type', $subcontractorType);
+            })->latest()->first();
 
             $unseenCount = Message::where('from_user_id', $contractorId)
+                ->where('sender_type', 'contractor')
                 ->where('to_user_id', $subcontractorId)
+                ->where('receiver_type', $subcontractorType)
                 ->where('is_seen', false)
                 ->count();
 
+            // Determine the contractor from polymorphic sender/receiver
+            $contractor = null;
+            if ($latestMessage) {
+                $contractor = $latestMessage->sender_type === 'contractor'
+                    ? $latestMessage->sender
+                    : $latestMessage->receiver;
+            }
+
             return [
-                'contractor' => $latestMessage?->sender,
+                'contractor' => $contractor,
                 'project' => null,
                 'last_message_time' => $latestMessage?->created_at,
                 'last_message_body' => $latestMessage?->body,
                 'last_message_image' => $latestMessage?->image,
                 'unseen_count' => $unseenCount,
-                'image' =>  $latestMessage?->sender->profile_photo,
+                'image' => $contractor?->profile_photo,
             ];
         });
-        // dd($lockedContacts)
 
-        // Step 5: Merge and sort
-        $allContacts = $contactsFromUnlocked->merge($lockedContacts)->filter(fn($item) => $item['contractor'] !== null);
-
-        $sortedProjects = $allContacts
+        // Step 5: Merge, filter nulls, sort by last message time desc
+        $allContacts = $contactsFromUnlocked->merge($lockedContacts)
+            ->filter(fn($item) => $item['contractor'] !== null)
             ->sortByDesc(fn($item) => $item['last_message_time'] ?? now()->subYears(100))
             ->values();
 
         if ($request->ajax()) {
-            return view("subcontractor.massage.contact-list", compact('sortedProjects'))->render();
+            return view("subcontractor.massage.contact-list", ['sortedProjects' => $allContacts])->render();
         }
-        // dd($sortedProjects);
-        return view("subcontractor.massage.index", compact('sortedProjects'));
+
+        return view("subcontractor.massage.index", ['sortedProjects' => $allContacts]);
     }
     /**
      * Show the form for creating a new resource.

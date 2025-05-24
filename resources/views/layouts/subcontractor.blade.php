@@ -170,6 +170,11 @@
             color: var(--c-primary);
         }
 
+        .my-message:hover  .delete-message
+        {
+            display: block !important;
+        }
+
         /* .review-item {
             background-color: #f8f8f8;
             padding: 15px 20px;
@@ -223,7 +228,7 @@
         window.routes = {
             loadContacts: "{{ route('subcontractor.messages.index') }}"
         };
-       const defaultImage = "{{ asset('assets/images/icons8-person-94.png') }}";
+        const defaultImage = "{{ asset('assets/images/icons8-person-94.png') }}";
     </script>
     <script src="{{ asset('assets/subcontractor/js/chat.js') }}"></script>
     <script>

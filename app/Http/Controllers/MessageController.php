@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageDeleted;
 use App\Events\MessageSent;
 use App\Models\Contractor;
 use App\Models\Message;
@@ -17,6 +18,10 @@ class MessageController extends Controller
         try {
             $sender = auth('contractor')->user() ?? auth('subcontractor')->user();
             $senderType = auth('contractor')->check() ? 'contractor' : 'subcontractor';
+
+            if ($sender->id == $request->to_user_id) {
+                return response()->json(['error' => 'You cannot send a message to yourself'], 400);
+            }
 
             $message = Message::create([
                 'from_user_id' => $sender->id,
@@ -81,6 +86,7 @@ class MessageController extends Controller
             'sender_type' => $senderType,
             'body' => null,
             'image' => $path,
+            // 'chat_id' => $request->chat_id,
         ]);
 
         broadcast(new MessageSent($message));
@@ -148,6 +154,8 @@ class MessageController extends Controller
     {
         $message = Message::findOrFail($id);
 
+        $receiverId = $message->to_user_id;       // adjust to your column
+        $receiverType = $message->receiver_type;
 
         $userId = auth('contractor')->id() ?? auth('subcontractor')->id();
         $usertype = auth('contractor')->check() ? 'contractor' : 'subcontractor';
@@ -158,26 +166,8 @@ class MessageController extends Controller
 
         $message->delete();
 
+        broadcast(new MessageDeleted($id, $receiverId, $receiverType))->toOthers();
+
         return response()->json(['success' => true]);
-    }
-
-    public function deleteAll($receiverId, $receiverType)
-    {
-        $userId = auth('contractor')->id() ?? auth('subcontractor')->id();
-        $usertype = auth('contractor')->check() ? 'contractor' : 'subcontractor';
-
-        Message::where(function ($query) use ($receiverId, $receiverType, $userId, $usertype) {
-            $query->where('from_user_id', $userId)
-                ->where('sender_type', $usertype)
-                ->where('to_user_id', $receiverId)
-                ->where('receiver_type', $receiverType);
-        })->orWhere(function ($query) use ($receiverId, $receiverType, $userId, $usertype) {
-            $query->where('from_user_id', $receiverId)
-                ->where('sender_type', $receiverType)
-                ->where('to_user_id', $userId)
-                ->where('receiver_type', $usertype);
-        })->delete();
-
-        return response()->json(['status' => 'success']);
     }
 }

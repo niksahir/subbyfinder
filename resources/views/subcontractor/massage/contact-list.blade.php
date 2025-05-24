@@ -4,17 +4,16 @@
     </div>
     @foreach ($sortedProjects as $item)
         @php
-            $project = $item['project'];
             $contractor = $item['contractor'];
             $isUnseen = $item['unseen_count'] > 0;
             $isImage = $item['last_message_image'] && !$item['last_message_body'];
             $preview = $item['last_message_body'] ?? ($isImage ? '📷 Image' : 'No messages yet');
             $image = $item['image'] ? $item['image'] : asset('assets/images/icons8-person-94.png');
+            // $chatId = $item['chat_id'] ?? null;
         @endphp
 
         <div class="inner-item user-chat-trigger d-flex align-items-start" style="cursor: pointer;"
-            data-id="{{ $contractor->id }}" data-type="contractor"
-            data-name="{{ $contractor->contact_name }}"
+            data-id="{{ $contractor->id }}" data-type="contractor" data-name="{{ $contractor->contact_name }}"
             data-photo="{{ $contractor->profile_photo ? asset('storage/' . $contractor->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
             data-incomig="{{ $image }}">
 
@@ -26,7 +25,7 @@
                     <span>{{ $contractor->contact_name }}</span>
                     @if ($item['last_message_time'])
                         <small
-                            class="text-muted">{{ \Carbon\Carbon::parse($item['last_message_time'])->format('h:i A') }}</small>
+                            class="text-muted">{{ \Carbon\Carbon::parse($item['last_message_time'])->timezone('Asia/Kolkata')->format('h:i A') }}</small>
                     @endif
                 </h6>
 

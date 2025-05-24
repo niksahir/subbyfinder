@@ -20,11 +20,11 @@ class Message extends Model
 
     public function sender()
     {
-        return $this->morphTo(null, 'sender_type', 'from_user_id');
+        return $this->morphTo(__FUNCTION__, 'sender_type', 'from_user_id');
     }
 
     public function receiver()
     {
-        return $this->morphTo(null, 'receiver_type', 'to_user_id');
+        return $this->morphTo(__FUNCTION__, 'receiver_type', 'to_user_id');
     }
 }

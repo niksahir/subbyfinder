@@ -34,12 +34,21 @@ function loadContacts() {
         method: 'GET',
         success: function (response) {
             $('#contactListWrapper').html(response);
+
+            // Only auto-click if no chat is open
+            if ($('.chat-detail:visible').length === 0) {
+                const firstChat = $('#contactListWrapper .user-chat-trigger').first();
+                if (firstChat.length) {
+                    firstChat.trigger('click');
+                }
+            }
         },
         error: function () {
             alert('Failed to load contacts.');
         }
     });
 }
+
 
 if (document.getElementById('triggerFileInput')) {
     document.getElementById('triggerFileInput').addEventListener('click', function () {
@@ -49,7 +58,7 @@ if (document.getElementById('triggerFileInput')) {
 
 let receiverId;
 let receiverType;
-
+let chatId;
 
 if (document.getElementById('contactListWrapper')) {
     document.getElementById('contactListWrapper').addEventListener('click', function (e) {
@@ -58,6 +67,7 @@ if (document.getElementById('contactListWrapper')) {
 
         receiverId = item.dataset.id;
         receiverType = item.dataset.type;
+        chatId = item.dataset.chat;
         console.log('Selected user:', receiverId, receiverType);
 
         document.querySelectorAll('.chat-detail').forEach(function (el) {
@@ -73,9 +83,9 @@ if (document.getElementById('contactListWrapper')) {
         // Update user topbar
         document.querySelector('.chat-detail .user-topbar img').src = item.dataset.photo;
         document.querySelector('.chat-detail .user-topbar .name h6').textContent = item.dataset.name;
-        document.querySelector('.chat-detail .center-user-info h6').textContent = item.dataset.name;
-        document.querySelector('.chat-detail .center-user-info p b').textContent = item.dataset.name;
-        document.querySelector('.chat-detail .center-user-info img').src = item.dataset.photo;
+        // document.querySelector('.chat-detail .center-user-info h6').textContent = item.dataset.name;
+        // document.querySelector('.chat-detail .center-user-info p b').textContent = item.dataset.name;
+        // document.querySelector('.chat-detail .center-user-info img').src = item.dataset.photo;
 
         // console.log('Image:', item.dataset.incomig);
         // document.querySelector('#incoming_image').src = item.dataset
@@ -91,10 +101,18 @@ if (document.getElementById('contactListWrapper')) {
             .then(res => {
                 // const image = item.dataset.photo;
                 // console.log('Messages:', res.data.messages);
-                res.data.messages.forEach(msg => {
-                    appendMessage(msg, msg.from_user_id == window.authUser.id ? 'outgoing' :
-                        'incoming');
-                });
+                if (res.data.messages.length === 0) {
+                    document.querySelector('.no-messages').classList.remove('d-none');
+                    document.querySelector('.no-messages').classList.add('d-flex');
+                    return;
+                } else {
+                    document.querySelector('.no-messages').classList.add('d-none');
+                    document.querySelector('.no-messages').classList.remove('d-flex');
+                    res.data.messages.forEach(msg => {
+                        appendMessage(msg, msg.from_user_id == window.authUser.id ? 'outgoing' :
+                            'incoming');
+                    });
+                }
 
             })
             .catch(err => {
@@ -161,7 +179,9 @@ if (document.getElementById('sendMessageBtn')) {
         axios.post('/send-message', {
             to_user_id: receiverId,
             receiver_type: receiverType,
-            message: body
+            message: body,
+            // chat_id: chatId
+
         }).then(res => {
             appendMessage(res.data.message, 'outgoing');
             messageInput.value = '';
@@ -182,6 +202,7 @@ if (document.getElementById('imageInput')) {
         formData.append('image', file);
         formData.append('to_user_id', receiverId);
         formData.append('receiver_type', receiverType);
+        // formData.append('chat_id', chatId);
 
         axios.post('/send-image', formData)
             .then(res => {
@@ -201,6 +222,17 @@ console.log('Subscribed to channel:', 'chat.' + window.authUser.id + '.' + windo
 
 channel.bind_global(function (eventName, data) {
     console.log('Global event received:', eventName, data);
+});
+
+channel.bind('MessageDeleted', function (data) {
+    console.log('MessageDeleted event received:', data);
+
+    const messageEl = document.querySelector(`.message[data-id="${data.messageId}"]`);
+    if (messageEl) {
+        messageEl.remove();
+        loadContacts(); // Refresh contacts to update unseen counts
+        refreshUnseenCount(); // Ensure unseen count is updated
+    }
 });
 
 channel.bind('MessageSent', function (data) {
@@ -281,8 +313,11 @@ function appendMessage(msg, image) {
 
     if (isMyMessage) {
         content += `
-        <div class="d-flex align-items-start justify-content-end text-end mb-2">
-            <div>
+        <div class="d-flex align-items-start justify-content-end text-end mb-2 mt-auto">
+            <div class="my-message position-relative" data-msg-id="${msg.id}">
+                <i class="fa-solid fa-trash-can text-danger delete-message position-absolute"
+                style="cursor: pointer; font-size: 20px; display: none; top: 0; left: 0;"></i>
+
                 ${msg.body ? `<div class="text-dark p-2 rounded mb-1 outgoing">${msg.body}</div>` : ''}
                 ${msg.image ? `<img src="/storage/${msg.image}" class="img-fluid rounded mt-2" style="max-width: 200px;">` : ''}
                 <div class="text-muted small">${messageTime}</div>
@@ -301,7 +336,7 @@ function appendMessage(msg, image) {
 
         // Incoming message
         content += `
-            <div class="d-flex align-items-start mb-3">
+            <div class="d-flex align-items-start mb-3 mt-auto">
                 <img src="${senderImage}" class="rounded-circle me-2" alt="" style="width: 40px; height: 40px;">
                 <div>
                     ${msg.body ? `<div class="bg-light p-2 rounded border mb-1 incoming">${msg.body}</div>` : ''}
@@ -349,47 +384,48 @@ function refreshUnseenCount() {
 }
 
 
-if (document.getElementById('message-box')) {
-    document.querySelector('.message-box').addEventListener('click', function (e) {
-        const messageEl = e.target.closest('.message');
+document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('delete-message')) {
+
+        const messageEl = e.target.closest('.my-message');
         if (!messageEl) return;
 
-        const messageId = messageEl.dataset.id;
-        if (!messageId) return;
+        const messageId = messageEl.dataset.msgId;
+        if (!messageId) {
+            console.error('Message ID not found');
+            return;
+        };
 
         if (confirm('Do you want to delete this message?')) {
             axios.delete(`/delete-message/${messageId}`, {
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                        'content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             }).then(() => {
-                messageEl.remove();
+                messageEl.parentElement.remove();
                 loadContacts();
             }).catch(err => {
-                console.error('Delete failed', err);
                 alert('Could not delete message.');
             });
         }
-    });
-
-}
-
-document.querySelector('.delete-chat-btn').addEventListener('click', function () {
-    if (!receiverId || !receiverType) return;
-
-    if (confirm('Are you sure you want to delete all messages in this chat?')) {
-        axios.delete(`/delete-all-messages/${receiverId}/${receiverType}`, {
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                    'content')
-            }
-        }).then(() => {
-            document.querySelector('.message-box').innerHTML = '';
-            loadContacts();
-        }).catch(err => {
-            console.error('Delete All Failed', err);
-            alert('Could not delete chat.');
-        });
     }
 });
+
+// document.querySelector('.delete-chat-btn').addEventListener('click', function () {
+//     if (!receiverId || !receiverType) return;
+
+//     if (confirm('Are you sure you want to delete all messages in this chat?')) {
+//         axios.delete(`/delete-all-messages/${chatId}`, {
+//             headers: {
+//                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+//                     'content')
+//             }
+//         }).then(() => {
+//             document.querySelector('.message-box').innerHTML = '';
+//             loadContacts();
+//         }).catch(err => {
+//             console.error('Delete All Failed', err);
+//             alert('Could not delete chat.');
+//         });
+//     }
+// });

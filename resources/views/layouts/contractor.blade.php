@@ -156,6 +156,10 @@
         .save-project:hover {
             background-color: var(--c-secondary);
         }
+
+        .my-message:hover .delete-message {
+            display: block !important;
+        }
     </style>
 </head>
 
@@ -207,8 +211,7 @@
         window.routes = {
             loadContacts: "{{ route('contractor.messages.index') }}"
         };
-       const defaultImage = "{{ asset('assets/images/icons8-person-94.png') }}";
-
+        const defaultImage = "{{ asset('assets/images/icons8-person-94.png') }}";
     </script>
     <script src="{{ asset('assets/contractor/js/chat.js') }}"></script>
     <script>

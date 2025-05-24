@@ -86,7 +86,7 @@ Route::middleware(['auth:contractor,subcontractor'])->group(function () {
     Route::post('/mark-as-seen', [MessageController::class, 'markAsSeen']);
     Route::get('/unseen-count', [MessageController::class, 'unseenCount'])->name('message.unseenCount');
     Route::delete('/delete-message/{id}', [MessageController::class, 'destroy'])->name('messages.destroy');
-    Route::delete('/delete-all-messages/{receiverId}/{receiverType}', [MessageController::class, 'deleteAll']);
+    Route::delete('/delete-all-messages/{chatId}', [MessageController::class, 'deleteAll']);
 });
 Route::prefix('sub-contractor')->name('subcontractor.')->group(function () {
     Route::resource('login', SubContractorLoginController::class);
