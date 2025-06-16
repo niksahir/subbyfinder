@@ -61,7 +61,7 @@
 
     <section class="popular-sec">
         <div class="container">
-            <div class="row">
+            <div class="row g-3">
                 <div class="title col-12">
                     <h2>Popular Categories</h2>
                 </div>
