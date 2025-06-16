@@ -39,10 +39,10 @@ Route::get('project-search', [FrontHomeController::class, 'projectSearch'])->nam
 Route::get('project-details/{id}', [FrontHomeController::class, 'projectDetails'])->name('front.projectDetils');
 Route::get('project-details-lock/{id}', [FrontHomeController::class, 'projectdetilslock'])->name('front.projectdetilslock');
 Route::get('unlock-project/{id}', [FrontHomeController::class, 'unlockproject'])->name('front.unlockproject');
-Route::get('unlock-subcontractor-project/{id}', [FrontHomeController::class, 'unlockSubcontractorProject'])->name('front.contractor.unlockproject');
+Route::get('unlock-subcontractor/{id}', [FrontHomeController::class, 'unlockSubcontractorProject'])->name('front.contractor.unlockproject');
 Route::get('subcontractor-search', [FrontHomeController::class, 'subcontractorsearch'])->name('front.subcontractorsearch');
-Route::get('subcontractor-project-details-lock/{id}', [FrontHomeController::class, 'subcontractorprojectdetilslock'])->name('front.subcontractorprojectdetilslock');
-Route::get('subcontractor-project-details/{id}', [FrontHomeController::class, 'subcontractorprojectdetils'])->name('front.subcontractorprojectdetils');
+Route::get('subcontractor-details-lock/{id}', [FrontHomeController::class, 'subcontractorprojectdetilslock'])->name('front.subcontractorprojectdetilslock');
+Route::get('subcontractor-details/{id}', [FrontHomeController::class, 'subcontractorprojectdetils'])->name('front.subcontractorprojectdetils');
 Route::get('pricing', [FrontHomeController::class, 'showPlans'])->name('front.pricing');
 Route::get('job-search', [FrontHomeController::class, 'jobSearch'])->name('front.jobsearch');
 Route::post('send-enquiry-mail', [FrontHomeController::class, 'sendEnquiryMail'])->name('front.sendEnquiryMail');

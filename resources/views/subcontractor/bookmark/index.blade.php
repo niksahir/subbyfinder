@@ -37,7 +37,7 @@
                         <!-- Project Logo -->
                         <div class="col-sm-3">
                             <div class="p-logo">
-                                <img src="{{ asset('storage/' . $project->project_logo) }}" alt="Project Logo"
+                                <img src="{{$project->project_logo ? asset('storage/' . $project->project_logo) : asset('assets/images/icons8-project-50.png') }}" alt="Project Logo"
                                     class="img-fluid">
                             </div>
                         </div>
@@ -72,9 +72,6 @@
                                 </div>
                                 <div class="link-light">
                                     <a href="{{ route('front.projectdetilslock', $project->id) }}">View Profile</a>
-                                </div>
-                                <div class="link">
-                                    <a href="#">Message</a>
                                 </div>
                             </div>
                         </div>

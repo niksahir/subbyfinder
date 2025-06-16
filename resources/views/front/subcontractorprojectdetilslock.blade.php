@@ -12,7 +12,7 @@
                         <div class="col-12">
                             <div class="bplogo-wrwppr">
                                 <div class="b-logo">
-                                    <img src="{{ asset('assets/images/project-logo.png') }}" alt="">
+                                    <img src="{{$project->profile_photo ? asset('storage/' . $project->profile_photo) : asset('assets/images/icons8-person-94.png') }}" alt="">
                                 </div>
 
                                 <div class="text">
@@ -125,12 +125,12 @@
                                         data-bs-target="#exampleModalLogin">Unlock
                                         Contact</a>
                                 @elseif ($unlockProject == false)
-                                    <a href="{{ '/unlock-subcontractor-project/' . $project->id }}"
+                                    <a href="{{ '/unlock-subcontractor/' . $project->id }}"
                                         class="text-decoration-none" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal">Unlock
                                         Contact</a>
                                 @else
-                                    <a href="{{ '/unlock-subcontractor-project/' . $project->id }}"
+                                    <a href="{{ '/unlock-subcontractor/' . $project->id }}"
                                         class="text-decoration-none">Unlock
                                         Contact</a>
                                 @endif
@@ -684,7 +684,7 @@
                     <h4>Your Unlock Contact Limit Is Over,For More Unlock Pay AUD9</h4>
                 </div>
                 <div class="modal-footer">
-                    <a href="{{ '/unlock-subcontractor-project/' . $project->id }}" class="btn">Buy</a>
+                    <a href="{{ '/unlock-subcontractor/' . $project->id }}" class="btn">Buy</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

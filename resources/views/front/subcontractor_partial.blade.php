@@ -35,7 +35,7 @@
             <div class="inner-wrapper">
                 <div class="image">
                     <div class="check">
-                        <img src="{{ asset('storage/' . $subcontractor->profile_photo) }}" alt=""
+                        <img src="{{$subcontractor->profile_photo ? asset('storage/' . $subcontractor->profile_photo) : asset('assets/images/icons8-person-94.png')}}" alt=""
                             class="img-fluid">
                     </div>
                 </div>

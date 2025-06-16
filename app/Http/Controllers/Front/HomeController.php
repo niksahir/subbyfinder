@@ -77,6 +77,7 @@ class HomeController extends Controller
         $monthlyPlans = Plan::where('billing_type', 'monthly')->get();
         $yearlyPlans = Plan::where('billing_type', 'yearly')->get();
         $locations = Location::all();
+        $categories = Expertise::latest()->take(6)->get();
 
         $subcontractorsReviews = reviewContractor::with('user')
             ->latest()
@@ -109,7 +110,8 @@ class HomeController extends Controller
                 'yearlyPlans',
                 'locations',
                 'userType',
-                'subcontractorsReviews'
+                'subcontractorsReviews',
+                'categories'
             )
         );
     }

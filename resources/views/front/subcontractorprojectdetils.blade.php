@@ -12,7 +12,7 @@
                         <div class="col-12">
                             <div class="bplogo-wrwppr">
                                 <div class="b-logo">
-                                    <img src="{{ asset('assets/images/project-logo.png') }}" alt="">
+                                    <img src="{{$project->profile_photo ? asset('storage/' . $project->profile_photo) : asset('assets/images/icons8-project-50.png') }}" alt="">
                                 </div>
 
                                 <div class="text">

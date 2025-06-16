@@ -245,6 +245,25 @@
                                         </span>
                                     @enderror
                                 </div>
+                                <div class="col-md-6 form-inner">
+                                    <label class="form-label">Location</label>
+                                    <div class="@error('location') is-invalid @enderror">
+                                        <select name="location" class="form-control">
+                                            <option value="" disabled selected>Select Location</option>
+                                            @foreach ($locations as $location)
+                                                <option value="{{ $location->name }}">
+                                                    {{ $location->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    @error('location')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
                             </div>
 
                             {{-- <div class="col-12">
@@ -618,6 +637,7 @@
                 validateField($("input[name='abn']"), "ABN is required");
                 validateField($("input[name='licenses']"), "Licenses are required");
                 validateField($("textarea[name='description']"), "Description is required");
+                validateField($("input[name='location']"), "Location is required");
 
                 const passwordField = $("input[name='password']");
                 const confirmPasswordField = $("input[name='password_confirmation']");

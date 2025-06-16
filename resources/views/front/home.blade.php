@@ -67,17 +67,15 @@
                 </div>
 
 
-                <div class="col-md-3">
-                    <div class="img-wrapper">
-                        <img src="assets/images/p-1.png" alt="" class="img-fluid">
-
-                        <div class="content">
-                            <span>612</span>
-                            <h5>Electrician</h5>
+                @foreach ($categories as $category)
+                    <div class="col-md-3">
+                        <div class="content d-flex justify-content-center align-items-center rounded-2"
+                            style="background-color : #f77a36">
+                            <h5 class="p-5 text-white m-0">{{ $category->name }}</h5>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3">
+                @endforeach
+                {{-- <div class="col-md-3">
                     <div class="img-wrapper">
                         <img src="assets/images/p-2.png" alt="" class="img-fluid">
 
@@ -146,7 +144,7 @@
                             <h5>Electrician</h5>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </section>
@@ -198,9 +196,9 @@
                                 </div>
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#collapseThree"
-                                            aria-expanded="false" aria-controls="collapseThree">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseThree" aria-expanded="false"
+                                            aria-controls="collapseThree">
                                             3. ⁠Industry insights and reports
                                         </button>
                                     </h2>
@@ -215,9 +213,9 @@
                                 </div>
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#collapsefour"
-                                            aria-expanded="false" aria-controls="collapsefour">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapsefour" aria-expanded="false"
+                                            aria-controls="collapsefour">
                                             4. Networking opportunities
                                         </button>
                                     </h2>
@@ -345,8 +343,8 @@
                             <div class="row">
                                 <div class="col-sm-2">
                                     <div class="p-logo">
-                                        <img src="{{ asset('storage/' . $project->project_logo) }}" alt="Project Logo"
-                                            class="img-fluid">
+                                        <img src="{{ $project->project_logo ? asset('storage/' . $project->project_logo) : asset('assets/images/icons8-project-50.png') }}"
+                                            alt="Project Logo" class="img-fluid">
                                     </div>
                                 </div>
 
@@ -499,7 +497,7 @@
                         <div class="swiper-slide">
                             <div class="inner-slide">
                                 <div class="image">
-                                    <img src="{{ asset('storage/' . $subcontractorsReview->project->profile_photo) }}"
+                                    <img src="{{ $subcontractorsReview->project->profile_photo ? asset('storage/' . $subcontractorsReview->project->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
                                         alt="" class="img-fluid">
                                 </div>
 
@@ -531,8 +529,10 @@
                                     </div>
 
                                     <div class="buttons">
-                                        <a href="#">View Profile </a>
-                                        <a href="#">Message </a>
+                                        <a
+                                            href="{{ route('front.subcontractorprojectdetils', $subcontractorsReview->project->id) }}">View
+                                            Profile </a>
+                                        {{-- <a href="#">Message </a> --}}
                                     </div>
                                 </div>
                             </div>

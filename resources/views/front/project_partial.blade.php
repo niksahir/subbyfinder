@@ -41,8 +41,8 @@
                 <!-- Project Logo -->
                 <div class="col-sm-3">
                     <div class="p-logo">
-                        <img src="{{ asset('storage/' . $project->contractor->profile_photo) }}" alt="Project Logo"
-                            class="img-fluid">
+                        <img src="{{ $project->project_logo ? asset('storage/' . $project->project_logo) : asset('assets/images/icons8-project-50.png') }}"
+                            alt="Project Logo" class="img-fluid">
                     </div>
                 </div>
 
