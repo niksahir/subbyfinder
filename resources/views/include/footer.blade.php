@@ -47,7 +47,7 @@
                         <li><a href="{{ route('front.projectSearch') }}">Browse Project</a></li>
                         <li><a href="#">Project Alerts</a></li>
                         <li><a
-                                href="@if ($user && $guard === 'contractor') {{ route('contractor.bookmark.index') }} @elseif ($user && $guard === 'subcontractor') {{ route('subcontractor.bookmark.index') }} @endif">My
+                                href="@if ($user && $guard === 'contractor') {{ route('contractor.bookmark.index') }} @elseif ($user && $guard === 'subcontractor') {{ route('subcontractor.bookmark.index') }} @else {{ route('login') }} @endif">My
                                 Bookmarks</a></li>
                     </ul>
                 </div>
@@ -82,7 +82,7 @@
                     <ul>
                         <li><a href="{{ route('login') }}">Log In</a></li>
                         <li><a
-                                href="@if ($guard === 'contractor') {{ route('contractor.dashboard.index') }} @elseif ($guard === 'subcontractor') {{ route('subcontractor.dashboard.index') }} @else {{ route('front.home') }} @endif">My
+                                href="@if ($guard === 'contractor') {{ route('contractor.dashboard.index') }} @elseif ($guard === 'subcontractor') {{ route('subcontractor.dashboard.index') }} @else {{ route('login') }} @endif">My
                                 Account</a></li>
                     </ul>
                 </div>
