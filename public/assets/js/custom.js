@@ -50,11 +50,20 @@
             const showNav = totalSlides > slidesPerView;
             console.log("ShowNav:", showNav, "slidesPerView:", slidesPerView, "totalSlides:", totalSlides);
 
-            const navButtons = document.querySelectorAll(".swiper-contols");
-            navButtons.forEach(el => {
-                el.style.display = showNav ? "d-flex" : "none";
-            });
+            const navButtons = document.getElementById("swiper-controls");
+            if (navButtons) {
+                if (showNav == true) {
+                    navButtons.classList.remove("d-none");
+                    navButtons.classList.add("d-flex");
+                } else {
+                    navButtons.classList.remove("d-flex");
+                    navButtons.classList.add("d-none");
+                }
+            }else {
+                console.error("Element with ID 'swiper-contols' not found.");
+            }
         }
+
 
 
 

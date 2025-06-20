@@ -69,10 +69,19 @@
 
                 @foreach ($categories as $category)
                     <div class="col-md-3">
-                        <div class="content d-flex justify-content-center align-items-center rounded-2"
-                            style="background-color : #f77a36">
-                            <h5 class="p-5 text-white m-0">{{ $category->name }}</h5>
-                        </div>
+                        <a class="text-decoration-none text-white"
+                            href="@if (!empty($userLogin) && $userLogin != null) @if ($userType == 'subcontractor')
+                                                        {{ route('front.projectSearch') }}
+                                                    @elseif($userType == 'contractor')
+                                                        {{ route('front.subcontractorsearch') }} @endif
+@else
+{{ route('front.projectSearch') }} @endif">
+                            <div class="content d-flex justify-content-center align-items-center rounded-2"
+                                style="background-color : #f77a36">
+                                <h5 class="p-5 text-white m-0">{{ $category->name }}
+                                </h5>
+                            </div>
+                        </a>
                     </div>
                 @endforeach
                 {{-- <div class="col-md-3">
@@ -642,7 +651,7 @@
                 </div>
             </div>
 
-            <div class="swiper-contols">
+            <div class="swiper-contols d-none" id="swiper-controls">
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
             </div>
