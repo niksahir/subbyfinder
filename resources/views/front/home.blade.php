@@ -71,19 +71,20 @@
                     <div class="col-md-3">
                         <a class="text-decoration-none text-white"
                             href="@if (!empty($userLogin) && $userLogin != null) @if ($userType == 'subcontractor')
-                                                        {{ route('front.projectSearch') }}
-                                                    @elseif($userType == 'contractor')
-                                                        {{ route('front.subcontractorsearch') }} @endif
+                            {{ route('front.projectSearch', ['trade_category' => $category->id]) }}
+                        @elseif($userType == 'contractor')
+                            {{ route('front.subcontractorsearch', ['trade_category' => $category->id]) }} @endif
 @else
-{{ route('front.projectSearch') }} @endif">
+{{ route('front.projectSearch', ['trade_category' => $category->id]) }}
+                   @endif">
                             <div class="content d-flex justify-content-center align-items-center rounded-2"
-                                style="background-color : #f77a36">
-                                <h5 class="p-5 text-white m-0">{{ $category->name }}
-                                </h5>
+                                style="background-color: #f77a36">
+                                <h5 class="p-5 text-white m-0">{{ $category->name }}</h5>
                             </div>
                         </a>
                     </div>
                 @endforeach
+
                 {{-- <div class="col-md-3">
                     <div class="img-wrapper">
                         <img src="assets/images/p-2.png" alt="" class="img-fluid">

@@ -31,7 +31,7 @@
                                     <select name="trade_category[]" id="trade_category" multiple="multiple"
                                         class="form-control" onchange="fetchProjects()">
                                         @foreach ($expertise_in as $expertise)
-                                            <option value="{{ $expertise->id }}">
+                                            <option value="{{ $expertise->id }}" @if($tradeCategory && $expertise->id == $tradeCategory) selected @endif>
                                                 {{ $expertise->name }}
                                             </option>
                                         @endforeach

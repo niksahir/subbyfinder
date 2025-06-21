@@ -178,6 +178,11 @@ class HomeController extends Controller
         if ($request->has('project') && !empty($request->project)) {
             $query->where('project_name', 'LIKE', '%' . $request->project . '%');
         }
+        $tradeCategory = null;
+        if ($request->has('trade_category') && !empty($request->trade_category)) {
+            $tradeCategory = $request->trade_category;
+            $query->whereJsonContains('trade_category', $request->trade_category);
+        }
 
         // Filter by sorting
         if ($request->sort_by == 'price_asc') {
@@ -233,7 +238,7 @@ class HomeController extends Controller
         $project_types = ProjectType::all();
         // $projects = ContractorProject::latest()->paginate(10);
         $locations = Location::all();
-        return view('front.projectSearch', compact('expertise_in', 'projects', 'project_types', 'userEmailAlerts', 'sortBy', 'locations', 'userLogin'));
+        return view('front.projectSearch', compact('tradeCategory','expertise_in', 'projects', 'project_types', 'userEmailAlerts', 'sortBy', 'locations', 'userLogin'));
     }
 
 
@@ -415,6 +420,12 @@ class HomeController extends Controller
         if ($request->has('project') && !empty($request->project)) {
             $query->where('contact_name', 'LIKE', '%' . $request->project . '%');
         }
+
+        $tradeCategory = null;
+        if ($request->has('trade_category') && !empty($request->trade_category)) {
+            $tradeCategory = $request->trade_category;
+            $query->whereJsonContains('trade_category', $request->trade_category);
+        }
         // Get Paginated Results
         $subcontractors = $query->latest()->paginate(10);
 
@@ -427,7 +438,7 @@ class HomeController extends Controller
         $expertise_in = Expertise::all();
         // $subcontractors = SubContractor::latest()->paginate(10);
         $locations = Location::all();
-        return view('front.principalContractor', compact('expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
+        return view('front.principalContractor', compact('tradeCategory','expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
     }
 
     public function jobSearch(Request $request)
