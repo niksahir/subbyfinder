@@ -29,7 +29,8 @@
                                     <a href="{{ route('subcontractor.dashboard.index') }}">Dashboard</a>
                                 @endif
                             </li>
-                            <li class=" @if (Auth::guard('contractor')->check()) d-block @else d-none @endif"><a href="{{ route('contractor.projects.create') }}">Post Project</a></li>
+                            <li class=" @if (Auth::guard('contractor')->check()) d-block @else d-none @endif"><a
+                                    href="{{ route('contractor.projects.create') }}">Post Project</a></li>
                         </ul>
                     </div>
                 </div>
@@ -140,11 +141,13 @@
                             <li><a class="nav-link" style="height: 40px"
                                     href="@if ($guard == 'contractor') {{ route('contractor.messages.index') }}
                                  @elseif($guard == 'subcontractor')
-                                 {{ route('subcontractor.messages.index') }} @endif"><img src="{{ asset('assets/images/message-mail-svgrepo-com.svg') }}" alt="" class="object-cover" height="25" width="25"><span id="header-unseen-count"
+                                 {{ route('subcontractor.messages.index') }} @endif"><img
+                                        src="{{ asset('assets/images/message-mail-svgrepo-com.svg') }}" alt=""
+                                        class="object-cover" height="25" width="25"><span
+                                        id="header-unseen-count"
                                         class="@if ($unseenMessages <= 0) d-none @endif">
                                         {{ $unseenMessages }}</span></a></li>
                             <!-- Notification Bell Icon -->
-
                         </ul>
 
                         <div class="user">
@@ -198,7 +201,8 @@
         <div class="left-side-menu">
             <ul>
                 <p>Start</p>
-                <li><a href="#">
+                <li><a
+                        href="{{ $guard == 'contractor' ? route('contractor.dashboard.index') : route('subcontractor.dashboard.index') }}">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -216,14 +220,49 @@
                         </svg>
 
                         Dashboard</a></li>
-                <li><a href="#"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                <li> <a href="{{ $guard == 'contractor' ? route('contractor.messages.index') : route('subcontractor.messages.index') }}"
+                        style="display: inline-block;
+                               width: 100%;
+                               text-decoration: none;
+                               display: -webkit-box;
+                               display: -ms-flexbox;
+                               display: flex;
+                               -webkit-box-align: center;
+                               -ms-flex-align: center;
+                               align-items: center;
+                               -webkit-transition: all 0.32s ease-in-out;
+                               transition: all 0.32s ease-in-out;
+                               position: relative;">
+                        <svg class="me-2" width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
                                 d="M9.99935 2.29199C5.74215 2.29199 2.29102 5.74313 2.29102 10.0003C2.29102 11.2345 2.58062 12.3993 3.09501 13.4321C3.30147 13.8466 3.38097 14.3422 3.25071 14.829L2.75437 16.6841C2.66321 17.0248 2.9749 17.3365 3.31559 17.2453L5.17062 16.749C5.65746 16.6187 6.1531 16.6982 6.56761 16.9047C7.60035 17.4191 8.76513 17.7087 9.99935 17.7087C14.2565 17.7087 17.7077 14.2575 17.7077 10.0003C17.7077 5.74313 14.2565 2.29199 9.99935 2.29199ZM1.04102 10.0003C1.04102 5.05277 5.0518 1.04199 9.99935 1.04199C14.9469 1.04199 18.9577 5.05277 18.9577 10.0003C18.9577 14.9479 14.9469 18.9587 9.99935 18.9587C8.56743 18.9587 7.21229 18.6222 6.01031 18.0236C5.83094 17.9342 5.64779 17.9153 5.49372 17.9565L3.63868 18.4528C2.36882 18.7926 1.20708 17.6308 1.54685 16.361L2.04319 14.506C2.08441 14.3519 2.06546 14.1687 1.97612 13.9894C1.37744 12.7874 1.04102 11.4322 1.04102 10.0003ZM6.04102 8.75033C6.04102 8.40515 6.32084 8.12533 6.66602 8.12533H13.3327C13.6779 8.12533 13.9577 8.40515 13.9577 8.75033C13.9577 9.0955 13.6779 9.37533 13.3327 9.37533H6.66602C6.32084 9.37533 6.04102 9.0955 6.04102 8.75033ZM6.04102 11.667C6.04102 11.3218 6.32084 11.042 6.66602 11.042H11.2493C11.5945 11.042 11.8743 11.3218 11.8743 11.667C11.8743 12.0122 11.5945 12.292 11.2493 12.292H6.66602C6.32084 12.292 6.04102 12.0122 6.04102 11.667Z"
                                 fill="currentColor" />
                         </svg>
-                        Messages <span></span></a></li>
-                <li><a href="#">
+                        Messages <span id="header-unseen-count"
+                            class="@if ($unseenMessages <= 0) d-none @endif"
+                            style="min-width: 20px;
+                                   aspect-ratio: 1 / 1;
+                                   border-radius: 50%;
+                                   display: inline-block;
+                                   margin-left: 20px;
+                                   background-color: var(--c-primary);
+                                   color: var(--c-white);
+                                   font-size: 11px;
+                                   height: 20px;
+                                   display: -webkit-box;
+                                   display: -ms-flexbox;
+                                   display: flex;
+                                   -webkit-box-align: center;
+                                   -ms-flex-align: center;
+                                   align-items: center;
+                                   -webkit-box-pack: center;
+                                   -ms-flex-pack: center;
+                                   justify-content: center;">
+                            {{ $unseenMessages }}</span></a>
+                </li>
+                <li><a
+                        href="{{ $guard == 'contractor' ? route('contractor.reviews.index') : route('subcontractor.reviews.index') }}">
                         <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -232,7 +271,8 @@
                         </svg>
 
                         Reviews</a></li>
-                <li><a href="#">
+                <li><a
+                        href="{{ $guard == 'contractor' ? route('contractor.bookmark.index') : route('subcontractor.bookmark.index') }}">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -244,8 +284,9 @@
                         </svg>
 
                         Bookmark</a></li>
-                <p>Organize and Manage</p>
-                <li><a href="#">
+                <p class="{{ $guard == 'contractor' ? 'd-block' : 'd-none' }}">Organize and Manage</p>
+                <li><a href="{{ $guard == 'contractor' ? route('contractor.projects.index') : route('login') }}"
+                        class="{{ $guard == 'contractor' ? 'd-block' : 'd-none' }}">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -255,7 +296,8 @@
 
                         Projects</a></li>
                 <p>Wallet</p>
-                <li><a href="#">
+                <li><a
+                        href="{{ $guard == 'contractor' ? route('contractor.wallet.index') : route('subcontractor.wallet.index') }}">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -275,9 +317,10 @@
                                 fill="currentColor" />
                         </svg>
 
-                        Wallet </a></li>
+                        Transaction </a></li>
                 <p>Account</p>
-                <li><a href="#">
+                <li><a
+                        href="{{ $guard == 'contractor' ? route('contractor.setting.index') : route('subcontractor.setting.index') }}">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -289,7 +332,7 @@
                         </svg>
 
                         Settings</a></li>
-                <li><a href="#">
+                <li><a href="{{ route('logout') }}">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
