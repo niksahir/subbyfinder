@@ -189,7 +189,7 @@
         </ul>
     </div>
 </div>
-<div class="mobile-menus @if ($guard === null) d-none @else d-block @endif">
+<div class="mobile-menus @if ($guard === null) d-none @endif">
     <div class="container">
         <div class="left-side-menu">
             <ul>
