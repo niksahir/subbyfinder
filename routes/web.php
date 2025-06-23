@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController as AuthRegisterController;
 use App\Http\Controllers\Contractor\BookmarkController;
 use App\Http\Controllers\Contractor\ChatController;
@@ -68,6 +69,7 @@ Route::prefix('contractor')->name('contractor.')->group(function () {
         Route::resource('projects', ProjectController::class);
         Route::resource('wallet', WalletController::class);
         Route::resource('setting', SettingController::class);
+        Route::post('logout', [\App\Http\Controllers\Contractor\LoginController::class, 'logout'])->name('logout');
         Route::get('unlockPostProject', [ProjectController::class, 'unlockPostProject'])->name('unlockPostProject');
         Route::get('handleStripePaymentProject', [ProjectController::class, 'handleStripePaymentProject'])->name('handleStripePaymentProject');
         Route::resource('note', ContractorNoteController::class);
@@ -103,6 +105,7 @@ Route::prefix('sub-contractor')->name('subcontractor.')->group(function () {
         Route::resource('setting', SubContractorSettingController::class);
         Route::resource('protfolio', ProtfolioController::class);
         Route::resource('note', NoteController::class);
+        Route::post('logout', [\App\Http\Controllers\SubContractor\LoginController::class, 'logout'])->name('logout');
         Route::get(
             '/dashboard/profile-views/data',  // GET because we’re only reading
             [\App\Http\Controllers\SubContractor\HomeController::class, 'profileViewsData']

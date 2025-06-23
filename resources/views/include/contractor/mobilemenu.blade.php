@@ -32,7 +32,8 @@
                          ->count('from_user_id');
                  @endphp
                  <li class="{{ Route::currentRouteName() == 'contractor.messages.index' ? 'active' : '' }}">
-                     <a href="{{ route('contractor.messages.index') }}" style="
+                     <a href="{{ route('contractor.messages.index') }}"
+                         style="
     display: inline-block;
     width: 100%;
     text-decoration: none;
@@ -149,8 +150,9 @@
 
                          Settings</a>
                  </li>
-                 <li class="{{ Route::currentRouteName() == 'front.home' ? 'active' : '' }}">
-                     <a href="{{ route('front.home') }}">
+                 <li class="{{ Route::currentRouteName() == 'logout' ? 'active' : '' }}">
+                     <a href="{{ route('contractor.logout') }}"
+                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
                              <path
@@ -161,7 +163,12 @@
                                  fill="currentColor" />
                          </svg>
 
-                         Logout</a>
+                         {{ __('Logout') }}</a>
+
+                     <form id="logout-form" action="{{ route('contractor.logout') }}" method="POST"
+                         class="d-none">
+                         @csrf
+                     </form>
                  </li>
              </ul>
          </div>

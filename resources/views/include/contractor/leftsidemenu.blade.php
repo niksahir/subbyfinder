@@ -117,7 +117,7 @@
                     Settings</a>
             </li>
             <li class="{{ Route::currentRouteName() == 'logout' ? 'active' : '' }}">
-                <a href="{{ route('logout') }}"
+                <a href="{{ route('contractor.logout') }}"
                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -131,7 +131,7 @@
 
                     {{ __('Logout') }}</a>
 
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                <form id="logout-form" action="{{ route('contractor.logout') }}" method="POST" class="d-none">
                     @csrf
                 </form>
             </li>

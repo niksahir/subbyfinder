@@ -36,7 +36,7 @@
             <div class="col-6 col-lg-8">
                 <div class="logo-with-menu">
                     <div class="logo">
-                        <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
+                        <a href="{{ route('front.home') }}"><img src="{{ asset('assets/images/logo.png') }}" alt="logo"></a>
                     </div>
 
                     <div class="menus">
@@ -172,9 +172,9 @@
 <div class="mobile-menus">
     <div class="container">
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Find Work</a></li>
-            <li><a href="#">Find Subcontractors</a></li>
+            <li><a href="{{ route('front.home') }}">Home</a></li>
+            <li><a href="{{ route('front.projectSearch') }}">Find Work</a></li>
+            <li><a href="{{ route('front.subcontractorsearch') }}">Find Subcontractors</a></li>
             <li>
                 @if (Auth::guard('contractor')->check())
                     <a href="{{ route('contractor.dashboard.index') }}">Dashboard</a>
@@ -189,8 +189,7 @@
         </ul>
     </div>
 </div>
-
-<div class="mobile-menus">
+<div class="mobile-menus @if ($guard === null) d-none @else d-block @endif">
     <div class="container">
         <div class="left-side-menu">
             <ul>
@@ -327,7 +326,8 @@
                         </svg>
 
                         Settings</a></li>
-                <li><a href="{{ route('logout') }}">
+                <li><a href="@if (isset($guard) && $guard == 'contractor') route('contractor.logout') @elseif(isset($guard) && $guard == 'subcontractor') route('subcontractor.logout') @endif"
+                        onclick="@if (isset($guard) && $guard == 'contractor') event.preventDefault(); document.getElementById('contractor-logout-form').submit(); @elseif(isset($guard) && $guard == 'subcontractor') event.preventDefault(); document.getElementById('subcontractor-logout-form').submit(); @endif">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -337,8 +337,18 @@
                                 d="M6.50065 9.62467C6.15547 9.62467 5.87565 9.34485 5.87565 8.99967C5.87565 8.65449 6.15547 8.37467 6.50065 8.37467L15.6444 8.37467L14.0106 6.97421C13.7485 6.74957 13.7181 6.35501 13.9428 6.09293C14.1674 5.83085 14.562 5.8005 14.8241 6.02514L17.7407 8.52514C17.8793 8.64388 17.959 8.81722 17.959 8.99967C17.959 9.18213 17.8793 9.35547 17.7407 9.47421L14.8241 11.9742C14.562 12.1988 14.1674 12.1685 13.9428 11.9064C13.7181 11.6443 13.7485 11.2498 14.0106 11.0251L15.6444 9.62467L6.50065 9.62467Z"
                                 fill="currentColor" />
                         </svg>
+                        <form id="subcontractor-logout-form" action="{{ route('subcontractor.logout') }}"
+                            method="POST" class="d-none">
+                            @csrf
+                        </form>
 
-                        Logout</a></li>
+                        <form id="contractor-logout-form" action="{{ route('contractor.logout') }}" method="POST"
+                            class="d-none">
+                            @csrf
+                        </form>
+
+                        Logout
+                    </a></li>
             </ul>
         </div>
     </div>

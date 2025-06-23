@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -37,4 +39,24 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
+
+    // public function logout(Request $request)
+    // {
+    //     dd('Logout called');
+    //     if (Auth::guard('contractor')->check()) {
+    //         Auth::guard('contractor')->logout();
+    //         $redirect = '/contractor/login'; // change as needed
+    //     } elseif (Auth::guard('subcontractor')->check()) {
+    //         Auth::guard('subcontractor')->logout();
+    //         $redirect = '/subcontractor/login'; // change as needed
+    //     } else {
+    //         Auth::logout();
+    //         $redirect = '/login'; // fallback
+    //     }
+
+    //     $request->session()->invalidate();
+    //     $request->session()->regenerateToken();
+
+    //     return redirect($redirect);
+    // }
 }

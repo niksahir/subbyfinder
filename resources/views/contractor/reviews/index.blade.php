@@ -33,7 +33,7 @@
                 <div class="inner-slide">
                     <div class="top-label">
                         <img src="{{ asset('assets/images/order.png') }}" alt="">
-                        <p>Rate Subcontractor</p>
+                        <p>Rate Contractor</p>
                     </div>
 
                     <div class="inner-wrapper">
@@ -337,7 +337,7 @@
                             </div>
 
                             <div class="rating form-group mb-4 d-none">
-                                <label>Description of Jobs</label>
+                                <label>Communication of works</label>
                                 <div class="star-rating">
                                     <input type="radio" name="doj" id="workmanship-5" value="5"><label
                                         for="workmanship-5">★</label>
@@ -369,7 +369,7 @@
                             </div>
 
                             <div class="rating form-group mb-4 d-none">
-                                <label>Support Staff</label>
+                                <label>Support Staff & Safety</label>
                                 <div class="star-rating">
                                     <input type="radio" name="support_staff" id="presentation-5" value="5"><label
                                         for="presentation-5">★</label>
@@ -385,7 +385,7 @@
                             </div>
 
                             <div class="rating form-group mb-4 d-none">
-                                <label>Safety</label>
+                                <label>Quality of projects</label>
                                 <div class="star-rating">
                                     <input type="radio" name="safety" id="communication-5" value="5"><label
                                         for="communication-5">★</label>
@@ -441,7 +441,7 @@
                 document.getElementById('completionEstimateSection').classList.toggle('d-none', value !==
                     'no');
                 document.querySelectorAll('.rating').forEach(ratingEl => {
-                    ratingEl.classList.remove('d-none');
+                    ratingEl.classList.toggle('d-none', value !== 'yes');
                 });
             });
         });

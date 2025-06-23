@@ -29,7 +29,7 @@
                 <div class="inner-slide">
                     <div class="top-label">
                         <img src="{{ asset('assets/images/order.png') }}" alt="">
-                        <p>Rate Subcontractor</p>
+                        <p>Rate Contractor</p>
                     </div>
 
                     <div class="inner-wrapper">
@@ -622,8 +622,11 @@
                 document.getElementById('completionEstimateSection').classList.toggle('d-none', value !==
                     'no');
                 document.querySelectorAll('.rating').forEach(ratingEl => {
-                    ratingEl.classList.remove('d-none');
+                    ratingEl.classList.toggle('d-none', value !== 'yes');
                 });
+                // document.querySelectorAll('.rating').forEach(ratingEl => {
+                //     ratingEl.classList.remove('d-none');
+                // });
             });
         });
     </script>
