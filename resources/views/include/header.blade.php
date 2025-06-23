@@ -1,5 +1,36 @@
 <!-- Header -->
 <header>
+    @php
+        if (auth('contractor')->check()) {
+            $user = auth('contractor')->user();
+            $guard = 'contractor';
+        } elseif (auth('subcontractor')->check()) {
+            $user = auth('subcontractor')->user();
+            $guard = 'subcontractor';
+        } else {
+            // Handle case when no user is authenticated
+            $user = null;
+            $guard = null;
+        }
+        // dd($user);
+        $unseenMessages = 0;
+        if ($guard == 'contractor') {
+            $unseenMessages = \App\Models\Message::where('to_user_id', Auth::guard('contractor')->user()->id)
+                ->where('receiver_type', 'contractor')
+                ->where('is_seen', 0)
+                ->select('from_user_id')
+                ->distinct()
+                ->count('from_user_id');
+        } elseif ($guard == 'subcontractor') {
+            $unseenMessages = \App\Models\Message::where('to_user_id', Auth::guard('subcontractor')->user()->id)
+                ->where('receiver_type', 'subcontractor')
+                ->where('is_seen', 0)
+                ->select('from_user_id')
+                ->distinct()
+                ->count('from_user_id');
+        }
+
+    @endphp
     <div class="container">
         <div class="row">
             <div class="col-6 col-lg-8">
@@ -50,43 +81,6 @@
                     </ul>
                 @else
                     <div class="logged-in">
-                        @php
-                            if (auth('contractor')->check()) {
-                                $user = auth('contractor')->user();
-                                $guard = 'contractor';
-                            } elseif (auth('subcontractor')->check()) {
-                                $user = auth('subcontractor')->user();
-                                $guard = 'subcontractor';
-                            } else {
-                                // Handle case when no user is authenticated
-                                $user = null;
-                                $guard = null;
-                            }
-                            // dd($user);
-                            $unseenMessages = 0;
-                            if ($guard == 'contractor') {
-                                $unseenMessages = \App\Models\Message::where(
-                                    'to_user_id',
-                                    Auth::guard('contractor')->user()->id,
-                                )
-                                    ->where('receiver_type', 'contractor')
-                                    ->where('is_seen', 0)
-                                    ->select('from_user_id')
-                                    ->distinct()
-                                    ->count('from_user_id');
-                            } elseif ($guard == 'subcontractor') {
-                                $unseenMessages = \App\Models\Message::where(
-                                    'to_user_id',
-                                    Auth::guard('subcontractor')->user()->id,
-                                )
-                                    ->where('receiver_type', 'subcontractor')
-                                    ->where('is_seen', 0)
-                                    ->select('from_user_id')
-                                    ->distinct()
-                                    ->count('from_user_id');
-                            }
-
-                        @endphp
                         <ul>
                             <li class="nav-item dropdown">
                                 <a class="nav-link position-relative" href="#" id="notificationDropdown"
@@ -104,8 +98,8 @@
 
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <h5 class="mb-0">Notifications</h5>
-                                        <a href="@if ($guard == 'contractor') {{ route('contractor.notifications.markAllAsRead') }}
-                                            @elseif($guard == 'subcontractor')
+                                        <a href="@if (isset($guard) && $guard == 'contractor') {{ route('contractor.notifications.markAllAsRead') }}
+                                            @elseif(isset($guard) && $guard == 'subcontractor')
                                             {{ route('subcontractor.notifications.markAllAsRead') }} @endif"
                                             class="text-orange text-decoration-none fs-6" style="color: #fd7e14;">
                                             Mark all as read
@@ -139,13 +133,13 @@
                             </li>
 
                             <li><a class="nav-link" style="height: 40px"
-                                    href="@if ($guard == 'contractor') {{ route('contractor.messages.index') }}
-                                 @elseif($guard == 'subcontractor')
+                                    href="@if (isset($guard) && $guard == 'contractor') {{ route('contractor.messages.index') }}
+                                 @elseif(isset($guard) && $guard == 'subcontractor')
                                  {{ route('subcontractor.messages.index') }} @endif"><img
                                         src="{{ asset('assets/images/message-mail-svgrepo-com.svg') }}" alt=""
                                         class="object-cover" height="25" width="25"><span
                                         id="header-unseen-count"
-                                        class="@if ($unseenMessages <= 0) d-none @endif">
+                                        class="@if (isset($unseenMessages) && $unseenMessages <= 0) d-none @endif">
                                         {{ $unseenMessages }}</span></a></li>
                             <!-- Notification Bell Icon -->
                         </ul>
@@ -156,8 +150,8 @@
                             @endphp
                             @if (isset($userLogin) && !empty($userLogin))
                                 <a
-                                    href="@if ($guard == 'contractor') {{ route('contractor.dashboard.index') }}
-                                    @elseif($guard == 'subcontractor')
+                                    href="@if (isset($guard) && $guard == 'contractor') {{ route('contractor.dashboard.index') }}
+                                    @elseif(isset($guard) && $guard == 'subcontractor')
                                     {{ route('subcontractor.dashboard.index') }} @endif">
                                     <img src="{{ $userLogin->profile_photo ? asset('storage/' . $userLogin->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
                                         alt="Profile Photo" class="img-fluid">
@@ -202,7 +196,7 @@
             <ul>
                 <p>Start</p>
                 <li><a
-                        href="{{ $guard == 'contractor' ? route('contractor.dashboard.index') : route('subcontractor.dashboard.index') }}">
+                        href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.dashboard.index') : route('subcontractor.dashboard.index') }}">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -220,7 +214,7 @@
                         </svg>
 
                         Dashboard</a></li>
-                <li> <a href="{{ $guard == 'contractor' ? route('contractor.messages.index') : route('subcontractor.messages.index') }}"
+                <li> <a href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.messages.index') : route('subcontractor.messages.index') }}"
                         style="display: inline-block;
                                width: 100%;
                                text-decoration: none;
@@ -240,7 +234,7 @@
                                 fill="currentColor" />
                         </svg>
                         Messages <span id="header-unseen-count"
-                            class="@if ($unseenMessages <= 0) d-none @endif"
+                            class="@if (isset($unseenMessages) && $unseenMessages <= 0) d-none @endif"
                             style="min-width: 20px;
                                    aspect-ratio: 1 / 1;
                                    border-radius: 50%;
@@ -262,7 +256,7 @@
                             {{ $unseenMessages }}</span></a>
                 </li>
                 <li><a
-                        href="{{ $guard == 'contractor' ? route('contractor.reviews.index') : route('subcontractor.reviews.index') }}">
+                        href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.reviews.index') : route('subcontractor.reviews.index') }}">
                         <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -272,7 +266,7 @@
 
                         Reviews</a></li>
                 <li><a
-                        href="{{ $guard == 'contractor' ? route('contractor.bookmark.index') : route('subcontractor.bookmark.index') }}">
+                        href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.bookmark.index') : route('subcontractor.bookmark.index') }}">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -284,9 +278,10 @@
                         </svg>
 
                         Bookmark</a></li>
-                <p class="{{ $guard == 'contractor' ? 'd-block' : 'd-none' }}">Organize and Manage</p>
-                <li><a href="{{ $guard == 'contractor' ? route('contractor.projects.index') : route('login') }}"
-                        class="{{ $guard == 'contractor' ? 'd-block' : 'd-none' }}">
+                <p class="{{ isset($guard) && $guard == 'contractor' ? 'd-block' : 'd-none' }}">Organize and Manage
+                </p>
+                <li><a href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.projects.index') : route('login') }}"
+                        class="{{ isset($guard) && $guard == 'contractor' ? 'd-block' : 'd-none' }}">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -297,7 +292,7 @@
                         Projects</a></li>
                 <p>Wallet</p>
                 <li><a
-                        href="{{ $guard == 'contractor' ? route('contractor.wallet.index') : route('subcontractor.wallet.index') }}">
+                        href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.wallet.index') : route('subcontractor.wallet.index') }}">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -320,7 +315,7 @@
                         Transaction </a></li>
                 <p>Account</p>
                 <li><a
-                        href="{{ $guard == 'contractor' ? route('contractor.setting.index') : route('subcontractor.setting.index') }}">
+                        href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.setting.index') : route('subcontractor.setting.index') }}">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
