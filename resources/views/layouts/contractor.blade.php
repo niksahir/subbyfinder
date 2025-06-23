@@ -160,6 +160,18 @@
         .my-message:hover .delete-message {
             display: block !important;
         }
+
+        .even-row {
+            background-color: #F8F8FD !important;
+        }
+
+        .table {
+            --bs-table-bg: none !important;
+        }
+
+        .table tbody tr:last-child {
+            border-bottom: 1px solid #dee2e6;
+        }
     </style>
 </head>
 

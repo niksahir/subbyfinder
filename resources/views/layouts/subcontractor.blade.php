@@ -170,8 +170,7 @@
             color: var(--c-primary);
         }
 
-        .my-message:hover  .delete-message
-        {
+        .my-message:hover .delete-message {
             display: block !important;
         }
 
@@ -181,6 +180,18 @@
             border-radius: 10px;
             margin-bottom: 30px;
         } */
+
+        .even-row {
+            background-color: #F8F8FD !important;
+        }
+
+        .table {
+            --bs-table-bg: none !important;
+        }
+
+        .table tbody tr:last-child {
+            border-bottom: 1px solid #dee2e6;
+        }
     </style>
 </head>
 

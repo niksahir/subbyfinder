@@ -95,7 +95,7 @@
                                     $no = 1;
                                 @endphp
                                 @foreach ($userSubcriptions as $userSubcription)
-                                    <tr>
+                                    <tr class="{{ $no % 2 == 0 ? 'even-row' : '' }}">
                                         <td>{{ $no }}</td>
                                         <td>{{ $userSubcription->stripe_session_id }}</td>
                                         <td>{{ date('d-m-Y', strtotime($userSubcription->created_at)) }}</td>
@@ -108,7 +108,7 @@
                                     @endphp
                                 @endforeach
                                 @foreach ($userAdditionalPays as $userAdditionalPay)
-                                    <tr>
+                                    <tr class="{{ $no % 2 == 0 ? 'even-row' : '' }}">
                                         <td>{{ $no }}</td>
                                         <td>{{ $userAdditionalPay->stripe_session_id }}</td>
                                         <td>{{ date('d-m-Y', strtotime($userAdditionalPay->created_at)) }}</td>
