@@ -28,9 +28,11 @@ use App\Http\Controllers\SubContractor\WalletController as SubContractorWalletCo
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SubContractor\ProtfolioController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FirebaseAuthController;
 
 Auth::routes();
 
+Route::any('api/firebase-login', [FirebaseAuthController::class, 'login']);
 Route::get('create-account', [RegisterController::class, 'index'])->name('front.createaccount');
 
 Route::get('/', [FrontHomeController::class, 'index'])->name('front.home');
