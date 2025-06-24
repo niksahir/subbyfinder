@@ -49,4 +49,14 @@ class Contractor extends Authenticatable
     {
         return $this->belongsToMany(ProjectType::class);
     }
+
+    public function subbyReviews()
+    {
+        return $this->morphMany(ReviewSubContractor::class, 'user');
+    }
+
+    public function contractorReviews()
+    {
+        return $this->morphMany(ReviewContractor::class, 'user');
+    }
 }

@@ -54,19 +54,27 @@
                         <h5>${plan.name}</h5>
                         <p>${plan.description || ''}</p>
                         <div class="price">
-                            <h3>$${plan.price} <span>/ ${plan.billing_type}</span></h3>
+                            <h3>AUD${plan.price} <span>/ ${plan.billing_type}</span></h3>
                         </div>
                         <h6>Features of ${plan.name}</h6>
                         <ul>
-                            ${(Array.isArray(plan.features) ? plan.features : JSON.parse(plan.features)).map(f => `<li>${f}</li>`).join('')}
+                            ${
+                                Array.isArray(plan.features)
+                                    ? plan.features
+                                    : (typeof plan.features === 'string'
+                                        ? JSON.parse(plan.features)
+                                        : [])
+                                    .map(f => `<li>${f}</li>`).join('')
+                            }
                         </ul>
                         <div class="link border">
-                            <a href="#" onclick="handleBuyNow('${plan.id}')">Buy Now</a>
+                            <a href="javascript:void(0)" onclick="handleBuyNow('${plan.id}')">Buy Now</a>
                         </div>
                     </div>
                 </div>`;
                 container.innerHTML += html;
             });
+
         }
 
         function handleBuyNow(planId) {
@@ -93,3 +101,6 @@
         });
     </script>
 @endsection
+{{-- // <ul>
+    //     ${(Array.isArray(plan.features) ? plan.features : JSON.parse(plan.features)).map(f => `<li>${f}</li>`).join('')}
+    // </ul> --}}

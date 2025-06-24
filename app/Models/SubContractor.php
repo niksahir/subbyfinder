@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class SubContractor extends Authenticatable
 {
     use HasFactory;
+    use Notifiable;
 
     protected $guard = 'subcontractor';
     protected $fillable = [
@@ -84,5 +85,25 @@ class SubContractor extends Authenticatable
             return 0;
         }
         return $this->bookmarks()->where(['user_id' => $userId, 'type' => $userType])->exists();
+    }
+
+    public function unlockedProjects()
+    {
+        return $this->hasMany(UnlockSubcontractorProject::class, 'user_id');
+    }
+
+    public function subContractorProtfolio()
+    {
+        return $this->hasMany(SubcontractorProtfolio::class, 'user_id');
+    }
+
+    public function reviews()
+    {
+        return $this->morphMany(ReviewSubContractor::class, 'project');
+    }
+
+    public function subbyReviews()
+    {
+        return $this->morphMany(ReviewSubContractor::class, 'user');
     }
 }

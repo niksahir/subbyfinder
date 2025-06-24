@@ -10,6 +10,8 @@ use App\Models\Expertise;
 use App\Models\ProjectType;
 use App\Models\SubContractor;
 use App\Models\Certification;
+use App\Models\Location;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class RegisterController extends Controller {
@@ -19,7 +21,8 @@ class RegisterController extends Controller {
    public function index() {
         $expertise_in = Expertise::all();
         $project_types = ProjectType::all();
-        return view('subcontractor.register.index', compact(['expertise_in', 'project_types']));
+        $locations = Location::all();
+        return view('subcontractor.register.index', compact(['expertise_in', 'project_types','locations']));
    }
 
    /**
@@ -35,7 +38,7 @@ class RegisterController extends Controller {
    public function store(Request $request) {
 
     $validatedData = $request->validate([
-        'profile_photo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        'profile_photo' => 'image|mimes:jpeg,png,jpg|max:2048',
         'business_name' => 'required|string|max:255',
         'contact_name' => 'required|string|max:255',
         'phone' => 'required|string|max:20',
@@ -53,6 +56,7 @@ class RegisterController extends Controller {
         // 'availability' => 'required|array',
         'description' => 'required|string',
         'certificates.*' => 'mimes:jpeg,png,jpg,gif,pdf|max:2048',
+        'location' => 'required',
     ], [
         'certificates.*.mimes' => 'Only JPEG, PNG, JPG, GIF, and PDF files are allowed for certificates.',
         'certificates.*.max' => 'Each certificate must not exceed 2MB in size.',
@@ -78,8 +82,8 @@ class RegisterController extends Controller {
             ]);
         }
     }
-
-    return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
+    Auth::guard('subcontractor')->login($subContractor);
+    return redirect()->route('front.pricing')->with('success', 'Registration successful!');
 
    }
 

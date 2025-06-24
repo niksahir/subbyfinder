@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Bookmark;
-use App\Models\Subcontractor;
+use App\Models\SubContractor;
 
 
 class BookmarkController extends Controller {
@@ -14,7 +14,7 @@ class BookmarkController extends Controller {
     * Display a listing of the resource.
     */
    public function index() {
-        $subcontractors = Subcontractor::whereHas('bookmarks', function ($query) {
+        $subcontractors = SubContractor::whereHas('bookmarks', function ($query) {
             $query->where([
                 'user_id' => Auth::guard('contractor')->id(),
                 'type' => 'contractor',
@@ -56,7 +56,11 @@ class BookmarkController extends Controller {
         if ($bookmark) {
             // Remove bookmark if already exists
             $bookmark->delete();
-            return response()->json(['status' => 'removed']);
+            // return response()->json(['status' => 'removed']);
+            return response()->json([
+                'status' => 'removed',
+                'message' => 'Your project remove from bookmark!'
+            ]);
         } else {
             // Add new bookmark
             Bookmark::create([
@@ -64,7 +68,10 @@ class BookmarkController extends Controller {
                 'project_id' => $projectId,
                 'type' => $userType
             ]);
-            return response()->json(['status' => 'added']);
+            return response()->json([
+                'status' => 'added',
+                'message' => 'Your project Added in bookmark!'
+            ]);
         }
     }catch(\Exception $e){
         return $e->getMessage();

@@ -3,6 +3,10 @@
     Sub Contractor
 @endsection
 
+@php
+    $suppressInlineAlert = false;
+@endphp
+
 @section('content')
     <div class="row">
         <div class="col-md-6">
@@ -17,7 +21,90 @@
                     <li><a href="{{ route('front.home') }}">Home</a></li>
                     <li><a href="{{ route('subcontractor.dashboard.index') }}">Dashboard</a></li>
                     <li><a href="#">Settings</a></li>
+                    <button class="bg-transparent border-none text-white box-shadow" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">Add protfolio</button>
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('subcontractor.protfolio.store') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group mb-3 @error('project_name') is-invalid @enderror">
+                            <label for="name">Project Name</label>
+                            <input type="text" class="form-control" id="name" value="{{ old('project_name') }}"
+                                name="project_name" placeholder="Project Name">
+                            @error('project_name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-inner">
+                            <label for="exampleInputPassword1" class="form-label">Location</label>
+                            <div class="@error('location') is-invalid @enderror">
+                                <select class="form-control js-example-tags" name="location" value="{{ old('location') }}"
+                                    id="location">
+                                    <option value="" selected>Select Location</option>
+                                    @foreach ($locations as $key => $location)
+                                        <option value="{{ $location->name }}">
+                                            {{ $location->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @error('location')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('protfolio_image[]') is-invalid @enderror">
+                            <label for="name">Image</label>
+                            <input type="file" class="form-control" id="protfolio_image" name="protfolio_image[]"
+                                accept="image/png, image/jpeg, image/jpg, image/webp" multiple>
+                            @error('protfolio_image[]')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('description') is-invalid @enderror">
+                            <label for="name">Description</label>
+                            <input type="text" class="form-control" id="description" value="{{ old('description') }}"
+                                name="description" placeholder="Description">
+                            @error('description')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('price') is-invalid @enderror">
+                            <label for="name">Price</label>
+                            <input type="text" class="form-control" id="price" value="{{ old('price') }}"
+                                name="price" placeholder="Price">
+                            @error('price')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary @if ($protfolioAdd == false) disabled @endif"
+                        value="Save changes">
+                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -34,12 +121,14 @@
                         <div class="col-12">
                             <div class="label">My Account</div>
                         </div>
-
-                        @if (session('success'))
+                        {{-- @php
+                            $suppressInlineAlert = true;
+                        @endphp
+                        @if (session('success') && $suppressInlineAlert)
                             <div class="alert alert-success">
                                 {{ session('success') }}
                             </div>
-                        @endif
+                        @endif --}}
 
                         <div class="col-md-3">
                             <div class="profile @error('profile_photo') is-invalid @enderror">
@@ -62,7 +151,8 @@
                             <div class="row g-3">
                                 <div class="col-md-6 form-inner">
                                     <label class="form-label">Business Name</label>
-                                    <input type="text" class="form-control @error('business_name') is-invalid @enderror"
+                                    <input type="text"
+                                        class="form-control @error('business_name') is-invalid @enderror"
                                         name="business_name" placeholder="Business Name"
                                         value="{{ old('business_name', $subcontractor->business_name) }}" required />
                                     @error('business_name')
@@ -221,7 +311,9 @@
                                         <select class="form-control" name="availability" id="availability" required>
                                             <option value="" selected>Select availability</option>
                                             @foreach (config('constants.availability') as $availability)
-                                                <option value="{{ $availability }}" {{ $availability == $subcontractor->availability ? 'selected' : '' }}>{{ $availability }}</option>
+                                                <option value="{{ $availability }}"
+                                                    {{ $availability == $subcontractor->availability ? 'selected' : '' }}>
+                                                    {{ $availability }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -238,7 +330,8 @@
                                     <select class="form-control js-example-tags" name="location" id="location" required>
                                         <option value="" selected>Select Location</option>
                                         @foreach ($locations as $key => $location)
-                                        <option value="{{ $location->name }}" {{ $location->name == $subcontractor->location ? 'selected' : '' }}>
+                                            <option value="{{ $location->name }}"
+                                                {{ $location->name == $subcontractor->location ? 'selected' : '' }}>
                                                 {{ $location->name }}
                                             </option>
                                         @endforeach
@@ -317,11 +410,273 @@
         <a href="#" name="subcontractor_update" id="subcontractor_update"> Save Changes</a>
     </div>
     </form>
+    <h5 class="mt-4">Protfolio</h5>
+    @if ($protfolios->isNotEmpty())
+        @foreach ($protfolios as $p)
+            <div class="prject-with-images mt-2 pb-3">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="img-with-text">
+                            <h6>{{ $p->project_name }}</h6>
+
+                            <ul class="list-unstyled">
+                                <li><i class="fa-solid fa-location-dot"></i> {{ $p->location }}
+                                </li>
+                            </ul>
+
+                            <p>{{ $p->description }}</p>
+                            @php
+                                $images = json_decode($p->images, true);
+                            @endphp
+
+                            <div class="img-wrapper">
+                                <input type="hidden" name="dh" value="{{ $p->images }}">
+                                @if ($images && is_array($images))
+                                    @foreach ($images as $image)
+                                        <img src="{{ asset('storage/' . $image) }}" alt="" class="img-fluid">
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 d-flex justify-content-center align-items-center">
+                        <div class="price">
+                            <h6>{{ $p->price }}</h6>
+                            <p>outcomes</p>
+                        </div>
+                        <div class="buttons ms-2">
+                            <i class="fa-solid fa-edit me-2" id="edit"
+                                onclick="editProject({{ $p->id }})"></i>
+                            <i class="fa-solid fa-trash" onclick="deleteProject({{ $p->id }})"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    @else
+        <div class="prject-with-images mb-5 pb-3">
+            <p>No past project available.</p>
+        </div>
+    @endif
+
+    <div class="modal fade" id="exampleModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Protfolio</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" enctype="multipart/form-data" id="edit_form">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="id" id="edit_id">
+                        <div class="form-group mb-3 @error('project_name') is-invalid @enderror">
+                            <label for="name">Project Name</label>
+                            <input type="text" class="form-control" id="editname" name="project_name">
+                            @error('project_name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-inner">
+                            <label for="editlocation" class="form-label">Location</label>
+                            <div class="@error('location') is-invalid @enderror">
+                                <select class="form-control" name="location" id="editlocation">
+                                    <option value="" selected>Select Location</option>
+                                </select>
+
+                            </div>
+                            @error('location')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('protfolio_image[]') is-invalid @enderror">
+                            <label for="name">Image</label>
+                            <input type="file" class="form-control" id="editprotfolio_image" name="protfolio_image[]"
+                                accept="image/png, image/jpeg, image/jpg, image/webp" multiple>
+                            <input type="hidden" name="existing_images" id="editportfolio_image" value="">
+
+                            <div class="form-group mb-3 mt-3">
+                                <label>Existing Images</label>
+                                <div id="existing-images" class="d-flex flex-wrap gap-2"></div>
+                            </div>
+
+                            @error('location')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('description') is-invalid @enderror">
+                            <label for="name">Description</label>
+                            <input type="text" class="form-control" id="editdescription" name="description">
+                            @error('description')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3 @error('price') is-invalid @enderror">
+                            <label for="name">Price</label>
+                            <input type="text" class="form-control" id="editprice" name="price">
+                            @error('price')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary" value="Save changes">
+                </div>
+                </form>
+            </div>
+        </div>
     </div>
-    </div>
+
 @endsection
 
 @section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('#exampleModal form');
+
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+
+                // Clear old errors
+                form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                form.querySelectorAll('.invalid-feedback.js-error').forEach(el => el.remove());
+
+                // Helper to show error
+                function showError(input, message) {
+                    input.classList.add('is-invalid');
+                    const error = document.createElement('div');
+                    error.className = 'invalid-feedback js-error';
+                    error.innerHTML = `<strong>${message}</strong>`;
+                    input.parentNode.appendChild(error);
+                    isValid = false;
+                }
+
+                // Project Name
+                const projectName = form.querySelector('[name="project_name"]');
+                if (!projectName.value.trim()) {
+                    showError(projectName, 'The project name is required.');
+                }
+
+                // Location
+                const location = form.querySelector('[name="location"]');
+                if (!location.value.trim()) {
+                    showError(location, 'The location is required.');
+                }
+
+                // Image
+                const imageInput = form.querySelector('[name="protfolio_image[]"]');
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+                if (imageInput.files.length === 0) {
+                    showError(imageInput, 'At least one image is required.');
+                } else {
+                    for (let file of imageInput.files) {
+                        if (!allowedTypes.includes(file.type)) {
+                            showError(imageInput, 'Only JPG, JPEG, PNG, and WEBP images are allowed.');
+                            break;
+                        }
+                    }
+                }
+
+                // Description
+                const description = form.querySelector('[name="description"]');
+                if (!description.value.trim()) {
+                    showError(description, 'The description is required.');
+                }
+
+                // Price
+                const price = form.querySelector('[name="price"]');
+                if (!price.value.trim()) {
+                    showError(price, 'The price is required.');
+                } else if (isNaN(price.value)) {
+                    showError(price, 'The price must be a number.');
+                }
+
+                if (!isValid) e.preventDefault();
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('#exampleModalEdit form');
+
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+
+                // Clear old errors
+                form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                form.querySelectorAll('.invalid-feedback.js-error').forEach(el => el.remove());
+
+                // Helper to show error
+                function showError(input, message) {
+                    input.classList.add('is-invalid');
+                    const error = document.createElement('div');
+                    error.className = 'invalid-feedback js-error';
+                    error.innerHTML = `<strong>${message}</strong>`;
+                    input.parentNode.appendChild(error);
+                    isValid = false;
+                }
+
+                // Project Name
+                const projectName = form.querySelector('[name="project_name"]');
+                if (!projectName.value.trim()) {
+                    showError(projectName, 'The project name is required.');
+                }
+
+                // Location
+                const location = form.querySelector('[name="location"]');
+                if (!location.value.trim()) {
+                    showError(location, 'The location is required.');
+                }
+
+                // Image
+                const imageInput = form.querySelector('[name="protfolio_image[]"]');
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+                const existingImages = form.querySelector('[name="existing_images"]').value;
+                if (imageInput.files.length === 0 && !existingImages) {
+                    showError(imageInput, 'At least one image is required.');
+                } else {
+                    for (let file of imageInput.files) {
+                        if (!allowedTypes.includes(file.type)) {
+                            showError(imageInput, 'Only JPG, JPEG, PNG, and WEBP images are allowed.');
+                            break;
+                        }
+                    }
+                }
+
+                // Description
+                const description = form.querySelector('[name="description"]');
+                if (!description.value.trim()) {
+                    showError(description, 'The description is required.');
+                }
+
+                // Price
+                const price = form.querySelector('[name="price"]');
+                if (!price.value.trim()) {
+                    showError(price, 'The price is required.');
+                } else if (isNaN(price.value)) {
+                    showError(price, 'The price must be a number.');
+                }
+
+                if (!isValid) e.preventDefault();
+            });
+        });
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -676,5 +1031,139 @@
                 }
             });
         });
+
+        function deleteProject(id) {
+            const url = "{{ route('subcontractor.protfolio.destroy', ':id') }}".replace(':id', id);
+            if (confirm('Are you sure you want to delete this project?')) {
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    data: {
+                        id: id,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            location.reload();
+                            // toastr.success(response.message);
+                        } else {
+                            alert('Failed to delete project.');
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while deleting the project.');
+                    }
+                });
+            }
+        }
+
+        function editProject(id) {
+            const url = "{{ route('subcontractor.protfolio.edit', ':id') }}".replace(':id', id);
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {
+                    id: id,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        console.log(response.data);
+                        const project = response.data;
+                        const locations = response.locations;
+                        console.log(locations);
+
+                        $('#exampleModalLabelEdit').text('Edit Project');
+                        $('#editname').val(project.project_name);
+                        $('#edit_id').val(project.id);
+
+                        // Destroy existing select2 if active
+                        // if ($.fn.select2 && $('#editlocation').hasClass("select2-hidden-accessible")) {
+                        //     $('#editlocation').select2('destroy');
+                        // }
+
+                        // Clear and add options
+                        $('#editlocation').empty().append('<option value="">Select Location</option>');
+                        locations.forEach(loc => {
+                            const selected = loc.name === project.location ? 'selected' : '';
+                            $('#editlocation').append(
+                                `<option value="${loc.name}" ${selected}>${loc.name}</option>`);
+                        });
+
+
+
+                        // // Reinitialize select2
+                        // $('#editlocation').select2({
+                        //     tags: true
+                        // });
+
+                        // Show existing images
+                        let remainingImages = []; // Define this outside the loop so it's accessible
+
+                        // Show existing images
+                        $('#existing-images').empty();
+
+                        if (project.images && Array.isArray(project.images)) {
+                            remainingImages = [...project.images]; // Clone original image list
+
+                            // Set the hidden input initially
+                            $('#editportfolio_image').val(JSON.stringify(remainingImages));
+
+                            project.images.forEach((imageUrl, index) => {
+                                const fullImageUrl = `/storage/${imageUrl}`;
+                                const imageId = `image-${index}`;
+
+                                $('#existing-images').append(`
+            <div id="${imageId}" style="display: inline-block; position: relative; margin-right: 10px;">
+                <img src="${fullImageUrl}" alt="Image"
+                     style="height: 100px; width: auto; border-radius: 4px;">
+                <button class="delete-image" data-index="${index}"
+                        data-url="${imageUrl}"
+                        style="position: absolute; font-size:10px; top: 0; right: 0; background: red; padding: 3px 5px; color: white; border: none; cursor: pointer;">X</button>
+            </div>
+        `);
+                            });
+                        }
+
+                        // Attach handler outside loop, once
+                        $('#existing-images').off('click').on('click', '.delete-image', function() {
+                            const index = $(this).data('index');
+                            const imageUrl = $(this).data('url');
+
+                            // Remove image from DOM
+                            $(`#image-${index}`).remove();
+
+                            // Update array
+                            remainingImages = remainingImages.filter(img => img !== imageUrl);
+
+                            // Update hidden field
+                            $('#editportfolio_image').val(JSON.stringify(remainingImages));
+                            console.log(remainingImages);
+                        });
+
+
+
+
+                        $('#editdescription').val(project.description);
+                        $('#editprice').val(project.price);
+
+                        // Set form action dynamically
+                        var editUrl = "{{ route('subcontractor.protfolio.update', ':id') }}";
+                        $('#edit_form').attr('action', editUrl.replace(':id', id));
+
+                        // Ensure PUT method spoofing is added
+                        $('#edit_form').find('input[name="_method"]').remove();
+                        $('#edit_form').append('<input type="hidden" name="_method" value="PUT">');
+
+                        $('#exampleModalEdit').modal('show');
+                    } else {
+                        alert('Failed to fetch project details.');
+                    }
+                },
+                error: function() {
+                    alert('An error occurred while fetching project details.');
+                }
+            });
+        }
     </script>
 @endsection

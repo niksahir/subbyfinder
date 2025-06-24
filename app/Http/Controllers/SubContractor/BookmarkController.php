@@ -56,7 +56,10 @@ class BookmarkController extends Controller {
         if ($bookmark) {
             // Remove bookmark if already exists
             $bookmark->delete();
-            return response()->json(['status' => 'removed']);
+            return response()->json([
+                'status' => 'removed',
+                'message' => 'Your project remove from bookmark!'
+            ]);
         } else {
             // Add new bookmark
             SubContractorsBookmark::create([
@@ -64,7 +67,10 @@ class BookmarkController extends Controller {
                 'subcontractor_id' => $subcontractor_id,
                 'type' => $userType
             ]);
-            return response()->json(['status' => 'added']);
+            return response()->json([
+                'status' => 'added',
+                'message' => 'Your project Added in bookmark!'
+            ]);
         }
     }catch(\Exception $e){
         return $e->getMessage();

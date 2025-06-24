@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SubContractor;
 
 use App\Http\Controllers\Controller;
+use App\Models\SubcontractorProtfolio;
 use Illuminate\Http\Request;
 use App\Models\Expertise;
 use App\Models\SubContractor;
@@ -11,52 +12,110 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\ProjectType;
 use App\Models\Certification;
 use App\Models\Location;
+use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Storage;
 
-class SettingController extends Controller {
-   /**
-    * Display a listing of the resource.
-    */
-   public function index() {
+class SettingController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
         $userId = Auth::guard('subcontractor')->id();
         $subcontractor = SubContractor::where('id', $userId)->first();
         $expertise_in = Expertise::all();
         $locations = Location::all();
-        return view("subcontractor.setting.index", compact('subcontractor', 'expertise_in', 'locations'));
-   }
 
-   /**
-    * Show the form for creating a new resource.
-    */
-   public function create() {
-      //
-   }
+        $userSubcription = UserSubscription::where('user_id', $userId)
+            ->where('is_active', 1)
+            ->where('user_type', 'subcontractor')
+            ->latest()
+            ->first();
 
-   /**
-    * Store a newly created resource in storage.
-    */
-   public function store(Request $request) {
-      //
-   }
+        $protfolios = SubcontractorProtfolio::where('user_id', $userId)
+            ->get();
 
-   /**
-    * Display the specified resource.
-    */
-   public function show(string $id) {
-      //
-   }
+        if ($userSubcription == null) {
 
-   /**
-    * Show the form for editing the specified resource.
-    */
-   public function edit(string $id) {
-      //
-   }
+            $protfolioAdd = false;
+            return view("subcontractor.setting.index", compact('protfolios','subcontractor', 'expertise_in', 'locations', 'protfolioAdd'));
+        }
 
-   /**
-    * Update the specified resource in storage.
-    */
-   public function update(Request $request, string $id) {
+        $unloackedProjectCount = SubcontractorProtfolio::where('user_id', $userId)
+            ->count();
+
+        $protfolioAdd = false;
+        $now = now();
+        $startDate = $userSubcription->start_date;
+        $endDate = $userSubcription->end_date;
+
+        $monthsSinceStart = $startDate->diffInMonths($now);
+
+        $currentBillingStart = $startDate->copy()->addMonths($monthsSinceStart);
+        $currentBillingEnd = $currentBillingStart->copy()->addMonth();
+
+        $unlockedThisMonth = SubcontractorProtfolio::where('user_id', $userId)
+            ->whereBetween('created_at', [$currentBillingStart, $currentBillingEnd])
+            ->count();
+
+        $planId = $userSubcription->plan_id;
+        $unlockLimit = null;
+
+        if (in_array($planId, [1, 2])) {
+            $unlockLimit = 2;
+        } elseif (in_array($planId, [3, 4])) {
+            $unlockLimit = 3;
+        } elseif (in_array($planId, [5, 6])) {
+            $unlockLimit = null; // Unlimited
+        }
+        // Final decision
+        if ($endDate >= $now) {
+            if (is_null($unlockLimit) || $unlockedThisMonth < $unlockLimit) {
+                $protfolioAdd = true;
+            }
+        }
+
+        return view("subcontractor.setting.index", compact('protfolios', 'subcontractor', 'expertise_in', 'locations', 'protfolioAdd'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
 
         // Validate the input data
         $validatedData = $request->validate([
@@ -143,12 +202,13 @@ class SettingController extends Controller {
         }
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
-   }
+    }
 
-   /**
-    * Remove the specified resource from storage.
-    */
-   public function destroy(string $id) {
-      //
-   }
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
 }

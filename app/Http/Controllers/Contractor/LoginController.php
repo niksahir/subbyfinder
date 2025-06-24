@@ -69,4 +69,14 @@ class LoginController extends Controller {
    public function destroy(string $id) {
       //
    }
+
+   public function logout(Request $request)
+    {
+        Auth::guard('contractor')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect(route('contractor.login.index'));
+    }
 }

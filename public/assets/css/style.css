@@ -2642,7 +2642,7 @@ header .sign-in li:nth-child(2) a {
 }
 
 .form-btn {
-  padding-top: 30px;
+  padding-top: 305px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3005,13 +3005,15 @@ header .sign-in li:nth-child(2) a {
           justify-content: center;
   z-index: 2;
 }
-.description-section .left-content .info .lock-button p {
-  padding: 10px 20px;
-  color: var(--c-primary);
-  background-color: rgba(247, 122, 54, 0.1019607843);
-  display: inline-block;
-  cursor: pointer;
-  border-radius: 4px;
+
+
+.description-section .left-content .info .lock-button a {
+  padding: 10px 20px !important;
+  color: var(--c-primary) !important;
+  background-color: rgba(247, 122, 54, 0.1019607843) !important;
+  display: inline-block !important;
+  cursor: pointer !important;
+  border-radius: 4px !important;
 }
 @media screen and (min-width: 768px) {
   .description-section .left-content .info .item {

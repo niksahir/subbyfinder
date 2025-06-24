@@ -77,7 +77,7 @@
                         <div class="col-md-3">
                             <div class="profile @error('profile_photo') is-invalid @enderror">
                                 <input type="file" accept="image/*" name="profile_photo" class="form-control d-none"
-                                    id="profileInput" required>
+                                    id="profileInput">
                                 <img src="{{ asset('assets/images/team-3.png') }}" alt="" class="img-fluid"
                                     id="profileImage" onclick="document.getElementById('profileInput').click()">
                             </div>
@@ -422,19 +422,22 @@
                 const profilePhoto = $('#profileInput');
                 const profileError = profilePhoto.next('.invalid-feedback');
 
-                if (!profilePhoto[0].files.length) {
-                    formValid = false;
-                    if (profileError.length === 0) {
-                        profilePhoto.after(
-                            "<span class='invalid-feedback' role='alert'><strong>Profile photo is required</strong></span>"
-                        );
-                    } else {
-                        profileError.html("<strong>Profile photo is required</strong>");
-                    }
-                    profilePhoto.addClass('is-invalid');
-                } else {
+                // if (!profilePhoto[0].files.length) {
+                //     formValid = false;
+                //     if (profileError.length === 0) {
+                //         profilePhoto.after(
+                //             "<span class='invalid-feedback' role='alert'><strong>Profile photo is required</strong></span>"
+                //         );
+                //     } else {
+                //         profileError.html("<strong>Profile photo is required</strong>");
+                //     }
+                //     profilePhoto.addClass('is-invalid');
+                // } else {
                     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-                    const file = profilePhoto[0].files[0];
+                const fileInput = profilePhoto[0];
+
+                if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
 
                     if (!allowedTypes.includes(file.type)) {
                         formValid = false;
@@ -443,13 +446,10 @@
                                 "<span class='invalid-feedback' role='alert'><strong>Only image files (JPG, PNG) are allowed</strong></span>"
                             );
                         } else {
-                            profileError.html(
-                                "<strong>Only image files (JPG, PNG) are allowed</strong>");
+                            profileError.html("<strong>Only image files (JPG, PNG) are allowed</strong>");
                         }
                         profilePhoto.addClass('is-invalid');
-                    }
-                    // Check file size (optional - 2MB max)
-                    else if (file.size > 2 * 1024 * 1024) {
+                    } else if (file.size > 2 * 1024 * 1024) {
                         formValid = false;
                         if (profileError.length === 0) {
                             profilePhoto.after(
@@ -464,6 +464,7 @@
                         profilePhoto.removeClass('is-invalid');
                     }
                 }
+                // }
 
 
 

@@ -11,16 +11,15 @@
                     <div class="left-sidebar">
                         <form id="filter-form" method="GET">
                             <fieldset>
+                                <input type="hidden" name="project" value="{{ request('project') }}">
                                 <!-- Location Filter -->
                                 <div class="inner-form">
                                     <label for="location" class="form-label">Location</label>
-                                    <select class="form-select" name="location" aria-label="Default select example"
-                                        onchange="fetchProjects()">
-                                        <option value="">
-                                            Select location
-                                        </option>
+                                    <select class="form-select" name="location" onchange="fetchProjects()">
+                                        <option value="">Select location</option>
                                         @foreach ($locations as $location)
-                                            <option value="{{ $location->name }}">
+                                            <option value="{{ $location->name }}"
+                                                {{ request('location') == $location->name ? 'selected' : '' }}>
                                                 {{ $location->name }}
                                             </option>
                                         @endforeach
@@ -32,7 +31,7 @@
                                     <select name="trade_category[]" id="trade_category" multiple="multiple"
                                         class="form-control" onchange="fetchProjects()">
                                         @foreach ($expertise_in as $expertise)
-                                            <option value="{{ $expertise->id }}">
+                                            <option value="{{ $expertise->id }}" @if($tradeCategory && $expertise->id == $tradeCategory) selected @endif>
                                                 {{ $expertise->name }}
                                             </option>
                                         @endforeach
@@ -128,7 +127,9 @@
                     success: function(response) {
                         if (response.status === 'added') {
                             iconElement.removeClass('fa-regular').addClass('fa-solid');
+                            toastr.success(response.message);
                         } else if (response.status === 'removed') {
+                            toastr.success(response.message);
                             iconElement.removeClass('fa-solid').addClass('fa-regular');
                         } else {
                             window.location.href = "{{ route('login') }}";

@@ -1,11 +1,42 @@
 <!-- Header -->
 <header>
+    @php
+        if (auth('contractor')->check()) {
+            $user = auth('contractor')->user();
+            $guard = 'contractor';
+        } elseif (auth('subcontractor')->check()) {
+            $user = auth('subcontractor')->user();
+            $guard = 'subcontractor';
+        } else {
+            // Handle case when no user is authenticated
+            $user = null;
+            $guard = null;
+        }
+        // dd($user);
+        $unseenMessages = 0;
+        if ($guard == 'contractor') {
+            $unseenMessages = \App\Models\Message::where('to_user_id', Auth::guard('contractor')->user()->id)
+                ->where('receiver_type', 'contractor')
+                ->where('is_seen', 0)
+                ->select('from_user_id')
+                ->distinct()
+                ->count('from_user_id');
+        } elseif ($guard == 'subcontractor') {
+            $unseenMessages = \App\Models\Message::where('to_user_id', Auth::guard('subcontractor')->user()->id)
+                ->where('receiver_type', 'subcontractor')
+                ->where('is_seen', 0)
+                ->select('from_user_id')
+                ->distinct()
+                ->count('from_user_id');
+        }
+
+    @endphp
     <div class="container">
         <div class="row">
             <div class="col-6 col-lg-8">
                 <div class="logo-with-menu">
                     <div class="logo">
-                        <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
+                        <a href="{{ route('front.home') }}"><img src="{{ asset('assets/images/logo.png') }}" alt="logo"></a>
                     </div>
 
                     <div class="menus">
@@ -29,6 +60,8 @@
                                     <a href="{{ route('subcontractor.dashboard.index') }}">Dashboard</a>
                                 @endif
                             </li>
+                            <li class=" @if (Auth::guard('contractor')->check()) d-block @else d-none @endif"><a
+                                    href="{{ route('contractor.projects.create') }}">Post Project</a></li>
                         </ul>
                     </div>
                 </div>
@@ -49,17 +82,82 @@
                 @else
                     <div class="logged-in">
                         <ul>
-                            <li><a href="#"> <i class="fa-solid fa-bell"></i> <span>4</span></a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link position-relative" href="#" id="notificationDropdown"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-bell" style="height: 25px; width: 25px;"></i>
+                                    @if ($user->unreadNotifications->count())
+                                        <span>
+                                            {{ $user->unreadNotifications->count() }}
+                                        </span>
+                                    @endif
+                                </a>
+                                <ol class="dropdown-menu dropdown-menu-end p-3 shadow"
+                                    aria-labelledby="notificationDropdown"
+                                    style="width: 350px; max-height: 400px; overflow-y: auto;">
+
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0">Notifications</h5>
+                                        <a href="@if (isset($guard) && $guard == 'contractor') {{ route('contractor.notifications.markAllAsRead') }}
+                                            @elseif(isset($guard) && $guard == 'subcontractor')
+                                            {{ route('subcontractor.notifications.markAllAsRead') }} @endif"
+                                            class="text-orange text-decoration-none fs-6" style="color: #fd7e14;">
+                                            Mark all as read
+                                        </a>
+                                    </div>
+
+                                    @forelse ($user->unreadNotifications as $notification)
+                                        <div class="notification-card d-flex align-items-start border-bottom pb-2 mb-2">
+                                            @if (isset($notification->data['image']))
+                                                <img src="{{ asset('storage/' . $notification->data['image']) }}"
+                                                    alt="Notification Image" class="img-fluid me-2" height="48"
+                                                    width="48" style="border-radius: 50%;">
+                                            @else
+                                                <img src="{{ asset('assets/images/icons8-person-94.png') }}"
+                                                    alt="Default Notification Image" class="img-fluid me-2"
+                                                    height="48" width="48" style="border-radius: 50%;">
+                                            @endif
+                                            <div>
+                                                <div>{{ $notification->data['message'] }}</div>
+                                                <div
+                                                    class="text-muted
+                                            small mt-1">
+                                                    {{ $notification->created_at->diffForHumans() }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="text-center text-muted">No new notifications</div>
+                                    @endforelse
+                                </ol>
                             </li>
-                            <li><a href="#"><i class="fa-regular fa-envelope"></i> <span>6</span></a></li>
+
+                            <li><a class="nav-link" style="height: 40px"
+                                    href="@if (isset($guard) && $guard == 'contractor') {{ route('contractor.messages.index') }}
+                                 @elseif(isset($guard) && $guard == 'subcontractor')
+                                 {{ route('subcontractor.messages.index') }} @endif"><img
+                                        src="{{ asset('assets/images/message-mail-svgrepo-com.svg') }}" alt=""
+                                        class="object-cover" height="25" width="25"><span
+                                        id="header-unseen-count"
+                                        class="@if (isset($unseenMessages) && $unseenMessages <= 0) d-none @endif">
+                                        {{ $unseenMessages }}</span></a></li>
+                            <!-- Notification Bell Icon -->
                         </ul>
 
                         <div class="user">
+                            @php
+                                $userLogin = Auth::guard($guard)->user();
+                            @endphp
                             @if (isset($userLogin) && !empty($userLogin))
-                                <img src="{{ asset('storage/' . $userLogin->profile_photo) }}" alt="Profile Photo"
-                                    class="img-fluid">
-                            @else
-                                <img src="{{ asset('assets/images/team-1.jpg') }}" alt="Default Image" class="img-fluid">
+                                <a
+                                    href="@if (isset($guard) && $guard == 'contractor') {{ route('contractor.dashboard.index') }}
+                                    @elseif(isset($guard) && $guard == 'subcontractor')
+                                    {{ route('subcontractor.dashboard.index') }} @endif">
+                                    <img src="{{ $userLogin->profile_photo ? asset('storage/' . $userLogin->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
+                                        alt="Profile Photo" class="img-fluid">
+                                @else
+                                    <img src="{{ asset('assets/images/team-1.jpg') }}" alt="Default Image"
+                                        class="img-fluid">
                             @endif
                             <span></span>
                         </div>
@@ -74,9 +172,9 @@
 <div class="mobile-menus">
     <div class="container">
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Find Work</a></li>
-            <li><a href="#">Find Subcontractors</a></li>
+            <li><a href="{{ route('front.home') }}">Home</a></li>
+            <li><a href="{{ route('front.projectSearch') }}">Find Work</a></li>
+            <li><a href="{{ route('front.subcontractorsearch') }}">Find Subcontractors</a></li>
             <li>
                 @if (Auth::guard('contractor')->check())
                     <a href="{{ route('contractor.dashboard.index') }}">Dashboard</a>
@@ -91,13 +189,13 @@
         </ul>
     </div>
 </div>
-
-<div class="mobile-menus">
+<div class="mobile-menus @if ($guard === null) d-none @endif">
     <div class="container">
         <div class="left-side-menu">
             <ul>
                 <p>Start</p>
-                <li><a href="#">
+                <li><a
+                        href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.dashboard.index') : route('subcontractor.dashboard.index') }}">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -115,14 +213,49 @@
                         </svg>
 
                         Dashboard</a></li>
-                <li><a href="#"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                <li> <a href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.messages.index') : route('subcontractor.messages.index') }}"
+                        style="display: inline-block;
+                               width: 100%;
+                               text-decoration: none;
+                               display: -webkit-box;
+                               display: -ms-flexbox;
+                               display: flex;
+                               -webkit-box-align: center;
+                               -ms-flex-align: center;
+                               align-items: center;
+                               -webkit-transition: all 0.32s ease-in-out;
+                               transition: all 0.32s ease-in-out;
+                               position: relative;">
+                        <svg class="me-2" width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
                                 d="M9.99935 2.29199C5.74215 2.29199 2.29102 5.74313 2.29102 10.0003C2.29102 11.2345 2.58062 12.3993 3.09501 13.4321C3.30147 13.8466 3.38097 14.3422 3.25071 14.829L2.75437 16.6841C2.66321 17.0248 2.9749 17.3365 3.31559 17.2453L5.17062 16.749C5.65746 16.6187 6.1531 16.6982 6.56761 16.9047C7.60035 17.4191 8.76513 17.7087 9.99935 17.7087C14.2565 17.7087 17.7077 14.2575 17.7077 10.0003C17.7077 5.74313 14.2565 2.29199 9.99935 2.29199ZM1.04102 10.0003C1.04102 5.05277 5.0518 1.04199 9.99935 1.04199C14.9469 1.04199 18.9577 5.05277 18.9577 10.0003C18.9577 14.9479 14.9469 18.9587 9.99935 18.9587C8.56743 18.9587 7.21229 18.6222 6.01031 18.0236C5.83094 17.9342 5.64779 17.9153 5.49372 17.9565L3.63868 18.4528C2.36882 18.7926 1.20708 17.6308 1.54685 16.361L2.04319 14.506C2.08441 14.3519 2.06546 14.1687 1.97612 13.9894C1.37744 12.7874 1.04102 11.4322 1.04102 10.0003ZM6.04102 8.75033C6.04102 8.40515 6.32084 8.12533 6.66602 8.12533H13.3327C13.6779 8.12533 13.9577 8.40515 13.9577 8.75033C13.9577 9.0955 13.6779 9.37533 13.3327 9.37533H6.66602C6.32084 9.37533 6.04102 9.0955 6.04102 8.75033ZM6.04102 11.667C6.04102 11.3218 6.32084 11.042 6.66602 11.042H11.2493C11.5945 11.042 11.8743 11.3218 11.8743 11.667C11.8743 12.0122 11.5945 12.292 11.2493 12.292H6.66602C6.32084 12.292 6.04102 12.0122 6.04102 11.667Z"
                                 fill="currentColor" />
                         </svg>
-                        Messages <span></span></a></li>
-                <li><a href="#">
+                        Messages <span id="header-unseen-count"
+                            class="@if (isset($unseenMessages) && $unseenMessages <= 0) d-none @endif"
+                            style="min-width: 20px;
+                                   aspect-ratio: 1 / 1;
+                                   border-radius: 50%;
+                                   display: inline-block;
+                                   margin-left: 20px;
+                                   background-color: var(--c-primary);
+                                   color: var(--c-white);
+                                   font-size: 11px;
+                                   height: 20px;
+                                   display: -webkit-box;
+                                   display: -ms-flexbox;
+                                   display: flex;
+                                   -webkit-box-align: center;
+                                   -ms-flex-align: center;
+                                   align-items: center;
+                                   -webkit-box-pack: center;
+                                   -ms-flex-pack: center;
+                                   justify-content: center;">
+                            {{ $unseenMessages }}</span></a>
+                </li>
+                <li><a
+                        href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.reviews.index') : route('subcontractor.reviews.index') }}">
                         <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -131,7 +264,8 @@
                         </svg>
 
                         Reviews</a></li>
-                <li><a href="#">
+                <li><a
+                        href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.bookmark.index') : route('subcontractor.bookmark.index') }}">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -143,8 +277,10 @@
                         </svg>
 
                         Bookmark</a></li>
-                <p>Organize and Manage</p>
-                <li><a href="#">
+                <p class="{{ isset($guard) && $guard == 'contractor' ? 'd-block' : 'd-none' }}">Organize and Manage
+                </p>
+                <li><a href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.projects.index') : route('login') }}"
+                        class="{{ isset($guard) && $guard == 'contractor' ? 'd-block' : 'd-none' }}">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -154,7 +290,8 @@
 
                         Projects</a></li>
                 <p>Wallet</p>
-                <li><a href="#">
+                <li><a
+                        href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.wallet.index') : route('subcontractor.wallet.index') }}">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -174,9 +311,10 @@
                                 fill="currentColor" />
                         </svg>
 
-                        Wallet </a></li>
+                        Transaction </a></li>
                 <p>Account</p>
-                <li><a href="#">
+                <li><a
+                        href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.setting.index') : route('subcontractor.setting.index') }}">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -188,7 +326,8 @@
                         </svg>
 
                         Settings</a></li>
-                <li><a href="#">
+                <li><a href="@if (isset($guard) && $guard == 'contractor') route('contractor.logout') @elseif(isset($guard) && $guard == 'subcontractor') route('subcontractor.logout') @endif"
+                        onclick="@if (isset($guard) && $guard == 'contractor') event.preventDefault(); document.getElementById('contractor-logout-form').submit(); @elseif(isset($guard) && $guard == 'subcontractor') event.preventDefault(); document.getElementById('subcontractor-logout-form').submit(); @endif">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -198,8 +337,18 @@
                                 d="M6.50065 9.62467C6.15547 9.62467 5.87565 9.34485 5.87565 8.99967C5.87565 8.65449 6.15547 8.37467 6.50065 8.37467L15.6444 8.37467L14.0106 6.97421C13.7485 6.74957 13.7181 6.35501 13.9428 6.09293C14.1674 5.83085 14.562 5.8005 14.8241 6.02514L17.7407 8.52514C17.8793 8.64388 17.959 8.81722 17.959 8.99967C17.959 9.18213 17.8793 9.35547 17.7407 9.47421L14.8241 11.9742C14.562 12.1988 14.1674 12.1685 13.9428 11.9064C13.7181 11.6443 13.7485 11.2498 14.0106 11.0251L15.6444 9.62467L6.50065 9.62467Z"
                                 fill="currentColor" />
                         </svg>
+                        <form id="subcontractor-logout-form" action="{{ route('subcontractor.logout') }}"
+                            method="POST" class="d-none">
+                            @csrf
+                        </form>
 
-                        Logout</a></li>
+                        <form id="contractor-logout-form" action="{{ route('contractor.logout') }}" method="POST"
+                            class="d-none">
+                            @csrf
+                        </form>
+
+                        Logout
+                    </a></li>
             </ul>
         </div>
     </div>

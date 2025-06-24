@@ -44,10 +44,14 @@ class ContractorProject extends Model
         return [];
     }
 
-    public function projectType()
+    public function getProjectTypeModelsAttribute()
     {
-        return $this->belongsToMany(ProjectType::class);
+        if (is_array($this->project_type)) {
+            return ProjectType::whereIn('id', $this->project_type)->get();
+        }
+        return collect();
     }
+
 
     public function bookmarks()
     {
@@ -66,5 +70,20 @@ class ContractorProject extends Model
             return 0;
         }
         return $this->bookmarks()->where(['user_id' => $userId, 'type' => $userType])->exists();
+    }
+
+    public function reviews()
+    {
+        return $this->morphMany(ReviewSubContractor::class, 'project');
+    }
+
+    public function contractorReviews()
+    {
+        return $this->morphMany(ReviewContractor::class, 'project');
+    }
+
+    public function unlockedProjects()
+    {
+        return $this->morphMany(UnlockedProject::class, 'user');
     }
 }

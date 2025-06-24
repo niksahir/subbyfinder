@@ -1,114 +1,118 @@
 @extends('layouts.subcontractor')
-@section("title")
-Sub Contractor
+@section('title')
+    Chat - Subby Finder
 @endsection
-
 @section('content')
-<section class="charting-section">
-   <div class="row">
-      <div class="col-md-5">
-         <div class="left-chat">
+    <section class="charting-section min-vh-100">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="left-chat">
 
-            <div class="search">
-               <input type="text" placeholder="Search messages" class="form-control">
-               <i class="fa-solid fa-magnifying-glass"></i>
+                    <div class="search">
+                        <input type="text" placeholder="Search messages" class="form-control" id="searchContacts">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+
+
+                    <div id="contactListWrapper">
+                        @include('subcontractor.massage.contact-list', [
+                            'sortedProjects' => $sortedProjects,
+                        ])
+                    </div>
+                </div>
             </div>
 
+            <div class="col-md-7">
+                <div class="chat-detail d-none flex-column" style="height: 100vh;">
+                    <div class="user-topbar">
+                        <div class="name-with-img">
+                            <img src="{{ asset('assets/images/team-1.jpg') }}" alt="Profile Photo" class="img-fluid">
 
-            <div class="pepoles">
-               <div class="inner-item">
-                  <img src="{{ asset('assets/images/team-1.jpg') }}" alt="" class="img-fluid">
+                            <div class="name">
+                                <h6>Jan Mayer</h6>
+                                {{-- <p>Recruiter at Nomad</p> --}}
+                            </div>
+                        </div>
 
-                  <div class="content">
-                     <h6>Jan Mayer <span>3:40 PM</span></h6>
-                     <p>We want to invite you for a qui...</p>
-                  </div>
-               </div>
-               <div class="inner-item">
-                  <img src="{{ asset('assets/images/team-1.jpg') }}" alt="" class="img-fluid">
 
-                  <div class="content">
-                     <h6>Jan Mayer <span>3:40 PM</span></h6>
-                     <p>We want to invite you for a qui...</p>
-                  </div>
-               </div>
-               <div class="inner-item">
-                  <img src="{{ asset('assets/images/team-1.jpg') }}" alt="" class="img-fluid">
+                        <div class="icons">
+                            {{-- <i class="fa-solid fa-thumbtack"></i>
+                            <i class="fa-regular fa-star"></i>
+                            <i class="fa-solid fa-ellipsis-vertical"></i> --}}
+                            <!-- Assuming you are using Bootstrap icons or Font Awesome -->
+                            {{-- <i class="fas fa-trash delete-chat-btn" title="Delete All Messages"
+                                style="cursor: pointer;"></i> --}}
 
-                  <div class="content">
-                     <h6>Jan Mayer <span>3:40 PM</span></h6>
-                     <p>We want to invite you for a qui...</p>
-                  </div>
-               </div>
-               <div class="inner-item">
-                  <img src="{{ asset('assets/images/team-1.jpg') }}" alt="" class="img-fluid">
+                        </div>
 
-                  <div class="content">
-                     <h6>Jan Mayer <span>3:40 PM</span></h6>
-                     <p>We want to invite you for a qui...</p>
-                  </div>
-               </div>
-               <div class="inner-item">
-                  <img src="{{ asset('assets/images/team-1.jpg') }}" alt="" class="img-fluid">
+                    </div>
 
-                  <div class="content">
-                     <h6>Jan Mayer <span>3:40 PM</span></h6>
-                     <p>We want to invite you for a qui...</p>
-                  </div>
-               </div>
+
+                    {{-- <div class="center-user-info">
+                        <img src="{{ asset('assets/images/team-2.jpg') }}" alt="">
+                        <h6>Jan Mayer</h6>
+                        <p>Recruiter at <span>Nomad</span> </p>
+                        <p>This is the very beginning of your direct message with <b>Jan Mayer</b></p>
+
+                        <div class="today">
+                            <p><i class="fa-solid fa-angle-down"></i> Today</p>
+                        </div>
+                    </div> --}}
+
+                    <div class="message-box flex-grow-1 overflow-auto px-3 py-2 border d-flex flex-column" id="messageBox">
+                        <p class="no-messages d-none justify-content-center align-items-center h-100"> Start Chating </p>
+                        <div class="mt-auto d-flex flex-column">
+
+                            <!-- Jan Mayer's message (incoming) -->
+                            {{-- <div class="d-flex align-items-start mb-3">
+                                <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Jan Mayer">
+                                <div>
+                                    <p class="mb-1 fw-bold">Jan Mayer</p>
+                                    <div class="bg-light p-2 rounded border message incoming mb-2">
+                                        Hey Jake, I wanted to reach out because we saw your work contributions and were
+                                        impressed by your work.
+                                    </div>
+                                    <div class="bg-light p-2 rounded border message outgoing">
+                                        We want to invite you for a quick interview
+                                    </div>
+                                    <div class="text-muted small mt-1">12 mins ago</div>
+                                </div>
+                            </div>
+
+                            <!-- Your message (outgoing) -->
+                            <div class="d-flex align-items-start justify-content-end text-end mb-2">
+                                <div>
+                                    <div class="bg-primary text-white p-2 rounded mb-1 outgoing">
+                                        Hi Jan, sure I would love to. Thanks for taking the time to see my work!
+                                    </div>
+                                    <div class="text-muted small">12 mins ago</div>
+                                </div>
+                                <img src="https://via.placeholder.com/40" class="rounded-circle ms-2" alt="You">
+                            </div> --}}
+
+                        </div>
+                    </div>
+
+                    <div class="send-box-item">
+                        <input type="text" class="form-control" placeholder="Reply message" id="messageInput">
+                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                        <i class="fa-solid fa-paperclip" id="triggerFileInput" style="cursor: pointer;"></i>
+                        {{-- <img src="{{ asset('assets/images/smile.png') }}" alt=""> --}}
+                        <button id="sendMessageBtn"> <i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+
+                </div>
+                {{-- <div class="no-messages d-flex flex-column justify-content-center align-items-center text-center h-100">
+                    <p>Select user for chat</p>
+                </div> --}}
             </div>
-         </div>
-      </div>
-
-      <div class="col-md-7">
-         <div class="chat-detail">
-            <div class="user-topbar">
-               <div class="name-with-img">
-                  <img src="{{ asset('assets/images/team-1.jpg') }}" alt="" class="img-fluid">
-
-                  <div class="name">
-                     <h6>Jan Mayer</h6>
-                     <p>Recruiter at Nomad</p>
-                  </div>
-               </div>
-
-
-               <div class="icons">
-                  <i class="fa-solid fa-thumbtack"></i>
-                  <i class="fa-regular fa-star"></i>
-                  <i class="fa-solid fa-ellipsis-vertical"></i>
-               </div>
-
-            </div>
-
-
-            <div class="center-user-info">
-               <img src="{{ asset('assets/images/team-2.jpg') }}" alt="">
-               <h6>Jan Mayer</h6>
-               <p>Recruiter at <span>Nomad</span> </p>
-               <p>This is the very beginning of your direct message with <b>Jan Mayer</b></p>
-
-               <div class="today">
-                  <p><i class="fa-solid fa-angle-down"></i> Today</p>
-               </div>
-            </div>
+        </div>
 
 
 
-            <div class="send-box-item">
-               <input type="text" class="form-control" placeholder="Reply message">
-               <i class="fa-solid fa-paperclip"></i>
-               <img src="{{ asset('assets/images/smile.png') }}" alt="">
-               <button> <i class="fa-solid fa-paper-plane"></i></button>
-            </div>
+    </section>
+@endsection
+@section('scripts')
 
-         </div>
-      </div>
-   </div>
-
-
-
-</section>
-
-
+    </script>
 @endsection
