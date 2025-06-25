@@ -24,14 +24,16 @@ class FirebaseAuthController extends Controller
 
             if($request->type == 'contractor'){
                 $contractor = Contractor::firstOrCreate(['email' => $email]);
-                Auth::guard('contractor')->login($contractor);
-
-                return redirect()->route('contractor.dashboard.index'); // Ensure this executes
+                Auth::guard('contractor')->login($contractor);// Ensure this executes
+                return response()->json([
+                        'redirect_url' => route('contractor.dashboard.index')
+                    ]);
             }elseif($request->type == 'subcontractor'){
                 $subcontractor = SubContractor::firstOrCreate(['email' => $email]);
-                Auth::guard('subcontractor')->login($subcontractor);
-
-                return redirect()->route('subcontractor.dashboard.index'); // Ensure this executes
+                Auth::guard('subcontractor')->login($subcontractor); // Ensure this executes
+                return response()->json([
+                        'redirect_url' => route('subcontractor.dashboard.index')
+                    ]);
             }else{
                 return response()->json(['error' => $e->getMessage()], 401);
             }

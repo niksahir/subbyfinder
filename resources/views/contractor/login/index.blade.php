@@ -226,19 +226,27 @@
                     const storedParam = type;
 
                     fetch('/api/firebase-login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + idToken,
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                'content')
-                        },
-                        body: JSON.stringify({
-                            name: user.displayName,
-                            email: user.email,
-                            type: storedParam
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + idToken,
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            },
+                            body: JSON.stringify({
+                                name: user.displayName,
+                                email: user.email,
+                                type: storedParam
+                            })
                         })
-                    }).then(res => res.json()).then(data => console.log(data));
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.redirect_url) {
+                                window.location.href = data.redirect_url;
+                            } else {
+                                console.log(data);
+                            }
+                        });
                 })
                 .catch(err => console.error(err));
         }
