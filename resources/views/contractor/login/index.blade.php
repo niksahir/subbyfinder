@@ -65,7 +65,10 @@
 
                             <div class="login-type">
                                 <img src="{{ asset('assets/images/google.png') }}" alt="" class="img-fluid">
-                                <button onclick="signInWithGoogle('contractor')" data-type="contractor">Login with Google</button>
+                                <span onclick="signInWithGoogle('subcontractor')" data-type="subcontractor"
+                                    style="cursor: pointer;">
+                                    Login with Google
+                                </span>
                             </div>
 
 
@@ -128,7 +131,10 @@
 
                             <div class="login-type">
                                 <img src="{{ asset('assets/images/google.png') }}" alt="" class="img-fluid">
-                                <button onclick="signInWithGoogle('subcontractor')" data-type="subcontractor">Login with Google</button>
+                                <span onclick="signInWithGoogle('subcontractor')" data-type="subcontractor"
+                                    style="cursor: pointer;">
+                                    Login with Google
+                                </span>
                             </div>
 
 
@@ -201,7 +207,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-        <script>
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCZn3R2CXhxP-Hy45V4xnO3RwM3KBp3Adw",
             authDomain: "subby-finder-fb190.firebaseapp.com",
@@ -224,7 +230,8 @@
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': 'Bearer ' + idToken,
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
                         },
                         body: JSON.stringify({
                             name: user.displayName,

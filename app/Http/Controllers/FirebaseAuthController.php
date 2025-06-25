@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 use App\Services\FirebaseAuth;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Contractor;
+use App\Models\SubContractor;
 
 class FirebaseAuthController extends Controller
 {
@@ -20,11 +22,19 @@ class FirebaseAuthController extends Controller
             $email = $verifiedIdToken->claims()->get('email');
             $name = $request->input('name', 'Firebase User');
 
-            Log::alert("message",['email' => $email, 'name' => $name, 'type' => $request->input('type','contractor')]);
-            $user = User::firstOrCreate(['email' => $email], ['name' => $name]);
-            Auth::login($user);
+            if($request->type == 'contractor'){
+                $contractor = Contractor::firstOrCreate(['email' => $email]);
+                Auth::guard('contractor')->login($contractor);
 
-            return response()->json(['message' => 'Login successful', 'user' => $user]);
+                return redirect()->route('contractor.dashboard.index'); // Ensure this executes
+            }elseif($request->type == 'subcontractor'){
+                $subcontractor = SubContractor::firstOrCreate(['email' => $email]);
+                Auth::guard('subcontractor')->login($subcontractor);
+
+                return redirect()->route('subcontractor.dashboard.index'); // Ensure this executes
+            }else{
+                return response()->json(['error' => $e->getMessage()], 401);
+            }
         } catch (\Throwable $e) {
             return response()->json(['error' => $e->getMessage()], 401);
         }

@@ -58,7 +58,10 @@
 
                      <div class="login-type">
                         <img src="{{ asset('assets/images/google.png') }}" alt="" class="img-fluid">
-                        <span>Login with Google</span>
+                        <span onclick="signInWithGoogle('subcontractor')" data-type="subcontractor"
+                                    style="cursor: pointer;">
+                                    Login with Google
+                                </span>
                      </div>
 
 
@@ -115,7 +118,10 @@
 
                      <div class="login-type">
                         <img src="{{ asset('assets/images/google.png') }}" alt="" class="img-fluid">
-                        <span>Login with Google</span>
+                        <span onclick="signInWithGoogle('contractor')" data-type="contractor"
+                                    style="cursor: pointer;">
+                                    Login with Google
+                                </span>
                      </div>
 
 
@@ -177,7 +183,45 @@
    <script src=" {{ asset('assets/js/jquery.js') }} "></script>
    <script src=" {{ asset('assets/js/bootstrap.js') }} "></script>
    <script src=" {{ asset('assets/js/custom.js') }} "></script>
+   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCZn3R2CXhxP-Hy45V4xnO3RwM3KBp3Adw",
+            authDomain: "subby-finder-fb190.firebaseapp.com",
+            projectId: "subby-finder-fb190",
+            appId: "1:143717964761:web:a5b77edbd254d36ec2d7c8",
+        };
 
+        firebase.initializeApp(firebaseConfig);
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        function signInWithGoogle(type) {
+            firebase.auth().signInWithPopup(provider)
+                .then(async (result) => {
+                    const user = result.user;
+                    const idToken = await user.getIdToken();
+                    const storedParam = type;
+
+                    fetch('/api/firebase-login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + idToken,
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
+                        },
+                        body: JSON.stringify({
+                            name: user.displayName,
+                            email: user.email,
+                            type: storedParam
+                        })
+                    }).then(res => res.json()).then(data => console.log(data));
+                })
+                .catch(err => console.error(err));
+        }
+    </script>
 </body>
 
 </html>
