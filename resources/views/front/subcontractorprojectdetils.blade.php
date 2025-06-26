@@ -431,6 +431,54 @@
 
                                             foreach ($subcontractorReviews as $review) {
                                                 $subRatings = $subRatings->merge([
+                                                        $review->quality_of_projects,
+                                                        $review->communication_of_works,
+                                                        $review->payment_terms,
+                                                        $review->support_staff,
+                                                    ]);
+                                            }
+
+                                            $filtered = $subRatings->filter(fn($val) => $val !== null);
+                                            $subAvgRating = $filtered->isNotEmpty() ? $filtered->avg() : null;
+                                        @endphp
+
+                                        <div class="stars">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($subAvgRating >= $i)
+                                                    <i class="fa-solid fa-star" style="color: #fbbf24;"></i>
+                                                @elseif ($subAvgRating >= $i - 0.5)
+                                                    <i class="fa-solid fa-star-half-stroke" style="color: #fbbf24;"></i>
+                                                @else
+                                                    <i class="fa-regular fa-star" style="color: #fbbf24;"></i>
+                                                @endif
+                                            @endfor
+                                        </div>
+                                    </div>
+
+                                    {{-- <p>{{ $review->review_text ?? 'No comment provided.' }}</p> --}}
+
+                                    @if ($review->user != null)
+                                        <div class="client">
+                                            <div class="photo">
+                                                <img src="{{$review->user->profile_photo ?  asset('storage/' . $review->user->profile_photo)  : asset('assets/images/icons8-person-94.png') }}" alt="Project Logo"
+                                                        class="img-fluid">
+                                            </div>
+                                            <div class="name">
+                                                <h6>{{ $review->user->contact_name ?? 'Anonymous' }}</h6>
+                                                {{-- <p>{{ $review->user->designation ?? 'Client' }}</p> --}}
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                             @endforeach
+                             @foreach ($contractorReviews as $review)
+                                <div class="review-item">
+                                    <div class="star">
+                                        @php
+                                            $subRatings = collect();
+
+                                            foreach ($contractorReviews as $review) {
+                                                $subRatings = $subRatings->merge([
                                                     $review->workmanship,
                                                     $review->integrity,
                                                     $review->presentation,
@@ -460,56 +508,8 @@
                                     @if ($review->user != null)
                                         <div class="client">
                                             <div class="photo">
-                                                <img src="{{ asset('storage/' . $review->user->profile_photo) }}" alt="Project Logo"
-                                                    class="img-fluid">
-                                            </div>
-                                            <div class="name">
-                                                <h6>{{ $review->user->contact_name ?? 'Anonymous' }}</h6>
-                                                {{-- <p>{{ $review->user->designation ?? 'Client' }}</p> --}}
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                             @endforeach
-                             @foreach ($contractorReviews as $review)
-                                <div class="review-item">
-                                    <div class="star">
-                                        @php
-                                            $subRatings = collect();
-
-                                            foreach ($contractorReviews as $review) {
-                                                $subRatings = $subRatings->merge([
-                                                    $review->doj,
-                                                    $review->payment_terms,
-                                                    $review->support_staff,
-                                                    $review->safety,
-                                                ]);
-                                            }
-
-                                            $filtered = $subRatings->filter(fn($val) => $val !== null);
-                                            $subAvgRating = $filtered->isNotEmpty() ? $filtered->avg() : null;
-                                        @endphp
-
-                                        <div class="stars">
-                                            @for ($i = 1; $i <= 5; $i++)
-                                                @if ($subAvgRating >= $i)
-                                                    <i class="fa-solid fa-star" style="color: #fbbf24;"></i>
-                                                @elseif ($subAvgRating >= $i - 0.5)
-                                                    <i class="fa-solid fa-star-half-stroke" style="color: #fbbf24;"></i>
-                                                @else
-                                                    <i class="fa-regular fa-star" style="color: #fbbf24;"></i>
-                                                @endif
-                                            @endfor
-                                        </div>
-                                    </div>
-
-                                    {{-- <p>{{ $review->review_text ?? 'No comment provided.' }}</p> --}}
-
-                                    @if ($review->user != null)
-                                        <div class="client">
-                                            <div class="photo">
-                                                <img src="{{ asset('storage/' . $review->user->profile_photo) }}" alt="Project Logo"
-                                                    class="img-fluid">
+                                                <img src="{{$review->user->profile_photo ?  asset('storage/' . $review->user->profile_photo)  : asset('assets/images/icons8-person-94.png') }}" alt="Project Logo"
+                                                        class="img-fluid">
                                             </div>
                                             <div class="name">
                                                 <h6>{{ $review->user->contact_name ?? 'Anonymous' }}</h6>

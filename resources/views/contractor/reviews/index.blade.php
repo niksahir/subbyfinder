@@ -61,10 +61,10 @@
 
                                 if ($matchedReview) {
                                     $ratings = [
-                                        $matchedReview->doj,
-                                        $matchedReview->payment_terms,
-                                        $matchedReview->support_staff,
-                                        $matchedReview->safety,
+                                        $matchedReview->workmanship,
+                                        $matchedReview->integrity,
+                                        $matchedReview->presentation,
+                                        $matchedReview->communication,
                                     ];
 
                                     // Filter out nulls and calculate average
@@ -155,10 +155,10 @@
 
                                 if ($matchedReview) {
                                     $ratings = [
-                                        $matchedReview->doj,
-                                        $matchedReview->payment_terms,
-                                        $matchedReview->support_staff,
-                                        $matchedReview->safety,
+                                        $matchedReview->workmanship,
+                                        $matchedReview->integrity,
+                                        $matchedReview->presentation,
+                                        $matchedReview->communication,
                                     ];
 
                                     // Filter out nulls and calculate average
@@ -337,68 +337,68 @@
                             </div>
 
                             <div class="rating form-group mb-4 d-none">
-                                <label>Communication of works</label>
-                                <div class="star-rating">
-                                    <input type="radio" name="doj" id="workmanship-5" value="5"><label
-                                        for="workmanship-5">★</label>
-                                    <input type="radio" name="doj" id="workmanship-4" value="4"><label
-                                        for="workmanship-4">★</label>
-                                    <input type="radio" name="doj" id="workmanship-3" value="3"><label
-                                        for="workmanship-3">★</label>
-                                    <input type="radio" name="doj" id="workmanship-2" value="2"><label
-                                        for="workmanship-2">★</label>
-                                    <input type="radio" name="doj" id="workmanship-1" value="1"><label
-                                        for="workmanship-1">★</label>
+                                    <label>Workmanship</label>
+                                    <div class="star-rating">
+                                        <input type="radio" name="workmanship" id="workmanship-5"
+                                            value="5"><label for="workmanship-5">★</label>
+                                        <input type="radio" name="workmanship" id="workmanship-4"
+                                            value="4"><label for="workmanship-4">★</label>
+                                        <input type="radio" name="workmanship" id="workmanship-3"
+                                            value="3"><label for="workmanship-3">★</label>
+                                        <input type="radio" name="workmanship" id="workmanship-2"
+                                            value="2"><label for="workmanship-2">★</label>
+                                        <input type="radio" name="workmanship" id="workmanship-1"
+                                            value="1"><label for="workmanship-1">★</label>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="rating form-group mb-4 d-none">
-                                <label>Payment Terms</label>
-                                <div class="star-rating">
-                                    <input type="radio" name="payment_terms" id="integrity-5" value="5"><label
-                                        for="integrity-5">★</label>
-                                    <input type="radio" name="payment_terms" id="integrity-4" value="4"><label
-                                        for="integrity-4">★</label>
-                                    <input type="radio" name="payment_terms" id="integrity-3" value="3"><label
-                                        for="integrity-3">★</label>
-                                    <input type="radio" name="payment_terms" id="integrity-2" value="2"><label
-                                        for="integrity-2">★</label>
-                                    <input type="radio" name="payment_terms" id="integrity-1" value="1"><label
-                                        for="integrity-1">★</label>
+                                <div class=" rating form-group mb-4 d-none">
+                                    <label>Integrity</label>
+                                    <div class="star-rating">
+                                        <input type="radio" name="integrity" id="integrity-5" value="5"><label
+                                            for="integrity-5">★</label>
+                                        <input type="radio" name="integrity" id="integrity-4" value="4"><label
+                                            for="integrity-4">★</label>
+                                        <input type="radio" name="integrity" id="integrity-3" value="3"><label
+                                            for="integrity-3">★</label>
+                                        <input type="radio" name="integrity" id="integrity-2" value="2"><label
+                                            for="integrity-2">★</label>
+                                        <input type="radio" name="integrity" id="integrity-1" value="1"><label
+                                            for="integrity-1">★</label>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="rating form-group mb-4 d-none">
-                                <label>Support Staff & Safety</label>
-                                <div class="star-rating">
-                                    <input type="radio" name="support_staff" id="presentation-5" value="5"><label
-                                        for="presentation-5">★</label>
-                                    <input type="radio" name="support_staff" id="presentation-4" value="4"><label
-                                        for="presentation-4">★</label>
-                                    <input type="radio" name="support_staff" id="presentation-3" value="3"><label
-                                        for="presentation-3">★</label>
-                                    <input type="radio" name="support_staff" id="presentation-2" value="2"><label
-                                        for="presentation-2">★</label>
-                                    <input type="radio" name="support_staff" id="presentation-1" value="1"><label
-                                        for="presentation-1">★</label>
+                                <div class="rating form-group mb-4 d-none">
+                                    <label>Presentation</label>
+                                    <div class="star-rating">
+                                        <input type="radio" name="presentation" id="presentation-5"
+                                            value="5"><label for="presentation-5">★</label>
+                                        <input type="radio" name="presentation" id="presentation-4"
+                                            value="4"><label for="presentation-4">★</label>
+                                        <input type="radio" name="presentation" id="presentation-3"
+                                            value="3"><label for="presentation-3">★</label>
+                                        <input type="radio" name="presentation" id="presentation-2"
+                                            value="2"><label for="presentation-2">★</label>
+                                        <input type="radio" name="presentation" id="presentation-1"
+                                            value="1"><label for="presentation-1">★</label>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="rating form-group mb-4 d-none">
-                                <label>Quality of projects</label>
-                                <div class="star-rating">
-                                    <input type="radio" name="safety" id="communication-5" value="5"><label
-                                        for="communication-5">★</label>
-                                    <input type="radio" name="safety" id="communication-4" value="4"><label
-                                        for="communication-4">★</label>
-                                    <input type="radio" name="safety" id="communication-3" value="3"><label
-                                        for="communication-3">★</label>
-                                    <input type="radio" name="safety" id="communication-2" value="2"><label
-                                        for="communication-2">★</label>
-                                    <input type="radio" name="safety" id="communication-1" value="1"><label
-                                        for="communication-1">★</label>
+                                <div class="rating form-group mb-4 d-none">
+                                    <label>Communication</label>
+                                    <div class="star-rating">
+                                        <input type="radio" name="communication" id="communication-5"
+                                            value="5"><label for="communication-5">★</label>
+                                        <input type="radio" name="communication" id="communication-4"
+                                            value="4"><label for="communication-4">★</label>
+                                        <input type="radio" name="communication" id="communication-3"
+                                            value="3"><label for="communication-3">★</label>
+                                        <input type="radio" name="communication" id="communication-2"
+                                            value="2"><label for="communication-2">★</label>
+                                        <input type="radio" name="communication" id="communication-1"
+                                            value="1"><label for="communication-1">★</label>
+                                    </div>
                                 </div>
-                            </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -35,10 +35,10 @@ return new class extends Migration
             $table->string('completion_estimate')->nullable(); // values like: 7, 30, 90
 
             // Star ratings (1 to 5)
-            $table->tinyInteger('workmanship')->nullable();
-            $table->tinyInteger('integrity')->nullable();
-            $table->tinyInteger('presentation')->nullable();
-            $table->tinyInteger('communication')->nullable();
+            $table->tinyInteger('communication_of_works')->nullable();
+            $table->tinyInteger('payment_terms')->nullable();
+            $table->tinyInteger('support_staff')->nullable();
+            $table->tinyInteger('quality_of_projects')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

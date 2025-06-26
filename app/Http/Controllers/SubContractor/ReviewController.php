@@ -115,10 +115,10 @@ class ReviewController extends Controller
         $subContractorReview->completed = $request->completed;
         $subContractorReview->final_review = $request->final_review;
         $subContractorReview->completion_estimate = $request->completion_estimate;
-        $subContractorReview->workmanship = $request->workmanship;
-        $subContractorReview->integrity = $request->integrity;
-        $subContractorReview->presentation = $request->presentation;
-        $subContractorReview->communication = $request->communication;
+        $subContractorReview->communication_of_works = $request->cow;
+        $subContractorReview->payment_terms = $request->payment_terms;
+        $subContractorReview->support_staff = $request->support_staff;
+        $subContractorReview->quality_of_projects = $request->qop;
         $subContractorReview->save();
 
         $project = ContractorProject::find($request->project_id);

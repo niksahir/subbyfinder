@@ -82,13 +82,14 @@ class HomeController extends Controller
         $subcontractorsReviews = reviewContractor::with('user')
             ->latest()
             ->get()
+            ->where('project_type', 'subcontractor_project')
             ->map(function ($review) {
                 // Calculate average rating for each review
                 $average = collect([
-                    $review->doj,
-                    $review->payment_terms,
-                    $review->support_staff,
-                    $review->safety,
+                    $review->workmanship,
+                    $review->integrity,
+                    $review->presentation,
+                    $review->communication,
                 ])->avg();
 
                 // Attach average to the review
@@ -278,18 +279,18 @@ class HomeController extends Controller
         $ratings = collect();
         foreach ($contractorReviews as $review) {
             $ratings = $ratings->merge([
-                $review->doj,
-                $review->payment_terms,
-                $review->support_staff,
-                $review->safety,
-            ]);
-        }
-        foreach ($subcontractorReviews as $review) {
-            $ratings = $ratings->merge([
                 $review->workmanship,
                 $review->integrity,
                 $review->presentation,
                 $review->communication,
+            ]);
+        }
+        foreach ($subcontractorReviews as $review) {
+            $ratings = $ratings->merge([
+                $review->quality_of_projects,
+                $review->communication_of_works,
+                $review->payment_terms,
+                $review->support_staff,
             ]);
         }
         $filteredRatings = $ratings->filter(fn($v) => $v !== null);
@@ -584,6 +585,7 @@ class HomeController extends Controller
                     'quantity' => 1,
                 ]],
                 'mode' => 'payment',
+                'allow_promotion_codes' => true,
                 'success_url' => route('front.handleStripePaymentProject') . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('stripe.cancel'),
                 // 'metadata' => [
@@ -719,6 +721,7 @@ class HomeController extends Controller
                     'quantity' => 1,
                 ]],
                 'mode' => 'payment',
+                'allow_promotion_codes' => true,
                 'success_url' => route('front.handleStripePayment') . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('stripe.cancel'),
                 // 'metadata' => [
@@ -817,18 +820,18 @@ class HomeController extends Controller
         $ratings = collect();
         foreach ($contractorReviews as $review) {
             $ratings = $ratings->merge([
-                $review->doj,
-                $review->payment_terms,
-                $review->support_staff,
-                $review->safety,
-            ]);
-        }
-        foreach ($subcontractorReviews as $review) {
-            $ratings = $ratings->merge([
                 $review->workmanship,
                 $review->integrity,
                 $review->presentation,
                 $review->communication,
+            ]);
+        }
+        foreach ($subcontractorReviews as $review) {
+            $ratings = $ratings->merge([
+                $review->quality_of_projects,
+                $review->communication_of_works,
+                $review->payment_terms,
+                $review->support_staff,
             ]);
         }
 

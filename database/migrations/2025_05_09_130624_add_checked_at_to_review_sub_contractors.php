@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('review_sub_contractors', function (Blueprint $table) {
-             $table->timestamp('completion_estimate_checked_at')->nullable()->after('communication');
+             $table->timestamp('completion_estimate_checked_at')->nullable()->after('communication_of_works');
         });
     }
 

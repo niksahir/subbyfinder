@@ -461,7 +461,7 @@
                                         @if ($review->user != null)
                                             <div class="client">
                                                 <div class="photo">
-                                                    <img src="{{ asset('storage/' . $review->user->profile_photo) }}" alt="Project Logo"
+                                                    <img src="{{$review->user->profile_photo ?  asset('storage/' . $review->user->profile_photo)  : asset('assets/images/icons8-person-94.png') }}" alt="Project Logo"
                                                         class="img-fluid">
                                                 </div>
                                                 <div class="name">
@@ -480,10 +480,10 @@
 
                                                 foreach ($contractorReviews as $review) {
                                                     $subRatings = $subRatings->merge([
-                                                        $review->doj,
+                                                        $review->quality_of_projects,
+                                                        $review->communication_of_works,
                                                         $review->payment_terms,
                                                         $review->support_staff,
-                                                        $review->safety,
                                                     ]);
                                                 }
 
@@ -509,7 +509,7 @@
                                         @if ($review->user != null)
                                             <div class="client">
                                                 <div class="photo">
-                                                    <img src="{{ asset('storage/' . $review->user->profile_photo) }}" alt="Project Logo"
+                                                  <img src="{{$review->user->profile_photo ?  asset('storage/' . $review->user->profile_photo)  : asset('assets/images/icons8-person-94.png') }}" alt="Project Logo"
                                                         class="img-fluid">
                                                 </div>
                                                 <div class="name">
