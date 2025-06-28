@@ -35,8 +35,8 @@
             <div class="inner-wrapper">
                 <div class="image">
                     <div class="check">
-                        <img src="{{$subcontractor->profile_photo ? asset('storage/' . $subcontractor->profile_photo) : asset('assets/images/icons8-person-94.png')}}" alt=""
-                            class="img-fluid">
+                        <img src="{{ $subcontractor->profile_photo ? asset('storage/' . $subcontractor->profile_photo) : asset('assets/images/icons8-person-94.png') }}"
+                            alt="" class="img-fluid">
                     </div>
                 </div>
 
@@ -56,19 +56,28 @@
                         @endif
                     </ul>
 
-                    <div class="ratimg">
-                        <div class="number">
-                            5.0
-                        </div>
+                    @foreach ($subcontractorReviews as $subcontractorReview)
+                        @if ($subcontractorReview->project_id == $subcontractor->id)
+                            <div class="ratimg">
+                                <div class="number">
+                                    {{ $subcontractorReview->average_rating }}
+                                    {{-- Displaying the rating, e.g., 5.0 --}}
+                                </div>
 
-                        <div class="star">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                    </div>
+                                <div class="star">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        @if ($i <= floor($subcontractorReview->average_rating))
+                                            <i class="fa-solid fa-star"></i>
+                                        @elseif ($i - $subcontractorReview->average_rating < 1)
+                                            <i class="fa-solid fa-star-half-stroke"></i>
+                                        @else
+                                            <i class="fa-regular fa-star"></i>
+                                        @endif
+                                    @endfor
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
             </div>
 

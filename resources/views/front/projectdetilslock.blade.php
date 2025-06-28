@@ -388,7 +388,6 @@
                                     @endif
                                 </div>
                              @endforeach
-                             @dd($contractorReviews)
                              @foreach ($contractorReviews as $review)
 
                                 <div class="review-item">

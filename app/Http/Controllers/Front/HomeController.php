@@ -430,16 +430,36 @@ class HomeController extends Controller
         // Get Paginated Results
         $subcontractors = $query->latest()->paginate(10);
 
+        $subcontractorReviews = ReviewContractor::with('user')
+            ->latest()
+            ->get()
+            ->where('project_type', 'subcontractor_project')
+            ->map(function ($review) {
+                // Calculate average rating for each review
+                $average = collect([
+                    $review->workmanship,
+                    $review->integrity,
+                    $review->presentation,
+                    $review->communication,
+                ])->avg();
+
+                // Attach average to the review
+                $review->average_rating = round($average, 2);
+                return $review;
+            })
+            ->sortByDesc('average_rating') // sort by average descending
+            ->values();
+
         // AJAX Request Handling
         if ($request->ajax()) {
-            $html = view('front.subcontractor_partial', compact('subcontractors', 'userEmailAlerts', 'sortBy'))->render();
+            $html = view('front.subcontractor_partial', compact('subcontractorReviews','subcontractors', 'userEmailAlerts', 'sortBy'))->render();
             return response()->json(['html' => $html, 'param' => $request->all()]);
         }
 
         $expertise_in = Expertise::all();
         // $subcontractors = SubContractor::latest()->paginate(10);
         $locations = Location::all();
-        return view('front.principalContractor', compact('tradeCategory','expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
+        return view('front.principalContractor', compact('subcontractorReviews','tradeCategory','expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
     }
 
     public function jobSearch(Request $request)

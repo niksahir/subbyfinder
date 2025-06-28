@@ -554,7 +554,6 @@
 
                 <div class="col-md-4">
                     <div class="right-side">
-                        {{-- @dd($contractorProject->contractor->id) --}}
                         <div class="link">
                             @if($userType == 'contractor')
                                 <a href="{{ route('contractor.messages.index') }}">Message</a>

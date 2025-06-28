@@ -59,7 +59,7 @@
                 <!-- Projects List -->
                 <div class="col-md-8">
                     <div class="result" id="project-list">
-                        @include('front.subcontractor_partial', ['subcontractors' => $subcontractors])
+                        @include('front.subcontractor_partial', ['subcontractors' => $subcontractors,'subcontractorReviews' => $subcontractorReviews])
                     </div>
                 </div>
             </div>
