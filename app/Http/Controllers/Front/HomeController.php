@@ -239,7 +239,7 @@ class HomeController extends Controller
         $project_types = ProjectType::all();
         // $projects = ContractorProject::latest()->paginate(10);
         $locations = Location::all();
-        return view('front.projectSearch', compact('tradeCategory','expertise_in', 'projects', 'project_types', 'userEmailAlerts', 'sortBy', 'locations', 'userLogin'));
+        return view('front.projectSearch', compact('tradeCategory', 'expertise_in', 'projects', 'project_types', 'userEmailAlerts', 'sortBy', 'locations', 'userLogin'));
     }
 
 
@@ -452,14 +452,14 @@ class HomeController extends Controller
 
         // AJAX Request Handling
         if ($request->ajax()) {
-            $html = view('front.subcontractor_partial', compact('subcontractorReviews','subcontractors', 'userEmailAlerts', 'sortBy'))->render();
+            $html = view('front.subcontractor_partial', compact('subcontractorReviews', 'subcontractors', 'userEmailAlerts', 'sortBy'))->render();
             return response()->json(['html' => $html, 'param' => $request->all()]);
         }
 
         $expertise_in = Expertise::all();
         // $subcontractors = SubContractor::latest()->paginate(10);
         $locations = Location::all();
-        return view('front.principalContractor', compact('subcontractorReviews','tradeCategory','expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
+        return view('front.principalContractor', compact('subcontractorReviews', 'tradeCategory', 'expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
     }
 
     public function jobSearch(Request $request)

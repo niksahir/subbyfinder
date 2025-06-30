@@ -110,7 +110,8 @@
                         @else
                             <!-- Show leave review link -->
                             <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                class="text-white pe-auto" data-project-id="{{ $unlockedProject->project->id }}"
+                                class="text-white pe-auto leave-review"
+                                data-project-id="{{ $unlockedProject->project->id }}"
                                 data-project-type="{{ $unlockedProject->project_type }}">
                                 Leave a Review
                             </a>
@@ -205,7 +206,7 @@
                         @else
                             <!-- Show leave review link -->
                             <div class="link">
-                                <a href="" data-bs-toggle="modal" class="text-white pe-auto"
+                                <a href="" data-bs-toggle="modal" class="text-white pe-auto leave-review"
                                     data-bs-target="#exampleModal" data-project-id="{{ $unlockedProject->project->id }}"
                                     data-project-type="{{ $unlockedProject->project_type }}">Leave
                                     a Review </a>
@@ -597,6 +598,40 @@
     </section>
 @endsection
 @section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const reviewLinks = document.querySelectorAll('.leave-review');
+            const form = document.getElementById('reviewForm');
+
+            reviewLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    form.reset();
+
+                    document.querySelectorAll('#reviewForm .d-none').forEach(el => {
+                        el.classList.add('d-none');
+                    });
+
+                    document.querySelectorAll('#reviewForm .rating').forEach(el => {
+                        el.classList.add('d-none');
+                    });
+
+                    document.getElementById('feedbackWhyNoContact').classList.add('d-none');
+                    document.getElementById('agreedWorkSection').classList.add('d-none');
+                    document.getElementById('completedProjectSection').classList.add('d-none');
+                    document.getElementById('completionEstimateSection').classList.add('d-none');
+
+                    form.querySelectorAll('textarea, input[type="text"]').forEach(el => {
+                        el.value = '';
+                    });
+
+                    document.getElementById('project_id').value = this.getAttribute(
+                        'data-project-id');
+                    document.getElementById('project_type').value = this.getAttribute(
+                        'data-project-type');
+                });
+            });
+        });
+    </script>
     <script>
         document.querySelectorAll('input[name="contacted"]').forEach(el => {
             el.addEventListener('change', e => {

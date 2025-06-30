@@ -114,7 +114,8 @@
                         @else
                             <!-- Show leave review link -->
                             <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                class="text-white pe-auto" data-project-id="{{ $unlockedProject->project->id }}"
+                                class="text-white pe-auto leave-review"
+                                data-project-id="{{ $unlockedProject->project->id }}"
                                 data-project-type="{{ $unlockedProject->project_type }}">
                                 Leave a Review
                             </a>
@@ -208,7 +209,7 @@
                         @else
                             <!-- Show leave review link -->
                             <div class="link">
-                                <a href="" data-bs-toggle="modal" class="text-white pe-auto"
+                                <a href="" data-bs-toggle="modal" class="text-white pe-auto leave-review"
                                     data-bs-target="#exampleModal" data-project-id="{{ $unlockedProject->project->id }}"
                                     data-project-type="{{ $unlockedProject->project_type }}">Leave
                                     a Review </a>
@@ -337,68 +338,68 @@
                             </div>
 
                             <div class="rating form-group mb-4 d-none">
-                                    <label>Workmanship</label>
-                                    <div class="star-rating">
-                                        <input type="radio" name="workmanship" id="workmanship-5"
-                                            value="5"><label for="workmanship-5">★</label>
-                                        <input type="radio" name="workmanship" id="workmanship-4"
-                                            value="4"><label for="workmanship-4">★</label>
-                                        <input type="radio" name="workmanship" id="workmanship-3"
-                                            value="3"><label for="workmanship-3">★</label>
-                                        <input type="radio" name="workmanship" id="workmanship-2"
-                                            value="2"><label for="workmanship-2">★</label>
-                                        <input type="radio" name="workmanship" id="workmanship-1"
-                                            value="1"><label for="workmanship-1">★</label>
-                                    </div>
+                                <label>Workmanship</label>
+                                <div class="star-rating">
+                                    <input type="radio" name="workmanship" id="workmanship-5" value="5"><label
+                                        for="workmanship-5">★</label>
+                                    <input type="radio" name="workmanship" id="workmanship-4" value="4"><label
+                                        for="workmanship-4">★</label>
+                                    <input type="radio" name="workmanship" id="workmanship-3" value="3"><label
+                                        for="workmanship-3">★</label>
+                                    <input type="radio" name="workmanship" id="workmanship-2" value="2"><label
+                                        for="workmanship-2">★</label>
+                                    <input type="radio" name="workmanship" id="workmanship-1" value="1"><label
+                                        for="workmanship-1">★</label>
                                 </div>
+                            </div>
 
-                                <div class=" rating form-group mb-4 d-none">
-                                    <label>Integrity</label>
-                                    <div class="star-rating">
-                                        <input type="radio" name="integrity" id="integrity-5" value="5"><label
-                                            for="integrity-5">★</label>
-                                        <input type="radio" name="integrity" id="integrity-4" value="4"><label
-                                            for="integrity-4">★</label>
-                                        <input type="radio" name="integrity" id="integrity-3" value="3"><label
-                                            for="integrity-3">★</label>
-                                        <input type="radio" name="integrity" id="integrity-2" value="2"><label
-                                            for="integrity-2">★</label>
-                                        <input type="radio" name="integrity" id="integrity-1" value="1"><label
-                                            for="integrity-1">★</label>
-                                    </div>
+                            <div class=" rating form-group mb-4 d-none">
+                                <label>Integrity</label>
+                                <div class="star-rating">
+                                    <input type="radio" name="integrity" id="integrity-5" value="5"><label
+                                        for="integrity-5">★</label>
+                                    <input type="radio" name="integrity" id="integrity-4" value="4"><label
+                                        for="integrity-4">★</label>
+                                    <input type="radio" name="integrity" id="integrity-3" value="3"><label
+                                        for="integrity-3">★</label>
+                                    <input type="radio" name="integrity" id="integrity-2" value="2"><label
+                                        for="integrity-2">★</label>
+                                    <input type="radio" name="integrity" id="integrity-1" value="1"><label
+                                        for="integrity-1">★</label>
                                 </div>
+                            </div>
 
-                                <div class="rating form-group mb-4 d-none">
-                                    <label>Presentation</label>
-                                    <div class="star-rating">
-                                        <input type="radio" name="presentation" id="presentation-5"
-                                            value="5"><label for="presentation-5">★</label>
-                                        <input type="radio" name="presentation" id="presentation-4"
-                                            value="4"><label for="presentation-4">★</label>
-                                        <input type="radio" name="presentation" id="presentation-3"
-                                            value="3"><label for="presentation-3">★</label>
-                                        <input type="radio" name="presentation" id="presentation-2"
-                                            value="2"><label for="presentation-2">★</label>
-                                        <input type="radio" name="presentation" id="presentation-1"
-                                            value="1"><label for="presentation-1">★</label>
-                                    </div>
+                            <div class="rating form-group mb-4 d-none">
+                                <label>Presentation</label>
+                                <div class="star-rating">
+                                    <input type="radio" name="presentation" id="presentation-5" value="5"><label
+                                        for="presentation-5">★</label>
+                                    <input type="radio" name="presentation" id="presentation-4" value="4"><label
+                                        for="presentation-4">★</label>
+                                    <input type="radio" name="presentation" id="presentation-3" value="3"><label
+                                        for="presentation-3">★</label>
+                                    <input type="radio" name="presentation" id="presentation-2" value="2"><label
+                                        for="presentation-2">★</label>
+                                    <input type="radio" name="presentation" id="presentation-1" value="1"><label
+                                        for="presentation-1">★</label>
                                 </div>
+                            </div>
 
-                                <div class="rating form-group mb-4 d-none">
-                                    <label>Communication</label>
-                                    <div class="star-rating">
-                                        <input type="radio" name="communication" id="communication-5"
-                                            value="5"><label for="communication-5">★</label>
-                                        <input type="radio" name="communication" id="communication-4"
-                                            value="4"><label for="communication-4">★</label>
-                                        <input type="radio" name="communication" id="communication-3"
-                                            value="3"><label for="communication-3">★</label>
-                                        <input type="radio" name="communication" id="communication-2"
-                                            value="2"><label for="communication-2">★</label>
-                                        <input type="radio" name="communication" id="communication-1"
-                                            value="1"><label for="communication-1">★</label>
-                                    </div>
+                            <div class="rating form-group mb-4 d-none">
+                                <label>Communication</label>
+                                <div class="star-rating">
+                                    <input type="radio" name="communication" id="communication-5"
+                                        value="5"><label for="communication-5">★</label>
+                                    <input type="radio" name="communication" id="communication-4"
+                                        value="4"><label for="communication-4">★</label>
+                                    <input type="radio" name="communication" id="communication-3"
+                                        value="3"><label for="communication-3">★</label>
+                                    <input type="radio" name="communication" id="communication-2"
+                                        value="2"><label for="communication-2">★</label>
+                                    <input type="radio" name="communication" id="communication-1"
+                                        value="1"><label for="communication-1">★</label>
                                 </div>
+                            </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -416,6 +417,41 @@
 @endsection
 @section('scripts')
 @section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const reviewLinks = document.querySelectorAll('.leave-review');
+            const form = document.getElementById('reviewForm');
+
+            reviewLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    form.reset();
+
+                    document.querySelectorAll('#reviewForm .d-none').forEach(el => {
+                        el.classList.add('d-none');
+                    });
+
+                    document.querySelectorAll('#reviewForm .rating').forEach(el => {
+                        el.classList.add('d-none');
+                    });
+
+                    document.getElementById('feedbackWhyNoContact').classList.add('d-none');
+                    document.getElementById('agreedWorkSection').classList.add('d-none');
+                    document.getElementById('completedProjectSection').classList.add('d-none');
+                    document.getElementById('completionEstimateSection').classList.add('d-none');
+
+                    form.querySelectorAll('textarea, input[type="text"]').forEach(el => {
+                        el.value = '';
+                    });
+
+                    document.getElementById('project_id').value = this.getAttribute(
+                        'data-project-id');
+                    document.getElementById('project_type').value = this.getAttribute(
+                        'data-project-type');
+                });
+            });
+        });
+    </script>
+
     <script>
         document.querySelectorAll('input[name="contacted"]').forEach(el => {
             el.addEventListener('change', e => {
