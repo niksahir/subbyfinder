@@ -66,7 +66,7 @@
 <body>
     <div class="email-container">
         <div class="email-header">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="SubbyFinder Logo" width="180" />
+            <img src="https://staging.subbyfinder.com/assets/images/logo.png" alt="SubbyFinder Logo" width="180" />
         </div>
         <div class="email-body">
             <h2>Rate Your Completed Project</h2>
