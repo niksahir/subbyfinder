@@ -14,108 +14,119 @@ use App\Models\Location;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-class RegisterController extends Controller {
-   /**
-    * Display a listing of the resource.
-    */
-   public function index() {
+class RegisterController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
         $expertise_in = Expertise::all();
         $project_types = ProjectType::all();
         $locations = Location::all();
-        return view('subcontractor.register.index', compact(['expertise_in', 'project_types','locations']));
-   }
-
-   /**
-    * Show the form for creating a new resource.
-    */
-   public function create() {
-      //
-   }
-
-   /**
-    * Store a newly created resource in storage.
-    */
-   public function store(Request $request) {
-
-    $validatedData = $request->validate([
-        'profile_photo' => 'image|mimes:jpeg,png,jpg|max:2048',
-        'business_name' => 'required|string|max:255',
-        'contact_name' => 'required|string|max:255',
-        'phone' => 'required|string|max:20',
-        'email' => 'required|string|email|unique:sub_contractors,email',
-        'password' => 'required|string|max:255|confirmed',
-        'address' => 'required|string',
-        'support_staff_size' => 'required|integer',
-        'years_in_business' => 'required|integer',
-        'insurances' => 'required|string',
-        'abn' => 'required|string',
-        'licenses' => 'required|string',
-        'trade_category' => 'required|array',
-        // 'expertise_in' => 'required|string',
-        // 'project_types' => 'required|array',
-        // 'availability' => 'required|array',
-        'description' => 'required|string',
-        'certificates.*' => 'mimes:jpeg,png,jpg,gif,pdf|max:2048',
-        'location' => 'required',
-    ], [
-        'certificates.*.mimes' => 'Only JPEG, PNG, JPG, GIF, and PDF files are allowed for certificates.',
-        'certificates.*.max' => 'Each certificate must not exceed 2MB in size.',
-    ]);
-
-    if ($request->hasFile('profile_photo')) {
-        $path = $request->file('profile_photo')->store('profile_photos', 'public');
-        $validatedData['profile_photo'] = $path;
+        return view('subcontractor.register.index', compact(['expertise_in', 'project_types', 'locations']));
     }
 
-    $validatedData['password'] = Hash::make($validatedData['password']);
-    $subContractor = SubContractor::create($validatedData);
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
 
-    if ($request->hasFile('certificates')) {
-        foreach ($request->file('certificates') as $file) {
-            $extension = $file->getClientOriginalExtension(); // Get the file extension
-            $fileName = 'certificate_' . time() . '.' . $extension;
-            $filePath = $file->storeAs('certifications', $fileName, 'public'); // Store the file
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
 
-            Certification::create([
-                'sub_contractor_id' => $subContractor->id,
-                'file_path' => $filePath,
-            ]);
+        $validatedData = $request->validate([
+            'profile_photo' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'business_name' => 'required|string|max:255',
+            'contact_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|string|email|unique:sub_contractors,email',
+            'password' => 'required|string|max:255|confirmed',
+            'address' => 'required|string',
+            'support_staff_size' => 'required|integer',
+            'years_in_business' => 'required|integer',
+            'insurances' => 'required|string',
+            'abn' => 'required|string',
+            'licenses' => 'required|string',
+            'trade_category' => 'required|array',
+            // 'expertise_in' => 'required|string',
+            // 'project_types' => 'required|array',
+            // 'availability' => 'required|array',
+            'description' => 'required|string',
+            'certificates.*' => 'mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            'location' => 'required',
+            'place_id' => 'nullable|string',
+            'lat' => 'nullable|numeric',
+            'lng' => 'nullable|numeric',
+        ], [
+            'certificates.*.mimes' => 'Only JPEG, PNG, JPG, GIF, and PDF files are allowed for certificates.',
+            'certificates.*.max' => 'Each certificate must not exceed 2MB in size.',
+        ]);
+
+
+        if ($request->hasFile('profile_photo')) {
+            $path = $request->file('profile_photo')->store('profile_photos', 'public');
+            $validatedData['profile_photo'] = $path;
         }
+
+        $validatedData['password'] = Hash::make($validatedData['password']);
+        $subContractor = SubContractor::create($validatedData);
+
+        if ($request->hasFile('certificates')) {
+            foreach ($request->file('certificates') as $file) {
+                $extension = $file->getClientOriginalExtension(); // Get the file extension
+                $fileName = 'certificate_' . time() . '.' . $extension;
+                $filePath = $file->storeAs('certifications', $fileName, 'public'); // Store the file
+
+                Certification::create([
+                    'sub_contractor_id' => $subContractor->id,
+                    'file_path' => $filePath,
+                ]);
+            }
+        }
+        Auth::guard('subcontractor')->login($subContractor);
+        return redirect()->route('front.pricing')->with('success', 'Registration successful!');
     }
-    Auth::guard('subcontractor')->login($subContractor);
-    return redirect()->route('front.pricing')->with('success', 'Registration successful!');
 
-   }
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
 
-   /**
-    * Display the specified resource.
-    */
-   public function show(string $id) {
-      //
-   }
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
 
-   /**
-    * Show the form for editing the specified resource.
-    */
-   public function edit(string $id) {
-      //
-   }
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
 
-   /**
-    * Update the specified resource in storage.
-    */
-   public function update(Request $request, string $id) {
-      //
-   }
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
 
-   /**
-    * Remove the specified resource from storage.
-    */
-   public function destroy(string $id) {
-      //
-   }
-
-   public function checkEmail(Request $request)
+    public function checkEmail(Request $request)
     {
         $emailExists = SubContractor::where('email', $request->email)->exists();
 

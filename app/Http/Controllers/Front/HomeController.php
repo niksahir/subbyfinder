@@ -21,9 +21,12 @@ use App\Models\ProfileView;
 use App\Models\SubcontractorProtfolio;
 use App\Models\UserSubscription;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
+
+use function Illuminate\Log\log;
 
 class HomeController extends Controller
 {
@@ -153,12 +156,50 @@ class HomeController extends Controller
         $sortBy = $request->sort_by ? $request->sort_by : 'latest';
         $userLogin = null;
 
+        $radiusKm = 5;
+
+        $lat = $request->input('lat');
+        $lng = $request->input('lng');
+
+        $lat = $request->filled('lat') ? $request->input('lat') : null;
+        $lng = $request->filled('lng') ? $request->input('lng') : null;
+
+        // normalise empty strings / 'null'
+        if ($lat === '' || $lat === 'null') $lat = null;
+        if ($lng === '' || $lng === 'null') $lng = null;
+
+        $isPaginationOrAjax = $request->ajax() || $request->has('page');
+
+        // 1) Fresh coords were supplied in this request → save & use
+        if (is_numeric($lat) && is_numeric($lng)) {
+            session(['lat' => $lat, 'lng' => $lng]);
+        }
+        // 2) No coords in this request:
+        else {
+            if ($isPaginationOrAjax) {
+                // follow‑up request: fall back to what we stored earlier
+                $lat = session('lat');
+                $lng = session('lng');
+            } else {
+                // brand‑new visit: wipe any stale coords
+                session()->forget(['lat', 'lng']);
+                $lat = $lng = null;
+            }
+        }
+
         if (Auth::guard('contractor')->check()) {
             $userEmailAlerts = Auth::guard('contractor')->user()->email_alerts;
             $userLogin = Auth::guard('contractor')->user();
         } elseif (Auth::guard('subcontractor')->check()) {
             $userEmailAlerts = Auth::guard('subcontractor')->user()->email_alerts;
             $userLogin = Auth::guard('subcontractor')->user();
+        }
+
+        if (is_numeric($lat) && is_numeric($lng)) {
+            Log::info("Radius filter ON  |  lat=$lat lng=$lng r={$radiusKm}km");
+            $query->withinRadius($lat, $lng, $radiusKm);
+        } else {
+            Log::info("Radius filter OFF |  plain listing");
         }
 
         // Search by Location
@@ -225,7 +266,6 @@ class HomeController extends Controller
                 }
             });
         }
-
         // Get Paginated Results
         $projects = $query->latest()->paginate(10);
 
@@ -392,126 +432,230 @@ class HomeController extends Controller
     public function subcontractorsearch(Request $request)
     {
 
-        $query = SubContractor::query();
         $userEmailAlerts = 0;
-        $sortBy = $request->sort_by ? $request->sort_by : 'latest';
         $userLogin = null;
-        $query->orderBy('created_at', $request->sort_by == 'latest' ? 'desc' : 'asc');
+
+        $radiusKm = 5;
+
+        $lat = $request->input('lat');
+        $lng = $request->input('lng');
+
+        $lat = $request->filled('lat') ? $request->input('lat') : null;
+        $lng = $request->filled('lng') ? $request->input('lng') : null;
+
+        // normalise empty strings / 'null'
+        if ($lat === '' || $lat === 'null') $lat = null;
+        if ($lng === '' || $lng === 'null') $lng = null;
+
+        $isPaginationOrAjax = $request->ajax() || $request->has('page');
+
+        // 1) Fresh coords were supplied in this request → save & use
+        if (is_numeric($lat) && is_numeric($lng)) {
+            session(['lat' => $lat, 'lng' => $lng]);
+        }
+        // 2) No coords in this request:
+        else {
+            if ($isPaginationOrAjax) {
+                // follow‑up request: fall back to what we stored earlier
+                $lat = session('lat');
+                $lng = session('lng');
+            } else {
+                // brand‑new visit: wipe any stale coords
+                session()->forget(['lat', 'lng']);
+                $lat = $lng = null;
+            }
+        }
+
+        // BASE QUERY
+        $query = SubContractor::query();
+        $sortBy = $request->sort_by ?? 'latest';
+
+        if (is_numeric($lat) && is_numeric($lng)) {
+            Log::info("Radius filter ON  |  lat=$lat lng=$lng r={$radiusKm}km");
+            $query->withinRadius($lat, $lng, $radiusKm);
+        } else {
+            Log::info("Radius filter OFF |  plain listing");
+        }
 
         if (Auth::guard('contractor')->check()) {
-            $userEmailAlerts = Auth::guard('contractor')->user()->subcontractor_email_alerts;
+            $userEmailAlerts = Auth::guard('contractor')->user()->email_alerts;
             $userLogin = Auth::guard('contractor')->user();
         } elseif (Auth::guard('subcontractor')->check()) {
-            $userEmailAlerts = Auth::guard('subcontractor')->user()->subcontractor_email_alerts;
+            $userEmailAlerts = Auth::guard('subcontractor')->user()->email_alerts;
             $userLogin = Auth::guard('subcontractor')->user();
         }
-        // Filter by Category
-        if ($request->has('trade_category') && !empty($request->trade_category)) {
-            $query->whereJsonContains('trade_category', $request->trade_category);
-        }
 
-        if ($request->has('location') && !empty($request->location)) {
-            $query->where('location', 'LIKE', '%' . $request->location . '%');
+        // Other filters
+        if ($request->filled('location')) {
+            $query->where('location', 'like', '%' . $request->location . '%');
         }
-
-        if ($request->has('availability') && !empty($request->availability)) {
-            $query->where('availability', 'LIKE', '%' . $request->availability . '%');
+        if ($request->filled('availability')) {
+            $query->where('availability', 'like', '%' . $request->availability . '%');
         }
-
-        if ($request->has('project') && !empty($request->project)) {
-            $query->where('contact_name', 'LIKE', '%' . $request->project . '%');
+        if ($request->filled('project')) {
+            $query->where('contact_name', 'like', '%' . $request->project . '%');
         }
 
         $tradeCategory = null;
-        if ($request->has('trade_category') && !empty($request->trade_category)) {
+        if ($request->filled('trade_category')) {
             $tradeCategory = $request->trade_category;
-            $query->whereJsonContains('trade_category', $request->trade_category);
+            $query->whereJsonContains('trade_category', $tradeCategory);
         }
-        // Get Paginated Results
-        $subcontractors = $query->latest()->paginate(10);
 
+        // Sort
+        $query->orderBy('created_at', $sortBy === 'latest' ? 'desc' : 'asc');
+
+        // Auth
+        $userLogin = null;
+        $userEmailAlerts = 0;
+        if (Auth::guard('contractor')->check()) {
+            $userLogin = Auth::guard('contractor')->user();
+            $userEmailAlerts = $userLogin->subcontractor_email_alerts;
+        } elseif (Auth::guard('subcontractor')->check()) {
+            $userLogin = Auth::guard('subcontractor')->user();
+            $userEmailAlerts = $userLogin->subcontractor_email_alerts;
+        }
+
+        // Final paginated results
+        $subcontractors = $query->paginate(10)->withQueryString();
+
+        // Reviews
         $subcontractorReviews = ReviewContractor::with('user')
             ->latest()
-            ->get()
             ->where('project_type', 'subcontractor_project')
-            ->map(function ($review) {
-                // Calculate average rating for each review
-                $average = collect([
-                    $review->workmanship,
-                    $review->integrity,
-                    $review->presentation,
-                    $review->communication,
-                ])->avg();
-
-                // Attach average to the review
-                $review->average_rating = round($average, 2);
-                return $review;
+            ->get()
+            ->map(function ($r) {
+                $avg = collect([$r->workmanship, $r->integrity, $r->presentation, $r->communication])->avg();
+                $r->average_rating = round($avg, 2);
+                return $r;
             })
-            ->sortByDesc('average_rating') // sort by average descending
+            ->sortByDesc('average_rating')
             ->values();
 
-        // AJAX Request Handling
+        // AJAX
         if ($request->ajax()) {
-            $html = view('front.subcontractor_partial', compact('subcontractorReviews', 'subcontractors', 'userEmailAlerts', 'sortBy'))->render();
+            $html = view('front.subcontractor_partial', compact(
+                'subcontractorReviews',
+                'subcontractors',
+                'userEmailAlerts',
+                'sortBy'
+            ))->render();
+
             return response()->json(['html' => $html, 'param' => $request->all()]);
         }
 
-        $expertise_in = Expertise::all();
-        // $subcontractors = SubContractor::latest()->paginate(10);
-        $locations = Location::all();
-        return view('front.principalContractor', compact('subcontractorReviews', 'tradeCategory', 'expertise_in', 'subcontractors', 'userEmailAlerts', 'sortBy', 'userLogin', 'locations'));
+        return view('front.principalContractor', [
+            'subcontractorReviews' => $subcontractorReviews,
+            'tradeCategory'        => $tradeCategory,
+            'expertise_in'         => Expertise::all(),
+            'subcontractors'       => $subcontractors,
+            'userEmailAlerts'      => $userEmailAlerts,
+            'sortBy'               => $sortBy,
+            'userLogin'            => $userLogin,
+            'locations'            => Location::all(),
+        ]);
     }
+
+
+
 
     public function jobSearch(Request $request)
     {
+        $userType     = $this->getUserType();
+        $locationName = $request->input('location');
+        $projectTerm  = $request->input('project') ?? null;
+        $radius       = 50;
 
-        $userType = $this->getUserType();
 
-        $location = $request->input('location');
-        $project = $request->input('project') ?? null;
+        $lat = $request->input('lat');
+        $lng = $request->input('lng');
 
-        if ($userType == 'contractor') {
-            return redirect()->route(
-                'front.subcontractorsearch',
-                [
-                    'location' => $location,
-                    'project' => $project,
-                ]
-            );
-        } else if ($userType == 'subcontractor') {
-            return redirect()->route('front.projectSearch', [
-                'location' => $location,
-                'project' => $project,
+        $distanceSelect = '*, ST_Distance_Sphere(point(lng, lat), point(?, ?)) AS distance';
+        $distanceWhere  = 'ST_Distance_Sphere(point(lng, lat), point(?, ?)) <= ?';
+        $bind           = [$lng, $lat, $radius];            // used twice below
+
+        if ($userType === 'contractor') {
+            // $subcontractors = SubContractor::selectRaw($distanceSelect, [$lng, $lat])
+            //     ->whereRaw($distanceWhere, $bind)
+            //     ->when(
+            //         $projectTerm,
+            //         fn($q) =>
+            //         $q->where('contact_name', 'like', "%$projectTerm%")
+            //     )
+            //     ->orderBy('distance')
+            //     ->paginate(10);
+
+            return redirect()->route('front.subcontractorsearch', [
+                // 'location' => $locationName,
+                'project'  => $projectTerm,
+                'lat'      => $lat,      // ← add
+                'lng'      => $lng,      // ← add
             ]);
-        } else {
-            $projects = ContractorProject::where('location', 'like', '%' . $location . '%')
-                ->where('project_name', 'like', '%' . $project . '%')
-                ->paginate(10);
-
-            $subcontractors = SubContractor::where('location', 'like', '%' . $location . '%')
-                ->where('contact_name', 'like', '%' . $project . '%')
-                ->paginate(10);
-
-            if ($projects != null && $subcontractors == null) {
-                return redirect()->route('front.projectSearch', [
-                    'location' => $location,
-                    'project' => $project,
-                ]);
-            } else if ($subcontractors != null && $projects == null) {
-                return redirect()->route(
-                    'front.subcontractorsearch',
-                    [
-                        'location' => $location,
-                        'project' => $project,
-                    ]
-                );
-            } else {
-                return redirect()->route('front.projectSearch', [
-                    'location' => $location,
-                    'project' => $project,
-                ]);
-            }
         }
+
+        if ($userType === 'subcontractor') {
+            $projects = ContractorProject::selectRaw($distanceSelect, [$lng, $lat])
+                ->whereRaw($distanceWhere, $bind)
+                ->when(
+                    $projectTerm,
+                    fn($q) =>
+                    $q->where('project_name', 'like', "%$projectTerm%")
+                )
+                ->orderBy('distance')
+                ->paginate(10);
+
+            return redirect()->route('front.projectSearch', [
+                'project'  => $projectTerm,
+                'lat'      => $lat,      // ← add
+                'lng'      => $lng,      // ← add
+            ]);
+        }
+
+        $projects = ContractorProject::selectRaw($distanceSelect, [$lng, $lat])
+            ->whereRaw($distanceWhere, $bind)
+            ->when(
+                $projectTerm,
+                fn($q) =>
+                $q->where('project_name', 'like', "%$projectTerm%")
+            )
+            ->orderBy('distance')
+            ->paginate(10);
+
+        $subcontractors = SubContractor::selectRaw($distanceSelect, [$lng, $lat])
+            ->whereRaw($distanceWhere, $bind)
+            ->when(
+                $projectTerm,
+                fn($q) =>
+                $q->where('contact_name', 'like', "%$projectTerm%")
+            )
+            ->orderBy('distance')
+            ->paginate(10);
+
+        $projCnt  = $projects->total();
+        $subCnt   = $subcontractors->total();
+
+        if ($projCnt && !$subCnt) {
+            return redirect()->route('front.projectSearch', [
+                'project'  => $projectTerm,
+                'lat'      => $lat,      // ← add
+                'lng'      => $lng,      // ← add
+            ]);
+        }
+
+        if ($subCnt && !$projCnt) {
+            return redirect()->route('front.subcontractorsearch', [
+                'project'  => $projectTerm,
+                'lat'      => $lat,      // ← add
+                'lng'      => $lng,      // ← add
+            ]);
+        }
+
+        // Both lists have results (or both empty) → default to project view
+        return redirect()->route('front.projectSearch', [
+            'project'  => $projectTerm,
+            'lat'      => $lat,      // ← add
+            'lng'      => $lng,      // ← add
+        ]);
     }
 
     public function projectdetilslock($id)

@@ -22,12 +22,25 @@
                             <div class="form-item">
                                 <label for="" class="form-label">Where?</label>
                                 <div class="form-control form-control">
-                                    <select class="form-select" aria-label="Default select example" name="location">
-                                        <option selected value="">Location</option>
-                                        @foreach ($locations as $location)
-                                            <option value="{{ $location->name }}">{{ $location->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <label class="form-label">Location</label>
+
+                                    {{-- Autocomplete text box --}}
+                                    <input type="text" id="autocomplete" name="location"
+                                        class="form-control @error('location') is-invalid @enderror"
+                                        placeholder="Search for a location…" value="{{ old('location') }}"
+                                        autocomplete="off" />
+
+                                    {{-- These get filled automatically after the user picks a place --}}
+                                    <input type="hidden" name="lat" id="lat">
+                                    <input type="hidden" name="lng" id="lng">
+                                    <input type="hidden" name="place_id" id="place_id">
+
+                                    @error('location')
+                                        <span class="invalid-feedback"
+                                            role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+
+                                    <div id="place-result" class="mt-2 small text-muted"></div>
                                 </div>
                             </div>
 
@@ -223,9 +236,9 @@
                                 </div>
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapsefour" aria-expanded="false"
-                                            aria-controls="collapsefour">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapsefour"
+                                            aria-expanded="false" aria-controls="collapsefour">
                                             4. Networking opportunities
                                         </button>
                                     </h2>
@@ -1117,6 +1130,53 @@
     </section>
 @endsection
 @section('scripts')
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_places.key') }}&libraries=places"
+        defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('autocomplete');
+            const resultBox = document.getElementById('place-result');
+            const latField = document.getElementById('lat');
+            const lngField = document.getElementById('lng');
+            const idField = document.getElementById('place_id');
+
+            function init() {
+                const ac = new google.maps.places.Autocomplete(input, {
+                    types: ['geocode']
+                });
+
+                ac.addListener('place_changed', () => {
+                    const place = ac.getPlace();
+
+                    if (!place.geometry) {
+                        resultBox.textContent = 'No details for that place – try again.';
+                        return;
+                    }
+
+                    // Fill visible field with formatted address; hidden fields with extras
+                    input.value = place.formatted_address || place.name;
+                    latField.value = place.geometry.location.lat();
+                    lngField.value = place.geometry.location.lng();
+                    idField.value = place.place_id || '';
+
+                    // Nice feedback for the user
+                    // resultBox.innerHTML =
+                    //     `<strong>${place.name || ''}</strong><br>${place.formatted_address}`;
+                });
+            }
+
+            // Google script loads async – wait until it is ready
+            let tries = 0,
+                w = setInterval(() => {
+                    if (window.google && google.maps && google.maps.places) {
+                        clearInterval(w);
+                        init();
+                    }
+                    if (++tries > 20) clearInterval(w); // give up after ~6 s
+                }, 300);
+        });
+    </script>
     <script>
         const monthlyPlans = @json($monthlyPlans);
         const yearlyPlans = @json($yearlyPlans);

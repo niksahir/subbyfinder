@@ -162,7 +162,6 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         // try{
-        // dd($request->all());
         $validatedData = $request->validate([
             // 'project_logo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'project_name' => 'required|string|max:255',
@@ -172,7 +171,10 @@ class ProjectController extends Controller
             // 'license' => 'required|string',
             'trade_category' => 'required|array',
             'budget' => 'required',
-            'project_type' => 'required|array'
+            'project_type' => 'required|array',
+            'place_id' => 'required|string',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
         ]);
         // dd($validatedData);
 
@@ -184,7 +186,7 @@ class ProjectController extends Controller
         $locationName = ucwords(strtolower(trim($request->location)));
 
         // Check if location exists
-        $location = Location::firstOrCreate(['name' => $locationName]);
+        // $location = Location::firstOrCreate(['name' => $locationName]);
 
         // Set location ID to validated data
         $validatedData['location'] = $locationName;

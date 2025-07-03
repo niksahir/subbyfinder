@@ -53,6 +53,10 @@ class RegisterController extends Controller {
             // 'availability' => 'required|array',
             'description' => 'required|string',
             // 'values' => 'required|array',
+            'place_id' => 'required|string',
+            'location' => 'required|string',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
         ]);
 
         if ($request->hasFile('profile_photo')) {

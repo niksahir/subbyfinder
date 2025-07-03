@@ -61,7 +61,8 @@
             <div class="title">
                 <h5>Create Account</h5>
             </div>
-            <form method="POST" id="contractor_register_form" action="{{ route('contractor.register.store') }}" enctype="multipart/form-data">
+            <form method="POST" id="contractor_register_form" action="{{ route('contractor.register.store') }}"
+                enctype="multipart/form-data">
                 @csrf
                 <div class="wrapper">
                     <div class="row">
@@ -246,6 +247,27 @@
                                         </span>
                                     @enderror
                                 </div>
+                                <div class="col-md-6 form-inner">
+                                    <label class="form-label">Location</label>
+
+                                    {{-- Autocomplete text box --}}
+                                    <input type="text" id="autocomplete" name="location"
+                                        class="form-control @error('location') is-invalid @enderror"
+                                        placeholder="Search for a location…" value="{{ old('location') }}"
+                                        autocomplete="off" />
+
+                                    {{-- These get filled automatically after the user picks a place --}}
+                                    <input type="hidden" name="lat" id="lat">
+                                    <input type="hidden" name="lng" id="lng">
+                                    <input type="hidden" name="place_id" id="place_id">
+
+                                    @error('location')
+                                        <span class="invalid-feedback"
+                                            role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+
+                                    <div id="place-result" class="mt-2 small text-muted"></div>
+                                </div>
                             </div>
 
                             {{-- <div class="col-12">
@@ -331,6 +353,54 @@
     <script src=" {{ asset('assets/js/bootstrap.js') }} "></script>
     <script src=" {{ asset('assets/js/custom.js') }} "></script>
     <script src="{{ asset('assets/js/multiSelect.js') }}"></script>
+    {{-- Google Places JS (key pulled from config) --}}
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_places.key') }}&libraries=places"
+        defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('autocomplete');
+            const resultBox = document.getElementById('place-result');
+            const latField = document.getElementById('lat');
+            const lngField = document.getElementById('lng');
+            const idField = document.getElementById('place_id');
+
+            function init() {
+                const ac = new google.maps.places.Autocomplete(input, {
+                    types: ['geocode']
+                });
+
+                ac.addListener('place_changed', () => {
+                    const place = ac.getPlace();
+
+                    if (!place.geometry) {
+                        resultBox.textContent = 'No details for that place – try again.';
+                        return;
+                    }
+
+                    // Fill visible field with formatted address; hidden fields with extras
+                    input.value = place.formatted_address || place.name;
+                    latField.value = place.geometry.location.lat();
+                    lngField.value = place.geometry.location.lng();
+                    idField.value = place.place_id || '';
+
+                    // Nice feedback for the user
+                    // resultBox.innerHTML =
+                    //     `<strong>${place.name || ''}</strong><br>${place.formatted_address}`;
+                });
+            }
+
+            // Google script loads async – wait until it is ready
+            let tries = 0,
+                w = setInterval(() => {
+                    if (window.google && google.maps && google.maps.places) {
+                        clearInterval(w);
+                        init();
+                    }
+                    if (++tries > 20) clearInterval(w); // give up after ~6 s
+                }, 300);
+        });
+    </script>
     <script>
         document.getElementById('profileInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
@@ -433,7 +503,7 @@
                 //     }
                 //     profilePhoto.addClass('is-invalid');
                 // } else {
-                    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
                 const fileInput = profilePhoto[0];
 
                 if (fileInput && fileInput.files && fileInput.files.length > 0) {
@@ -553,7 +623,7 @@
 
                             if (formValid) {
                                 $('#contractor_register_form')[0]
-                            .submit(); // Use native JS for submission to avoid reload
+                                    .submit(); // Use native JS for submission to avoid reload
                             }
                         }
                     },

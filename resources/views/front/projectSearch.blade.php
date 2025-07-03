@@ -15,17 +15,25 @@
                                 <input type="hidden" name="project" value="{{ request('project') }}">
                                 <!-- Location Filter -->
                                 <div class="inner-form">
-                                    <label for="location" class="form-label">Location</label>
-                                    <select class="form-select" name="location" onchange="fetchProjects()">
-                                        <option value="">Select location</option>
-                                        @foreach ($locations as $location)
-                                            <option value="{{ $location->name }}"
-                                                {{ request('location') == $location->name ? 'selected' : '' }}>
-                                                {{ $location->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <label class="form-label">Location</label>
 
+                                    {{-- Autocomplete text box --}}
+                                    <input type="text" id="autocomplete" name="location"
+                                        class="form-control @error('location') is-invalid @enderror"
+                                        placeholder="Search for a location…" value="{{ old('location') }}"
+                                        autocomplete="off" />
+
+                                    {{-- These get filled automatically after the user picks a place --}}
+                                    <input type="hidden" name="lat" id="lat">
+                                    <input type="hidden" name="lng" id="lng">
+                                    <input type="hidden" name="place_id" id="place_id">
+
+                                    @error('location')
+                                        <span class="invalid-feedback"
+                                            role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+
+                                    <div id="place-result" class="mt-2 small text-muted"></div>
                                 </div>
 
                                 <!-- Category Filter -->
@@ -83,112 +91,147 @@
         </div>
     </section>
 @endsection
-
 @section('scripts')
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_places.key') }}&libraries=places"
+        defer></script>
+
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const element = document.querySelector('#trade_category');
-            const choices = new Choices(element, {
-                removeItemButton: true,
-                placeholderValue: 'Select Options',
-                searchEnabled: true
-            });
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            const element = document.querySelector('#budget');
-            const choices = new Choices(element, {
-                removeItemButton: true,
-                placeholderValue: 'Select Options',
-                searchEnabled: true
-            });
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            const element = document.querySelector('#project_type');
-            const choices = new Choices(element, {
-                removeItemButton: true,
-                placeholderValue: 'Select Options',
-                searchEnabled: true
+        document.addEventListener('DOMContentLoaded', () => {
+            ['#trade_category', '#budget', '#project_type'].forEach(sel => {
+                new Choices(sel, {
+                    removeItemButton: true,
+                    placeholderValue: 'Select Options',
+                    searchEnabled: true
+                });
             });
         });
     </script>
+
     <script>
-        // Fetch projects without submit button when value changes
-        function fetchProjects(page = 1) {
-            let url = '{{ route('front.projectSearch') }}?page=' + page;
+        $(function() {
 
-            // Get form data and add sort_by value
-            let formData = $('#filter-form').serializeArray();
-            formData.push({
-                name: 'sort_by',
-                value: $('select[name="sort_by"]').val()
-            });
+            const $form = $('#filter-form'); // whole sidebar form
+            const $listBox = $('#project-list'); // results wrapper
+            const $locInput = $('#autocomplete'); // visible location box
+            const $lat = $('#lat'); // hidden
+            const $lng = $('#lng'); // hidden
+            const $placeId = $('#place_id'); // hidden
+            const $locFeed = $('#place-result'); // tiny feedback line
 
-            $.ajax({
-                url: url,
-                type: 'GET',
-                data: $.param(formData),
-                success: function(response) {
-                    $('#project-list').html(response.html);
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
+            /* ---------- 1.  CENTRAL AJAX HELPER ---------- */
+            function fetchProjects(page = 1) {
+
+                const base = "{{ route('front.projectSearch') }}";
+                const url = `${base}?page=${page}`;
+
+                const data = $form.serializeArray(); // grabs all fields, incl. lat/lng
+
+                // add sort_by if dropdown lives outside form
+                const sortVal = $('select[name="sort_by"]').val();
+                if (sortVal !== undefined) {
+                    data.push({
+                        name: 'sort_by',
+                        value: sortVal
+                    });
                 }
-            });
-        }
-
-        $(document).ready(function() {
-            // Fetch projects when the page loads
-            fetchProjects();
-
-            // Handle Pagination without reload
-            $(document).on('click', '.pagination a', function(event) {
-                event.preventDefault();
-                var page = $(this).attr('href').split('page=')[1];
-                fetchProjects(page);
-            });
-
-            $(document).on('click', '.bookmark-icon', function(event) {
-
-                const projectId = $(this).data('id');
-                const iconElement = $(this);
 
                 $.ajax({
-                    url: "{{ route('contractor.bookmark.store') }}", // Route to store bookmark
+                    url,
+                    type: 'GET',
+                    data: $.param(data),
+                    beforeSend() {
+                        $listBox.html('<p class="text-center my-3">Loading …</p>');
+                    },
+                    success(resp) {
+                        $listBox.html(resp.html);
+                        wirePagination(); // re‑attach AJAX to new links
+                    },
+                    error(xhr) {
+                        console.error(xhr.responseText);
+                        $listBox.html('<p class="text-danger my-3">Could not load results.</p>');
+                    }
+                });
+            }
+
+            function wirePagination() {
+                $listBox.find('.pagination a').on('click', function(e) {
+                    e.preventDefault();
+                    const page = (this.href.split('page=')[1]) || 1;
+                    fetchProjects(page);
+                });
+            }
+
+            function initPlaces() {
+                const ac = new google.maps.places.Autocomplete(
+                    document.getElementById('autocomplete'), {
+                        types: ['geocode']
+                    }
+                );
+
+                ac.addListener('place_changed', () => {
+                    const place = ac.getPlace();
+                    if (!place.geometry) {
+                        $locFeed.text('No details for that place – try again.');
+                        return;
+                    }
+
+                    $locInput.val(place.formatted_address || place.name);
+                    $lat.val(place.geometry.location.lat());
+                    $lng.val(place.geometry.location.lng());
+                    $placeId.val(place.place_id || '');
+                    $locFeed.text(place.formatted_address);
+
+                    fetchProjects(); // run search instantly
+                });
+            }
+
+            (function waitForGoogle(tries = 0) {
+                if (window.google && google.maps && google.maps.places) {
+                    initPlaces();
+                } else if (tries < 20) {
+                    setTimeout(() => waitForGoogle(++tries), 300);
+                }
+            })();
+
+            $form.on('change', 'input, select', () => fetchProjects());
+
+            fetchProjects(); // first page on load
+            wirePagination(); // first server‑rendered pagination links
+
+            $(document).on('click', '.bookmark-icon', function() {
+
+                const projectId = $(this).data('id');
+                const $icon = $(this);
+
+                $.ajax({
+                    url: "{{ route('contractor.bookmark.store') }}",
                     type: 'POST',
                     data: {
                         id: projectId,
                         _token: $('meta[name="csrf-token"]').attr('content')
                     },
-                    success: function(response) {
-                        if (response.status === 'added') {
-                            iconElement.removeClass('fa-regular').addClass('fa-solid');
-                            toastr.success(response.message);
-                        } else if (response.status === 'removed') {
-                            toastr.success(response.message);
-                            iconElement.removeClass('fa-solid').addClass('fa-regular');
+                    success(resp) {
+                        if (resp.status === 'added') {
+                            $icon.removeClass('fa-regular').addClass('fa-solid');
+                            toastr.success(resp.message);
+                        } else if (resp.status === 'removed') {
+                            toastr.success(resp.message);
+                            $icon.removeClass('fa-solid').addClass('fa-regular');
                         } else {
                             window.location.href = "{{ route('login') }}";
                         }
                     },
-                    error: function(xhr, status, error) {
+                    error() {
                         window.location.href = "{{ route('login') }}";
                     }
                 });
             });
 
-            $(document).on('change', '#flexSwitchCheckChecked', function(event) {
-                const emailAlerts = $(this).is(':checked') ? 1 : 0;
-
-                $.ajax({
-                    url: "{{ route('updateEmailAlerts') }}",
-                    type: 'POST',
-                    data: {
-                        email_alerts: emailAlerts,
-                        _token: $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        // alert(response.message);
-                    }
+            $(document).on('change', '#flexSwitchCheckChecked', function() {
+                $.post("{{ route('updateEmailAlerts') }}", {
+                    email_alerts: $(this).is(':checked') ? 1 : 0,
+                    _token: $('meta[name="csrf-token"]').attr('content')
                 });
             });
         });

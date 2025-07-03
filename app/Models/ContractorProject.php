@@ -22,7 +22,10 @@ class ContractorProject extends Model
         'license',
         'trade_category',
         'budget',
-        'project_type'
+        'project_type',
+        'place_id',
+        'lat',
+        'lng',
     ];
 
     protected $casts = [
@@ -85,5 +88,21 @@ class ContractorProject extends Model
     public function unlockedProjects()
     {
         return $this->morphMany(UnlockedProject::class, 'user');
+    }
+
+    public function scopeWithinRadius($query, float $lat, float $lng, float $radiusKm = 5)
+    {
+        return $query->selectRaw(
+            '*, (6371 * acos(
+            cos(radians(?)) *
+            cos(radians(lat)) *
+            cos(radians(lng) - radians(?)) +
+            sin(radians(?)) *
+            sin(radians(lat))
+        )) AS distance',
+            [$lat, $lng, $lat]
+        )
+            ->having('distance', '<=', $radiusKm)
+            ->orderBy('distance');
     }
 }
