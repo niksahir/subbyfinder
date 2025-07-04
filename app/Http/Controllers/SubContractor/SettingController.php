@@ -136,6 +136,9 @@ class SettingController extends Controller
             'trade_category' => 'required|array',
             'description' => 'required|string',
             'certificates.*' => 'mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            'place_id' => 'nullable|string',
+            'lat' => 'nullable|numeric',
+            'lng' => 'nullable|numeric',
         ], [
             'certificates.*.mimes' => 'Only JPEG, PNG, JPG, GIF, and PDF files are allowed for certificates.',
             'certificates.*.max' => 'Each certificate must not exceed 2MB in size.',

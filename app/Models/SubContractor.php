@@ -109,19 +109,19 @@ class SubContractor extends Authenticatable
     {
         return $this->morphMany(ReviewSubContractor::class, 'user');
     }
-    public function scopeWithinRadius($query, float $lat, float $lng, float $radiusKm = 5)
+    public function scopeWithinRadius($query, float $lat, float $lng, float $radiusMetres = 50)
     {
         return $query->selectRaw(
-            '*, (6371 * acos(
+            '*, (6371000 * acos(
             cos(radians(?)) *
             cos(radians(lat)) *
             cos(radians(lng) - radians(?)) +
             sin(radians(?)) *
             sin(radians(lat))
-        )) AS distance',
+        )) AS distance_m',
             [$lat, $lng, $lat]
         )
-            ->having('distance', '<=', $radiusKm)
-            ->orderBy('distance');
+            ->having('distance_m', '<=', $radiusMetres)
+            ->orderBy('distance_m');
     }
 }

@@ -140,6 +140,20 @@
         .share-buttons a:hover {
             opacity: 0.8;
         }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ff5722;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            border: 2px solid #fff;
+            /* margin-top: -6px; */
+            /* Adjust based on track height */
+        }
     </style>
 </head>
 

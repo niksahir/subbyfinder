@@ -71,23 +71,25 @@
 
                                     <div class="col-md-12">
                                         <div class="form-inner">
-                                            <label for="exampleInputPassword1" class="form-label">Location</label>
-                                            <div class="@error('location') is-invalid @enderror">
-                                                <select class="form-control js-example-tags" name="location" id="location">
-                                                    <option value="">Select Location</option>
-                                                    @foreach ($locations as $key => $location)
-                                                        <option value="{{ $location->name }}"
-                                                            {{ $location->name == $project->location ? 'selected' : '' }}>
-                                                            {{ $location->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('location')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
+                                            <label class="form-label">Location</label>
+
+                                            {{-- Autocomplete text box --}}
+                                            <input type="text" id="autocomplete" name="location"
+                                                class="form-control @error('location') is-invalid @enderror"
+                                                placeholder="Search for a location…" value="{{ old('location',$project->location) }}"
+                                                autocomplete="off" />
+
+                                            {{-- These get filled automatically after the user picks a place --}}
+                                            <input type="hidden" name="lat" id="lat">
+                                            <input type="hidden" name="lng" id="lng">
+                                            <input type="hidden" name="place_id" id="place_id">
+
+                                            @error('location')
+                                                <span class="invalid-feedback"
+                                                    role="alert"><strong>{{ $message }}</strong></span>
+                                            @enderror
+
+                                            <div id="place-result" class="mt-2 small text-muted"></div>
                                         </div>
 
                                         <div class="col-12">
@@ -220,4 +222,54 @@
             </div>
         </div>
     </section>
+@endsection
+@section('scripts')
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_places.key') }}&libraries=places"
+        defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('autocomplete');
+            const resultBox = document.getElementById('place-result');
+            const latField = document.getElementById('lat');
+            const lngField = document.getElementById('lng');
+            const idField = document.getElementById('place_id');
+
+            function init() {
+                const ac = new google.maps.places.Autocomplete(input, {
+                    types: ['geocode'],
+                    componentRestrictions: { country: 'AU' }
+                });
+
+                ac.addListener('place_changed', () => {
+                    const place = ac.getPlace();
+
+                    if (!place.geometry) {
+                        resultBox.textContent = 'No details for that place – try again.';
+                        return;
+                    }
+
+                    // Fill visible field with formatted address; hidden fields with extras
+                    input.value = place.formatted_address || place.name;
+                    latField.value = place.geometry.location.lat();
+                    lngField.value = place.geometry.location.lng();
+                    idField.value = place.place_id || '';
+
+                    // Nice feedback for the user
+                    // resultBox.innerHTML =
+                    //     `<strong>${place.name || ''}</strong><br>${place.formatted_address}`;
+                });
+            }
+
+            // Google script loads async – wait until it is ready
+            let tries = 0,
+                w = setInterval(() => {
+                    if (window.google && google.maps && google.maps.places) {
+                        clearInterval(w);
+                        init();
+                    }
+                    if (++tries > 20) clearInterval(w); // give up after ~6 s
+                }, 300);
+        });
+    </script>
 @endsection

@@ -35,6 +35,15 @@
 
                                     <div id="place-result" class="mt-2 small text-muted"></div>
                                 </div>
+                                <div class="inner-form">
+                                    <label for="range" class="form-label">Range:
+                                        <span id="rangeValue">0</span> <!-- Will update dynamically -->
+                                    </label>
+                                    <input type="range" id="range" name="range"
+                                        class="form-control @error('range') is-invalid @enderror" min="0"
+                                        max="50" value="0"
+                                        style="color: #F77A36 !important; background-color: #FEF6F1 !important; height: 19px !important; padding: 0px !important; border-radius: 50px;" />
+                                </div>
 
                                 <!-- Category Filter -->
                                 <div style="margin-bottom: 40px">
@@ -92,6 +101,25 @@
     </section>
 @endsection
 @section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rangeInput = document.getElementById('range');
+            const rangeValue = document.getElementById('rangeValue');
+            const locationInput = document.getElementById('autocomplete');
+
+            if (!locationInput.value) {
+                rangeInput.setAttribute('disabled', 'disabled');
+            }
+
+            // Update value initially
+            rangeValue.textContent = rangeInput.value;
+
+            // Update value on input
+            rangeInput.addEventListener('input', function() {
+                rangeValue.textContent = this.value;
+            });
+        });
+    </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_places.key') }}&libraries=places"
         defer></script>
 
@@ -153,6 +181,12 @@
                     }
                 });
             }
+            const rangeInput = document.getElementById('range');
+            const rangeValue = document.getElementById('rangeValue');
+
+            rangeInput.addEventListener('change', function() {
+                fetchProjects();
+            });
 
             function wirePagination() {
                 $listBox.find('.pagination a').on('click', function(e) {
@@ -184,6 +218,12 @@
                     $lng.val(place.geometry.location.lng());
                     $placeId.val(place.place_id || '');
                     // $locFeed.text(place.formatted_address);
+
+                    const rangeInput = document.getElementById('range');
+                    rangeInput.removeAttribute('disabled');
+
+                    /* show the current thumb value again (optional) */
+                    document.getElementById('rangeValue').textContent = rangeInput.value;
 
                     fetchProjects(); // run search instantly
                 });

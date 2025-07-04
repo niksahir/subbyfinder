@@ -261,7 +261,10 @@ class ProjectController extends Controller
             // 'license' => 'required|string',
             'trade_category' => 'required|array',
             'budget' => 'required',
-            'project_type' => 'required|array'
+            'project_type' => 'required|array',
+            'place_id' => 'required|string',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
         ]);
 
         $contractorId = Auth::guard('contractor')->id();

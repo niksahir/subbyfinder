@@ -156,7 +156,7 @@ class HomeController extends Controller
         $sortBy = $request->sort_by ? $request->sort_by : 'latest';
         $userLogin = null;
 
-        $radiusKm = 5;
+        $radius = $request->input('range', 50); //meters
 
         $lat = $request->input('lat');
         $lng = $request->input('lng');
@@ -164,18 +164,14 @@ class HomeController extends Controller
         $lat = $request->filled('lat') ? $request->input('lat') : null;
         $lng = $request->filled('lng') ? $request->input('lng') : null;
 
-        // normalise empty strings / 'null'
         if ($lat === '' || $lat === 'null') $lat = null;
         if ($lng === '' || $lng === 'null') $lng = null;
 
         $isPaginationOrAjax = $request->ajax() || $request->has('page');
 
-        // 1) Fresh coords were supplied in this request → save & use
         if (is_numeric($lat) && is_numeric($lng)) {
             session(['lat' => $lat, 'lng' => $lng]);
-        }
-        // 2) No coords in this request:
-        else {
+        } else {
             if ($isPaginationOrAjax) {
                 // follow‑up request: fall back to what we stored earlier
                 $lat = session('lat');
@@ -196,16 +192,15 @@ class HomeController extends Controller
         }
 
         if (is_numeric($lat) && is_numeric($lng)) {
-            Log::info("Radius filter ON  |  lat=$lat lng=$lng r={$radiusKm}km");
-            $query->withinRadius($lat, $lng, $radiusKm);
+            $query->withinRadius($lat, $lng, $radius);
         } else {
             Log::info("Radius filter OFF |  plain listing");
         }
 
         // Search by Location
-        if ($request->has('location') && !empty($request->location)) {
-            $query->where('location', 'LIKE', '%' . $request->location . '%');
-        }
+        // if ($request->has('location') && !empty($request->location)) {
+        //     $query->where('location', 'LIKE', '%' . $request->location . '%');
+        // }
 
         // Filter by Category
         if ($request->has('trade_category') && !empty($request->trade_category)) {
@@ -437,7 +432,7 @@ class HomeController extends Controller
         $userEmailAlerts = 0;
         $userLogin = null;
 
-        $radiusKm = 5;
+        $radius = $request->input('range', 50); //meters
 
         $lat = $request->input('lat');
         $lng = $request->input('lng');
@@ -473,8 +468,7 @@ class HomeController extends Controller
         $sortBy = $request->sort_by ?? 'latest';
 
         if (is_numeric($lat) && is_numeric($lng)) {
-            Log::info("Radius filter ON  |  lat=$lat lng=$lng r={$radiusKm}km");
-            $query->withinRadius($lat, $lng, $radiusKm);
+            $query->withinRadius($lat, $lng, $radius);
         } else {
             Log::info("Radius filter OFF |  plain listing");
         }
@@ -488,9 +482,9 @@ class HomeController extends Controller
         }
 
         // Other filters
-        if ($request->filled('location')) {
-            $query->where('location', 'like', '%' . $request->location . '%');
-        }
+        // if ($request->filled('location')) {
+        //     $query->where('location', 'like', '%' . $request->location . '%');
+        // }
         if ($request->filled('availability')) {
             $query->where('availability', 'like', '%' . $request->availability . '%');
         }
@@ -557,9 +551,6 @@ class HomeController extends Controller
             'locations'            => Location::all(),
         ]);
     }
-
-
-
 
     public function jobSearch(Request $request)
     {
