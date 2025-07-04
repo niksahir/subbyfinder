@@ -180,7 +180,7 @@
                     $lat.val(place.geometry.location.lat());
                     $lng.val(place.geometry.location.lng());
                     $placeId.val(place.place_id || '');
-                    $locFeed.text(place.formatted_address);
+                    // $locFeed.text(place.formatted_address);
 
                     fetchProjects(); // run search instantly
                 });

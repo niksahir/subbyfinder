@@ -51,7 +51,7 @@
                 <div class="inner-wrapper">
                     <!-- Project Logo -->
                     <div class="image not-round">
-                        <img src="{{ asset('storage/' . $project->contractor->profile_photo) }}" alt="Project Logo" class="img-fluid">
+                        <img src="{{ $project->contractor->profile_photo ?  asset('storage/' . $project->contractor->profile_photo) : asset('assets/images/icons8-project-50.png') }}" alt="Project Logo" class="img-fluid">
                     </div>
 
                     <!-- Project Details -->
