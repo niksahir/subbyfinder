@@ -295,12 +295,14 @@ class HomeController extends Controller
         $projectCount = ContractorProject::where('contractor_id', $project->contractor_id)->count();
         $contractorProjects = ContractorProject::with('contractor')->where('contractor_id', $project->contractor_id)->latest()->take(5)->get();
 
-        $profileCount = new ProfileView();
-        $profileCount->user_id = $userId->id;
-        $profileCount->user_type = $userType;
-        $profileCount->profile_id = $project->contractor_id;
-        $profileCount->profile_type = 'contractor_project';
-        $profileCount->save();
+        if ($userId != null) {
+            $profileCount = new ProfileView();
+            $profileCount->user_id = $userId->id;
+            $profileCount->user_type = $userType;
+            $profileCount->profile_id = $project->contractor_id;
+            $profileCount->profile_type = 'contractor_project';
+            $profileCount->save();
+        }
 
         // Fetch and merge reviews
         $contractorReviews = ReviewContractor::where('project_id', $id)
@@ -960,12 +962,14 @@ class HomeController extends Controller
         $portfolioCount = SubContractorProtfolio::where('user_id', $id)->count();
         $contractorProjects = ContractorProject::with('contractor')->get();
 
-        $profileCount = new ProfileView();
-        $profileCount->user_id = $userId->id;
-        $profileCount->user_type = $userType;
-        $profileCount->profile_id = $project->id;
-        $profileCount->profile_type = 'subcontractor_project';
-        $profileCount->save();
+        if ($userId != null) {
+            $profileCount = new ProfileView();
+            $profileCount->user_id = $userId->id;
+            $profileCount->user_type = $userType;
+            $profileCount->profile_id = $project->id;
+            $profileCount->profile_type = 'subcontractor_project';
+            $profileCount->save();
+        }
 
         // Fetch reviews
         $contractorReviews = ReviewContractor::where('project_id', $id)
