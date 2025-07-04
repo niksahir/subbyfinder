@@ -122,7 +122,7 @@
             const $listBox = $('#project-list'); // results wrapper
 
             /* ---------- 1.  CENTRAL AJAX HELPER ---------- */
-            function fetchProjects(page = 1) {
+            window.fetchProjects = function fetchProjects(page = 1){
 
                 const base = "{{ route('front.subcontractorsearch') }}";
                 const url = `${base}?page=${page}`;
@@ -193,7 +193,7 @@
 
                     /* show the current thumb value again (optional) */
                     document.getElementById('rangeValue').textContent = rangeInput.value;
-                    
+
                     fetchProjects(); // run search immediately
                 });
             }

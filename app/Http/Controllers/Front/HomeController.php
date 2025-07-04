@@ -216,9 +216,14 @@ class HomeController extends Controller
             $query->where('project_name', 'LIKE', '%' . $request->project . '%');
         }
         $tradeCategory = null;
-        if ($request->has('trade_category') && !empty($request->trade_category)) {
-            $tradeCategory = $request->trade_category;
-            $query->whereJsonContains('trade_category', $request->trade_category);
+        if ($request->filled('trade_category')) {
+            $selectedCategories = array_map('strval', (array) $request->input('trade_category'));
+
+            $query->where(function ($q) use ($selectedCategories) {
+                foreach ($selectedCategories as $categoryId) {
+                    $q->orWhereJsonContains('trade_category', $categoryId);
+                }
+            });
         }
 
         // Filter by sorting
@@ -494,9 +499,16 @@ class HomeController extends Controller
 
         $tradeCategory = null;
         if ($request->filled('trade_category')) {
-            $tradeCategory = $request->trade_category;
-            $query->whereJsonContains('trade_category', $tradeCategory);
+            // Force all selected values to strings to match JSON column like ["1", "2", "3"]
+            $selectedCategories = array_map('strval', (array) $request->input('trade_category'));
+
+            $query->where(function ($q) use ($selectedCategories) {
+                foreach ($selectedCategories as $categoryId) {
+                    $q->orWhereJsonContains('trade_category', $categoryId);
+                }
+            });
         }
+
 
         // Sort
         $query->orderBy('created_at', $sortBy === 'latest' ? 'desc' : 'asc');
@@ -514,7 +526,6 @@ class HomeController extends Controller
 
         // Final paginated results
         $subcontractors = $query->paginate(10)->withQueryString();
-
         // Reviews
         $subcontractorReviews = ReviewContractor::with('user')
             ->latest()

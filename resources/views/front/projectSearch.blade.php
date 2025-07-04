@@ -148,7 +148,7 @@
             const $locFeed = $('#place-result'); // tiny feedback line
 
             /* ---------- 1.  CENTRAL AJAX HELPER ---------- */
-            function fetchProjects(page = 1) {
+            window.fetchProjects = function fetchProjects(page = 1){
 
                 const base = "{{ route('front.projectSearch') }}";
                 const url = `${base}?page=${page}`;
