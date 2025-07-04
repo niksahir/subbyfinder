@@ -367,7 +367,8 @@
 
             function init() {
                 const ac = new google.maps.places.Autocomplete(input, {
-                    types: ['geocode']
+                    types: ['geocode'],
+                    componentRestrictions: { country: 'AU' }
                 });
 
                 ac.addListener('place_changed', () => {

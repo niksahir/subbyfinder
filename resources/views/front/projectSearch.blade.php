@@ -165,7 +165,10 @@
             function initPlaces() {
                 const ac = new google.maps.places.Autocomplete(
                     document.getElementById('autocomplete'), {
-                        types: ['geocode']
+                        types: ['geocode'],
+                        componentRestrictions: {
+                            country: 'AU'
+                        }
                     }
                 );
 
