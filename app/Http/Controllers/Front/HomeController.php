@@ -203,9 +203,9 @@ class HomeController extends Controller
         // }
 
         // Filter by Category
-        if ($request->has('trade_category') && !empty($request->trade_category)) {
-            $query->whereJsonContains('trade_category', $request->trade_category);
-        }
+        // if ($request->has('trade_category') && !empty($request->trade_category)) {
+        //     $query->whereJsonContains('trade_category', $request->trade_category);
+        // }
 
         // Filter by Project type
         if ($request->has('project_type') && !empty($request->project_type)) {

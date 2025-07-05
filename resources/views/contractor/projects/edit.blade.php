@@ -80,9 +80,11 @@
                                                 autocomplete="off" />
 
                                             {{-- These get filled automatically after the user picks a place --}}
-                                            <input type="hidden" name="lat" id="lat">
-                                            <input type="hidden" name="lng" id="lng">
-                                            <input type="hidden" name="place_id" id="place_id">
+                                            <input type="hidden" name="lat" id="lat" value="{{ old('lat', $project->lat) }}">
+                                            <input type="hidden" name="lng" id="lng" value="{{ old('lng', $project->lng) }}">
+                                            <input type="hidden" name="place_id" id="place_id" value="{{ old('place_id', $project->place_id) }}">
+
+                                            {{-- Error message for location --}}
 
                                             @error('location')
                                                 <span class="invalid-feedback"

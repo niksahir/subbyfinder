@@ -204,7 +204,7 @@ class ProjectController extends Controller
             ->latest()
             ->first();
 
-        if ($purchasedPlans == null ||$purchasedPlans->plan_id == 1 || $purchasedPlans->plan_id == 2 ) {
+        if ($purchasedPlans == null || $purchasedPlans->plan_id == 1 || $purchasedPlans->plan_id == 2) {
 
             $additionalPay = AdditionalPay::where('user_id', $contractorId)
                 ->where('user_type', 'contractor')

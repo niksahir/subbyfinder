@@ -334,9 +334,9 @@
                                     value="{{ old('location', $subcontractor->location) }}" autocomplete="off" />
 
                                 {{-- These get filled automatically after the user picks a place --}}
-                                <input type="hidden" name="lat" id="lat">
-                                <input type="hidden" name="lng" id="lng">
-                                <input type="hidden" name="place_id" id="place_id">
+                                <input type="hidden" name="lat" id="lat" value="{{ old('lat', $subcontractor->lat) }}">
+                                <input type="hidden" name="lng" id="lng" value="{{ old('lng', $subcontractor->lng) }}">
+                                <input type="hidden" name="place_id" id="place_id" value="{{ old('place_id', $subcontractor->place_id) }}">
 
                                 @error('location')
                                     <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
@@ -508,7 +508,7 @@
                                 <div id="existing-images" class="d-flex flex-wrap gap-2"></div>
                             </div>
 
-                            @error('location')
+                            @error('protfolio_image')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

@@ -13,12 +13,16 @@ class SubcontractorProtfolio extends Model
         'user_id',
         'project_name',
         'location',
+        'place_id',
+        'lat',
+        'lng',
         'images',
         'description',
         'price',
     ];
 
-    public function SubContractor(){
-        return $this->belongsTo(Subcontractor::class,'user_id');
+    public function SubContractor()
+    {
+        return $this->belongsTo(Subcontractor::class, 'user_id');
     }
 }
