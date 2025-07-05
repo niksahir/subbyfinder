@@ -35,7 +35,7 @@
 
                                     <div id="place-result" class="mt-2 small text-muted"></div>
                                 </div>
-                                <div class="inner-form">
+                                <div class="inner-form d-none" id="range-container">
                                     <label for="range" class="form-label">Range:
                                         <span id="rangeValue">5</span> <!-- Will update dynamically -->
                                     </label>
@@ -148,7 +148,7 @@
             const $locFeed = $('#place-result'); // tiny feedback line
 
             /* ---------- 1.  CENTRAL AJAX HELPER ---------- */
-            window.fetchProjects = function fetchProjects(page = 1){
+            window.fetchProjects = function fetchProjects(page = 1) {
 
                 const base = "{{ route('front.projectSearch') }}";
                 const url = `${base}?page=${page}`;
@@ -220,6 +220,9 @@
                     // $locFeed.text(place.formatted_address);
 
                     const rangeInput = document.getElementById('range');
+                    const rangeContainer = document.getElementById('range-container');
+                    rangeContainer.classList.remove('d-none');
+                    rangeContainer.classList.add('d-block');
                     rangeInput.removeAttribute('disabled');
 
                     /* show the current thumb value again (optional) */

@@ -34,7 +34,7 @@
 
                                     <div id="place-result" class="mt-2 small text-muted"></div>
                                 </div>
-                                <div class="inner-form">
+                                <div class="inner-form d-none" id="range-container">
                                     <label for="range" class="form-label">Range:
                                         <span id="rangeValue">5</span> <!-- Will update dynamically -->
                                     </label>
@@ -189,6 +189,9 @@
                     $placeId.val(place.place_id || '');
                     // $resultTxt.text(place.formatted_address);
                     const rangeInput = document.getElementById('range');
+                    const rangeContainer = document.getElementById('range-container');
+                    rangeContainer.classList.remove('d-none');
+                    rangeContainer.classList.add('d-block');
                     rangeInput.removeAttribute('disabled');
 
                     /* show the current thumb value again (optional) */
