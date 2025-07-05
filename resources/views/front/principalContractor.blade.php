@@ -40,7 +40,7 @@
                                     </label>
                                     <input type="range" id="range" name="range"
                                         class="form-control @error('range') is-invalid @enderror" min="5"
-                                        max="100" value="5"
+                                        max="250" value="5"
                                         style="color: #F77A36 !important; background-color: #FEF6F1 !important; height: 19px !important; padding: 0px !important; border-radius: 50px;" />
                                 </div>
                                 <!-- Category Filter -->
