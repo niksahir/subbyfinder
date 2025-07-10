@@ -1134,6 +1134,7 @@
             $userCurrentPlan = \App\Models\UserSubscription::where('user_id', $userLogin->id)
                 ->where('user_type', $userType)
                 ->where('is_active', 1)
+                ->orderBy('created_at', 'desc')
                 ->first();
         }
     @endphp
