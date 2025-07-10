@@ -29,14 +29,14 @@
 
 
    <section class="login-section">
-      <div class="logo">
+      {{-- <div class="logo">
          <img src="{{ asset('assets/images/logo.png') }}" alt="" class="img-fluid">
-      </div>
+      </div> --}}
 
       <div class="row">
          <div class="col-md-5">
             <div class="left-img">
-               <img src="{{ asset('assets/images/login.png') }}" alt="" class="img-fluid">
+                <img src="{{ asset('assets/images/login-register.jpg') }}" alt="" class="img-fluid">
             </div>
          </div>
 

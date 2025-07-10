@@ -7,7 +7,7 @@
     <section class="banner-sec">
         <div class="wrapper">
             <div class="bg-img">
-                <img src="assets/images/banner.png" alt="" class="img-fluid">
+                <img src="{{ asset('assets/images/home-page-banner.jpg') }}" alt="" class="img-fluid">
             </div>
 
             <div class="banner-content">
@@ -1128,7 +1128,17 @@
             </div>
         </div>
     </section>
+    @php
+        $userCurrentPlan = null;
+        if ($userLogin != null) {
+            $userCurrentPlan = \App\Models\UserSubscription::where('user_id', $userLogin->id)
+                ->where('user_type', $userType)
+                ->where('is_active', 1)
+                ->first();
+        }
+    @endphp
 @endsection
+
 @section('scripts')
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_places.key') }}&libraries=places"
         defer></script>
@@ -1144,7 +1154,9 @@
             function init() {
                 const ac = new google.maps.places.Autocomplete(input, {
                     types: ['geocode'],
-                    componentRestrictions: { country: 'AU' }
+                    componentRestrictions: {
+                        country: 'AU'
+                    }
                 });
 
                 ac.addListener('place_changed', () => {
@@ -1181,21 +1193,23 @@
     <script>
         const monthlyPlans = @json($monthlyPlans);
         const yearlyPlans = @json($yearlyPlans);
+        const userCurrentPlan = @json($userCurrentPlan);
         const isLoggedIn = {{ $userLogin ? 'true' : 'false' }};
 
         function renderPlans(plans) {
             const container = document.getElementById('plans-container');
             container.innerHTML = '';
 
-            plans.forEach(plan => {
-                const html = `
+            if (isLoggedIn == true && userCurrentPlan) {
+                plans.forEach(plan => {
+                    const html = `
                 <div class="col-md-4 p-0">
                     <div class="plan-inner ${plan.name === 'Standard Plan' ? 'orange' : ''}">
                         ${plan.name === 'Standard Plan' ? '<div class="Recommended"><p>Recommended</p></div>' : ''}
                         <h5>${plan.name}</h5>
                         <p>${plan.description || ''}</p>
-                        <div class="price">
-                            <h3>AUD${plan.price} <span>/ ${plan.billing_type}</span></h3>
+                        <div class="price" id="plan-price-${plan.id}">
+                            <h3>$${plan.price} <span>/ ${plan.billing_type}</span></h3>
                         </div>
                         <h6>Features of ${plan.name}</h6>
                         <ul>
@@ -1213,8 +1227,43 @@
                         </div>
                     </div>
                 </div>`;
-                container.innerHTML += html;
-            });
+                    container.innerHTML += html;
+                    const h3Element = document.querySelector(`#plan-price-${plan.id} h3`);
+                    if (userCurrentPlan && userCurrentPlan.plan_id === plan.id) {
+                        h3Element.classList.add('fw-bold');
+                    }
+                });
+
+            } else {
+                plans.forEach(plan => {
+                    const html = `
+                <div class="col-md-4 p-0">
+                    <div class="plan-inner ${plan.name === 'Standard Plan' ? 'orange' : ''}">
+                        ${plan.name === 'Standard Plan' ? '<div class="Recommended"><p>Recommended</p></div>' : ''}
+                        <h5>${plan.name}</h5>
+                        <p>${plan.description || ''}</p>
+                        <div class="price">
+                            <h3>$${plan.price} <span>/ ${plan.billing_type}</span></h3>
+                        </div>
+                        <h6>Features of ${plan.name}</h6>
+                        <ul>
+                            ${
+                                Array.isArray(plan.features)
+                                    ? plan.features
+                                    : (typeof plan.features === 'string'
+                                        ? JSON.parse(plan.features)
+                                        : [])
+                                    .map(f => `<li>${f}</li>`).join('')
+                            }
+                        </ul>
+                        <div class="link border">
+                            <a href="javascript:void(0)" onclick="handleBuyNow('${plan.id}')">Buy Now</a>
+                        </div>
+                    </div>
+                </div>`;
+                    container.innerHTML += html;
+                });
+            }
 
         }
 

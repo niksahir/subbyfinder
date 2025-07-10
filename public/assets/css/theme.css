@@ -1649,7 +1649,7 @@ header .sign-in li:nth-child(2) a {
 }
 .plans-sec .plan-inner .price h3 span {
   font-size: 20px;
-  color: var(--c-text);
+  /* color: var(--c-text); */
 }
 .plans-sec .plan-inner ul {
   padding: 0;
@@ -3685,8 +3685,6 @@ header .sign-in li:nth-child(2) a {
 }
 .login-section .left-img img {
   width: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
 }
 @media screen and (min-width: 768px) {
   .login-section .left-img img {

@@ -125,7 +125,8 @@ class HomeController extends Controller
         $monthlyPlans = Plan::where('billing_type', 'monthly')->get();
         $yearlyPlans = Plan::where('billing_type', 'yearly')->get();
         $userLogin = $this->userLogin;
-        return view('front.plans', compact('monthlyPlans', 'yearlyPlans', 'userLogin'));
+        $userType = $this->getUserType();
+        return view('front.plans', compact('monthlyPlans', 'yearlyPlans', 'userLogin', 'userType'));
     }
 
     private function convertBudgetToOrder($budget)

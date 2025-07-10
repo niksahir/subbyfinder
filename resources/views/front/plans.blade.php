@@ -34,19 +34,64 @@
             <input type="hidden" name="plan_id" id="plan-id-input">
         </form>
     </section>
+    @php
+        $userCurrentPlan = null;
+        if ($userLogin != null) {
+            $userCurrentPlan = \App\Models\UserSubscription::where('user_id', $userLogin->id)
+                ->where('user_type', $userType)
+                ->where('is_active', 1)
+                ->first();
+        }
+    @endphp
 @endsection
 
 @section('scripts')
     <script>
         const monthlyPlans = @json($monthlyPlans);
         const yearlyPlans = @json($yearlyPlans);
+        const userCurrentPlan = @json($userCurrentPlan);
         const isLoggedIn = {{ $userLogin ? 'true' : 'false' }};
 
         function renderPlans(plans) {
             const container = document.getElementById('plans-container');
             container.innerHTML = '';
 
-            plans.forEach(plan => {
+            if (isLoggedIn == true && userCurrentPlan) {
+                plans.forEach(plan => {
+                    const html = `
+                <div class="col-md-4 p-0">
+                    <div class="plan-inner ${plan.name === 'Standard Plan' ? 'orange' : ''}">
+                        ${plan.name === 'Standard Plan' ? '<div class="Recommended"><p>Recommended</p></div>' : ''}
+                        <h5>${plan.name}</h5>
+                        <p>${plan.description || ''}</p>
+                        <div class="price" id="plan-price-${plan.id}">
+                            <h3>$${plan.price} <span>/ ${plan.billing_type}</span></h3>
+                        </div>
+                        <h6>Features of ${plan.name}</h6>
+                        <ul>
+                            ${
+                                Array.isArray(plan.features)
+                                    ? plan.features
+                                    : (typeof plan.features === 'string'
+                                        ? JSON.parse(plan.features)
+                                        : [])
+                                    .map(f => `<li>${f}</li>`).join('')
+                            }
+                        </ul>
+                        <div class="link border">
+                            <a href="javascript:void(0)" onclick="handleBuyNow('${plan.id}')">Buy Now</a>
+                        </div>
+                    </div>
+                </div>`;
+                    container.innerHTML += html;
+                    const h3Element = document.querySelector(`#plan-price-${plan.id} h3`);
+                    if (userCurrentPlan && userCurrentPlan.plan_id === plan.id) {
+                        h3Element.classList.add('fw-bold');
+                    }
+                });
+
+            }else{
+                plans.forEach(plan => {
                 const html = `
                 <div class="col-md-4 p-0">
                     <div class="plan-inner ${plan.name === 'Standard Plan' ? 'orange' : ''}">
@@ -54,7 +99,7 @@
                         <h5>${plan.name}</h5>
                         <p>${plan.description || ''}</p>
                         <div class="price">
-                            <h3>AUD${plan.price} <span>/ ${plan.billing_type}</span></h3>
+                            <h3>$${plan.price} <span>/ ${plan.billing_type}</span></h3>
                         </div>
                         <h6>Features of ${plan.name}</h6>
                         <ul>
@@ -74,6 +119,7 @@
                 </div>`;
                 container.innerHTML += html;
             });
+            }
 
         }
 
