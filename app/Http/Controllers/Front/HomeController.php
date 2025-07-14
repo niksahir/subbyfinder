@@ -157,7 +157,7 @@ class HomeController extends Controller
         $sortBy = $request->sort_by ? $request->sort_by : 'latest';
         $userLogin = null;
 
-        $radius = $request->input('range', 50); //meters
+        $radius = $request->input('range', 5); //km
 
         $lat = $request->input('lat');
         $lng = $request->input('lng');
@@ -194,8 +194,6 @@ class HomeController extends Controller
 
         if (is_numeric($lat) && is_numeric($lng)) {
             $query->withinRadius($lat, $lng, $radius);
-        } else {
-            Log::info("Radius filter OFF |  plain listing");
         }
 
         // Search by Location
@@ -438,7 +436,7 @@ class HomeController extends Controller
         $userEmailAlerts = 0;
         $userLogin = null;
 
-        $radius = $request->input('range', 50); //meters
+        $radius = $request->input('range', 5); //km
 
         $lat = $request->input('lat');
         $lng = $request->input('lng');
@@ -475,8 +473,6 @@ class HomeController extends Controller
 
         if (is_numeric($lat) && is_numeric($lng)) {
             $query->withinRadius($lat, $lng, $radius);
-        } else {
-            Log::info("Radius filter OFF |  plain listing");
         }
 
         if (Auth::guard('contractor')->check()) {

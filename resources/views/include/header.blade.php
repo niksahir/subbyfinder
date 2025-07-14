@@ -36,7 +36,8 @@
             <div class="col-6 col-lg-8">
                 <div class="logo-with-menu">
                     <div class="logo">
-                        <a href="{{ route('front.home') }}"><img src="{{ asset('assets/images/logo.png') }}" alt="logo"></a>
+                        <a href="{{ route('front.home') }}"><img src="{{ asset('assets/images/logo.png') }}"
+                                alt="logo"></a>
                     </div>
 
                     <div class="menus">
@@ -213,6 +214,9 @@
                         </svg>
 
                         Dashboard</a></li>
+                <li><a href="{{ route('front.projectSearch') }}">Find Work</a></li>
+
+                <li><a href="{{ route('front.subcontractorsearch') }}">Find Subcontractors</a></li>
                 <li> <a href="{{ isset($guard) && $guard == 'contractor' ? route('contractor.messages.index') : route('subcontractor.messages.index') }}"
                         style="display: inline-block;
                                width: 100%;

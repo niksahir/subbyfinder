@@ -22,6 +22,7 @@
 
                     Dashboard</a>
             </li>
+            <li><a href="{{ route('front.projectSearch') }}">Find Work</a></li>
             @php
                 $unseenMessages = \App\Models\Message::where('to_user_id', Auth::guard('subcontractor')->user()->id)
                     ->where('receiver_type', 'subcontractor')
