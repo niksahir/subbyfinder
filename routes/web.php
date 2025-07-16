@@ -30,7 +30,7 @@ use App\Http\Controllers\SubContractor\ProtfolioController;
 use Illuminate\Support\Facades\Route;
 
 Auth::routes();
-
+Route::any('api/firebase-login', [FirebaseAuthController::class, 'login']);
 Route::get('create-account', [RegisterController::class, 'index'])->name('front.createaccount');
 
 Route::get('/', [FrontHomeController::class, 'index'])->name('front.home');
